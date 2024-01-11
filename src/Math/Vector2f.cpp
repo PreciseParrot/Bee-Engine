@@ -13,14 +13,16 @@ float Vector2f::dot(const Vector2f& right) const
     return x * right.x + y * right.y;
 }
 
-float Vector2f::length() const
+float Vector2f::getLength() const
 {
     return sqrtf(powf(x, 2) + powf(y, 2));
 }
 
 void Vector2f::normalize()
 {
-    float scale = 1.0f / length();
+    float length = getLength();
+    if (length <= 0) return;
+    float scale = 1.0f / length;
     x *= scale;
     y *= scale;
 }

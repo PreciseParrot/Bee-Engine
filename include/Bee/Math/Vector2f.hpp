@@ -8,7 +8,7 @@ struct Vector2f
     Vector2f();
     Vector2f(float x, float y);
     float dot(const Vector2f& right) const;
-    float length() const;
+    float getLength() const;
     void normalize();
     void operator =(const Vector2f& other);
     void operator +=(const Vector2f& other);
