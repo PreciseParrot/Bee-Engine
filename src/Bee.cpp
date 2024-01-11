@@ -16,7 +16,7 @@ static Uint64 loopTicksLast = 0;
 static World* p_nextWorld;
 static World* p_currentWorld;
 
-void Bee::init()
+void Bee::init(int windowWidth, int windowHeight)
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
@@ -28,7 +28,7 @@ void Bee::init()
     p_currentWorld = nullptr;
     p_nextWorld = nullptr;
 
-    Renderer::init();
+    Renderer::init(windowWidth, windowHeight);
     Audio::init();
     Input::init();
 }

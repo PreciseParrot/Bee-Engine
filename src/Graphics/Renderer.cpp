@@ -12,17 +12,20 @@
 #include "Math/Vector2f.hpp"
 #include "Math/Vector2i.hpp"
 
-static int windowHeight = 720;
-static int windowWidth = 1280;
-static float viewPortHeight = 13.5f;
-static float viewPortWidth = 24.0f;
+static int windowWidth = 0;
+static int windowHeight = 0;
+static float viewPortWidth = 16.0f;
+static float viewPortHeight = 9.0f;
 static SDL_Window* p_window;
 static SDL_Renderer* p_renderer;
 static std::unordered_map<std::string, SDL_Texture*> textureMap;
 static Vector2f cameraPosition;
 
-void Renderer::init()
+void Renderer::init(int wWidth, int wHeight)
 {
+    windowWidth = wWidth;
+    windowHeight = wHeight;
+
     if (IMG_Init(IMG_INIT_PNG) == 0)
     {
         std::cout << "Error initializing SDL2_image: " << SDL_GetError() << std::endl;

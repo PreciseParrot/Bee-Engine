@@ -11,7 +11,7 @@
 
 namespace Renderer
 {
-    void init();
+    void init(int windowWidth, int windowHeight);
     void clear();
     void display();
     void draw(const Vector2i& position, SDL_Rect* p_srcRect, SDL_Texture* p_texture);

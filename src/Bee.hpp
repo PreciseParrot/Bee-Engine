@@ -4,7 +4,7 @@
 
 namespace Bee
 {
-    void init();
+    void init(int windowWidth, int windowHeight);
     void run();
     World* getCurrentWorld();
     float getDeltaTime();
