@@ -1,7 +1,7 @@
 #pragma once
 
-#include "bee/Math/Vector2f.hpp"
-#include "bee/Math/Vector2i.hpp"
+#include "Bee/Math/Vector2f.hpp"
+#include "Bee/Math/Vector2i.hpp"
 
 namespace Renderer
 {

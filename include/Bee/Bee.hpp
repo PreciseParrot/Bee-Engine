@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bee/World/World.hpp"
+#include "Bee/World/World.hpp"
 
 namespace Bee
 {

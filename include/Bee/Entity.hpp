@@ -2,11 +2,11 @@
 
 #include <string>
 
-#include "bee/Audio.hpp"
-#include "bee/Input.hpp"
-#include "bee/Collision/HitBox.hpp"
-#include "bee/Collision/Intersection.hpp"
-#include "bee/Math/Vector2f.hpp"
+#include "Bee/Audio.hpp"
+#include "Bee/Input.hpp"
+#include "Bee/Collision/HitBox.hpp"
+#include "Bee/Collision/Intersection.hpp"
+#include "Bee/Math/Vector2f.hpp"
 
 class Sprite;
 

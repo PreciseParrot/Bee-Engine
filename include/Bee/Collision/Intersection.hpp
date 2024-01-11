@@ -1,7 +1,7 @@
 #pragma once
 
-#include "bee/Math/Vector2f.hpp"
-#include "bee/World/WorldObject.hpp"
+#include "Bee/Math/Vector2f.hpp"
+#include "Bee/World/WorldObject.hpp"
 
 class Entity;
 

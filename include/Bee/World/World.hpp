@@ -2,10 +2,10 @@
 
 #include <vector>
 
-#include "bee/Entity.hpp"
-#include "bee/Collision/Intersection.hpp"
-#include "bee/World/Tiles.hpp"
-#include "bee/World/WorldObject.hpp"
+#include "Bee/Entity.hpp"
+#include "Bee/Collision/Intersection.hpp"
+#include "Bee/World/Tiles.hpp"
+#include "Bee/World/WorldObject.hpp"
 
 class World
 {

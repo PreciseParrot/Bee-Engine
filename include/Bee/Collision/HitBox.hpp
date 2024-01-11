@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "bee/Math/Vector2f.hpp"
+#include "Bee/Math/Vector2f.hpp"
 
 struct HitBox
 {

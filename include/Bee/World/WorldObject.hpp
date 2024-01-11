@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "bee/Collision/HitBox.hpp"
+#include "Bee/Collision/HitBox.hpp"
 
 struct WorldObject
 {
