@@ -1,0 +1,22 @@
+[submodule "external/SDL_mixer"]
+	path = external/SDL_mixer
+	url = https://github.com/libsdl-org/SDL_mixer.git
+	branch = SDL2
+[submodule "external/SDL2"]
+	path = external/SDL2
+	url = https://github.com/libsdl-org/SDL.git
+	branch = SDL2
+[submodule "external/SDL_image"]
+	path = external/SDL_image
+	url = https://github.com/libsdl-org/SDL_image.git
+	branch = SDL2
+[submodule "external/SDL_ttf"]
+	path = external/SDL_ttf
+	url = https://github.com/libsdl-org/SDL_ttf.git
+	branch = SDL2
+[submodule "external/tinyxml2"]
+	path = external/tinyxml2
+	url = https://github.com/leethomason/tinyxml2.git
+[submodule "external/json"]
+	path = external/json
+	url = https://github.com/nlohmann/json.git
