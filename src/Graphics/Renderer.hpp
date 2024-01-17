@@ -14,11 +14,13 @@ namespace Renderer
     void init(int windowWidth, int windowHeight);
     void clear();
     void display();
-    void draw(const Vector2i& position, SDL_Rect* p_srcRect, SDL_Texture* p_texture);
-    void draw(const Vector2f& position, SDL_Rect* p_srcRect, SDL_Texture* p_texture, const Vector2f& scale, Vector2f& rotationCenter, float rotation);
+    void drawTile(const Vector2i& position, SDL_Rect* p_srcRect, SDL_Texture* p_texture);
+    void drawSprite(const Vector2f& position, SDL_Rect* p_srcRect, SDL_Texture* p_texture, const Vector2f& scale, Vector2f& rotationCenter, float rotation);
     SDL_Texture* loadTexture(std::string textureName, std::string path);
     void unloadTexture(std::string textureName);
     void unloadAllTextures();
+    void setWindowIcon(std::string path);
+    void setWindowTitle(std::string title);
     void setCameraPosition(float x, float y);
     void setCameraPosition(const Vector2f& cameraPosition);
     void setViewportSize(float width, float height);

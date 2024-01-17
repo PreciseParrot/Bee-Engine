@@ -21,10 +21,10 @@ static SDL_Renderer* p_renderer;
 static std::unordered_map<std::string, SDL_Texture*> textureMap;
 static Vector2f cameraPosition;
 
-void Renderer::init(int wWidth, int wHeight)
+void Renderer::init(int winWidth, int winHeight)
 {
-    windowWidth = wWidth;
-    windowHeight = wHeight;
+    windowWidth = winWidth;
+    windowHeight = winHeight;
 
     if (IMG_Init(IMG_INIT_PNG) == 0)
     {
@@ -32,7 +32,7 @@ void Renderer::init(int wWidth, int wHeight)
         throw std::exception();
     }
 
-    p_window = SDL_CreateWindow("GAEM", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, 0);
+    p_window = SDL_CreateWindow("Bee Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, 0);
     if (p_window == nullptr)
     {
         std::cout << "Error creating Window: " << SDL_GetError() << std::endl;
@@ -59,7 +59,7 @@ void Renderer::display()
     SDL_RenderPresent(p_renderer);
 }
 
-void Renderer::draw(const Vector2i& position, SDL_Rect* p_srcRect, SDL_Texture* p_texture)
+void Renderer::drawTile(const Vector2i& position, SDL_Rect* p_srcRect, SDL_Texture* p_texture)
 {
     SDL_Rect dst;
     dst.x = ceilf((position.x - cameraPosition.x + viewPortWidth / 2) * windowWidth / viewPortWidth);
@@ -70,7 +70,7 @@ void Renderer::draw(const Vector2i& position, SDL_Rect* p_srcRect, SDL_Texture* 
     SDL_RenderCopy(p_renderer, p_texture, p_srcRect, &dst);
 }
 
-void Renderer::draw(const Vector2f& position, SDL_Rect* p_srcRect, SDL_Texture* p_texture, const Vector2f& scale, Vector2f& rotationCenter, float rotation)
+void Renderer::drawSprite(const Vector2f& position, SDL_Rect* p_srcRect, SDL_Texture* p_texture, const Vector2f& scale, Vector2f& rotationCenter, float rotation)
 {
     SDL_Rect dst;
     dst.x = (position.x - scale.x / 2 - cameraPosition.x + viewPortWidth / 2) * windowWidth / viewPortWidth;
@@ -125,6 +125,23 @@ void Renderer::unloadAllTextures()
         SDL_DestroyTexture(val);
     }
     textureMap.clear();
+}
+
+void Renderer::setWindowIcon(std::string path)
+{
+    SDL_Surface* p_surface = IMG_Load(path.c_str());
+    if (p_surface == nullptr)
+    {
+        std::cout << "Error loading image" << std::endl;
+        throw std::exception();
+    }
+    SDL_SetWindowIcon(p_window, p_surface);
+    SDL_FreeSurface(p_surface);
+}
+
+void Renderer::setWindowTitle(std::string title)
+{
+    SDL_SetWindowTitle(p_window, title.c_str());
 }
 
 void Renderer::setCameraPosition(float x, float y)

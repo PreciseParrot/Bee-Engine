@@ -5,6 +5,8 @@
 
 namespace Renderer
 {
+    void setWindowIcon(std::string path);
+    void setWindowTitle(std::string title);
     void setCameraPosition(float x, float y);
     void setCameraPosition(const Vector2f& cameraPosition);
     void setViewportSize(float width, float height);

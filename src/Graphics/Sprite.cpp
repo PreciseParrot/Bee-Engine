@@ -94,7 +94,7 @@ void Sprite::setAnimation(std::string animationName)
 
 void Sprite::updateInternal(Vector2f& position, Vector2f& scale, Vector2f& rotationCenter, float rotation)
 {
-    Renderer::draw(position, (SDL_Rect*)&sprites[currentSprite], p_texture, scale, rotationCenter, rotation);
+    Renderer::drawSprite(position, (SDL_Rect*)&sprites[currentSprite], p_texture, scale, rotationCenter, rotation);
 
     uint32_t currentTime = Bee::getTime();
     if (frameStartTime + sprites[currentSprite].duration <= currentTime && currentAnimation.direction != ANIMATION_NONE)

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "Bee/World/World.hpp"
 
 namespace Bee

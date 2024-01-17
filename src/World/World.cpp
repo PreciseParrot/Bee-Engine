@@ -38,7 +38,7 @@ void World::updateInternal()
                 srcRect.x = tiles[tileId].currentX;
                 srcRect.y = tiles[tileId].currentY;
 
-                Renderer::draw(pos, &srcRect, tiles[tileId].p_texure);
+                Renderer::drawTile(pos, &srcRect, tiles[tileId].p_texure);
             }
         }   
     }
@@ -84,7 +84,7 @@ void World::updateInternal()
                 srcRect.x = tiles[tileId].currentX;
                 srcRect.y = tiles[tileId].currentY;
 
-                Renderer::draw(pos, &srcRect, tiles[tileId].p_texure);
+                Renderer::drawTile(pos, &srcRect, tiles[tileId].p_texure);
             }
         }   
     }
