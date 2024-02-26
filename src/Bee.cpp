@@ -13,8 +13,8 @@ static float deltaTime;
 static uint32_t currentTime;
 static Uint64 loopTicks = 0;
 static Uint64 loopTicksLast = 0;
-static World* p_nextWorld;
-static World* p_currentWorld;
+static World* nextWorld;
+static World* currentWorld;
 
 void Bee::init(int windowWidth, int windowHeight)
 {
@@ -25,8 +25,8 @@ void Bee::init(int windowWidth, int windowHeight)
     }
     std::cout << "Initialized SDL2" << std::endl;
 
-    p_currentWorld = nullptr;
-    p_nextWorld = nullptr;
+    currentWorld = nullptr;
+    nextWorld = nullptr;
 
     Renderer::init(windowWidth, windowHeight);
     Audio::init();
@@ -35,15 +35,15 @@ void Bee::init(int windowWidth, int windowHeight)
 
 void Bee::run()
 {
-    if (!p_nextWorld)
+    if (!nextWorld)
     {
         std::cout << "No world loaded" << std::endl;
         return;
     }
 
-    p_currentWorld = p_nextWorld;
-    p_nextWorld = nullptr;
-    p_currentWorld->onLoad();
+    currentWorld = nextWorld;
+    nextWorld = nullptr;
+    currentWorld->onLoad();
 
     while (gameRunning)
     {
@@ -52,24 +52,24 @@ void Bee::run()
 
         currentTime = SDL_GetTicks();
 
-        if (p_nextWorld)
+        if (nextWorld)
         {
-            p_currentWorld->onUnLoad();
-            p_currentWorld = p_nextWorld;
-            p_nextWorld = nullptr;
-            p_currentWorld->onLoad();
+            currentWorld->onUnLoad();
+            currentWorld = nextWorld;
+            nextWorld = nullptr;
+            currentWorld->onLoad();
         }
 
-        SDL_Event gameEvent;
-        while (SDL_PollEvent(&gameEvent))
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
         {
-            switch (gameEvent.type)
+            switch (event.type)
             {
                 case SDL_KEYDOWN:
-                    Input::handleInput(&gameEvent);
+                    Input::handleInput(&event);
                     break;
                 case SDL_KEYUP:
-                    Input::handleInput(&gameEvent);
+                    Input::handleInput(&event);
                     break;
                 case SDL_QUIT:
                     gameRunning = false;
@@ -78,8 +78,8 @@ void Bee::run()
         }
 
         Renderer::clear();
-        p_currentWorld->updateInternal();
-        p_currentWorld->update();
+        currentWorld->updateInternal();
+        currentWorld->update();
         Renderer::display();
         Input::update();
 
@@ -89,7 +89,7 @@ void Bee::run()
 
 World* Bee::getCurrentWorld()
 {
-    return p_currentWorld;
+    return currentWorld;
 }
 
 float Bee::getDeltaTime()
@@ -102,9 +102,9 @@ uint32_t Bee::getTime()
     return currentTime;
 }
 
-void Bee::setWorld(World* p_world)
+void Bee::setWorld(World* world)
 {
-    p_nextWorld = p_world;
+    nextWorld = world;
 }
 
 void Bee::cleanUp()

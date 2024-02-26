@@ -38,7 +38,7 @@ void World::updateInternal()
                 srcRect.x = tiles[tileId].currentX;
                 srcRect.y = tiles[tileId].currentY;
 
-                Renderer::drawTile(pos, &srcRect, tiles[tileId].p_texure);
+                Renderer::drawTile(pos, &srcRect, tiles[tileId].texture);
             }
         }   
     }
@@ -59,10 +59,10 @@ void World::updateInternal()
         }
     }
 
-    for (Entity* p_entity : entities)
+    for (Entity* entity : entities)
     {
-        p_entity->updateInternal();
-        p_entity->update();
+        entity->updateInternal();
+        entity->update();
     }
 
     for (const TileLayer &layer : foregroundLayers)
@@ -84,20 +84,20 @@ void World::updateInternal()
                 srcRect.x = tiles[tileId].currentX;
                 srcRect.y = tiles[tileId].currentY;
 
-                Renderer::drawTile(pos, &srcRect, tiles[tileId].p_texure);
+                Renderer::drawTile(pos, &srcRect, tiles[tileId].texture);
             }
         }   
     }
 }
 
-void World::addEntity(Entity* p_entity)
+void World::addEntity(Entity* entity)
 {
-    entities.push_back(p_entity);
+    entities.push_back(entity);
 }
 
-void World::removeEntity(Entity* p_entity)
+void World::removeEntity(Entity* entity)
 {
-    entities.erase(std::remove(entities.begin(), entities.end(), p_entity), entities.end());
+    entities.erase(std::remove(entities.begin(), entities.end(), entity), entities.end());
 }
 
 std::string World::getTileType(const Vector2f& position) const
@@ -120,27 +120,27 @@ std::string World::getTileType(const Vector2f& position) const
     return type;
 }
 
-std::vector<Intersection> World::getIntersections(const Entity* p_entity) const
+std::vector<Intersection> World::getIntersections(const Entity* entity) const
 {
     std::vector<Intersection> intersections;
 
     for (Entity* p_entityLoop : entities)
     {
-        if (p_entity == p_entityLoop) continue;
+        if (entity == p_entityLoop) continue;
 
         Intersection intersection;
-        intersection.p_entity = p_entityLoop;
-        intersection.p_worldObject = NULL;
-        if (Collision::checkCollision(p_entity->getHitBox(), p_entityLoop->getHitBox(), &intersection))
+        intersection.entity = p_entityLoop;
+        intersection.worldObject = NULL;
+        if (Collision::checkCollision(entity->getHitBox(), p_entityLoop->getHitBox(), &intersection))
             intersections.push_back(intersection);
     }
 
-    for (WorldObject* p_worldObject : worldObjects)
+    for (WorldObject* worldObject : worldObjects)
     {
         Intersection intersection;
-        intersection.p_entity = NULL;
-        intersection.p_worldObject = p_worldObject;
-        if (Collision::checkCollision(p_entity->getHitBox(), p_worldObject->hitBox, &intersection))
+        intersection.entity = NULL;
+        intersection.worldObject = worldObject;
+        if (Collision::checkCollision(entity->getHitBox(), worldObject->hitBox, &intersection))
             intersections.push_back(intersection);
     }
 
@@ -167,7 +167,7 @@ void World::loadTileset(const std::string source, int firstId)
     int columns = tilesetXMLElement->IntAttribute("columns");
     int tileCount = tilesetXMLElement->IntAttribute("tilecount");
     std::filesystem::path tilesetTexture = imageXMLElement->Attribute("source");
-    SDL_Texture* p_texture = Renderer::loadTexture(tilesetTexture.replace_extension().string(), "./assets/Worlds/Tilesets/" + tilesetTexture.string());
+    SDL_Texture* texture = Renderer::loadTexture(tilesetTexture.replace_extension().string(), "./assets/Worlds/Tilesets/" + tilesetTexture.string());
 
     for (int id = 0; id < tileCount; id++)
     {
@@ -180,7 +180,7 @@ void World::loadTileset(const std::string source, int firstId)
         tile.height = height;
         tile.tilesetWidth = imageXMLElement->IntAttribute("width");
         tile.tilesetHeight = imageXMLElement->IntAttribute("height");
-        tile.p_texure = p_texture;
+        tile.texture = texture;
         tile.x = (id % tile.columns) * tile.width;
         tile.y = (id / tile.columns) * tile.height;
         tile.currentX = tile.x;
@@ -282,7 +282,7 @@ void World::loadTilemap(const std::string tilemapName)
     {
         for (tinyxml2::XMLElement* object = objectGroup->FirstChildElement("object"); object != NULL; object = object->NextSiblingElement())
         {
-            WorldObject* p_worldObject = new WorldObject;
+            WorldObject* worldObject = new WorldObject;
             const char* name = object->Attribute("name");
             const char* type = object->Attribute("type");
             float x = object->FloatAttribute("x") / tileWidth;
@@ -290,8 +290,8 @@ void World::loadTilemap(const std::string tilemapName)
             float width = object->FloatAttribute("width") / tileWidth;
             float height = object->FloatAttribute("height") / tileHeight;
 
-            if (name) p_worldObject->name = name;
-            if (type) p_worldObject->type = type;
+            if (name) worldObject->name = name;
+            if (type) worldObject->type = type;
 
             tinyxml2::XMLElement* polygon = object->FirstChildElement("polygon");
             tinyxml2::XMLElement* ellipse = object->FirstChildElement("ellipse");
@@ -314,7 +314,7 @@ void World::loadTilemap(const std::string tilemapName)
                 }
                 for (const Vector2f& polygonPoint : polygonPoints)
                 {
-                    p_worldObject->hitBox.hitBoxPoints.push_back(polygonPoint + Vector2f(x, y));
+                    worldObject->hitBox.hitBoxPoints.push_back(polygonPoint + Vector2f(x, y));
                 }
             }
             else if (ellipse)
@@ -327,12 +327,12 @@ void World::loadTilemap(const std::string tilemapName)
             }
             else
             {
-                p_worldObject->hitBox.hitBoxPoints.push_back(Vector2f(x, y));
-                p_worldObject->hitBox.hitBoxPoints.push_back(Vector2f(x, y + height));
-                p_worldObject->hitBox.hitBoxPoints.push_back(Vector2f(x + width, y));
-                p_worldObject->hitBox.hitBoxPoints.push_back(Vector2f(x + width, y + height));
+                worldObject->hitBox.hitBoxPoints.push_back(Vector2f(x, y));
+                worldObject->hitBox.hitBoxPoints.push_back(Vector2f(x, y + height));
+                worldObject->hitBox.hitBoxPoints.push_back(Vector2f(x + width, y));
+                worldObject->hitBox.hitBoxPoints.push_back(Vector2f(x + width, y + height));
             }
-            worldObjects.push_back(p_worldObject);
+            worldObjects.push_back(worldObject);
         }
     }
 }
@@ -345,8 +345,8 @@ void World::onUnLoad() {}
 
 World::~World()
 {
-    for (Entity* p_entity : entities)
+    for (Entity* entity : entities)
     {
-        delete p_entity;
+        delete entity;
     }
 }

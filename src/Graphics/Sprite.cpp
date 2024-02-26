@@ -19,7 +19,7 @@ void Sprite::loadSpriteSheet(std::string spriteName)
     std::string jsonFilePath = "./assets/Sprites/" + spriteName + ".json";
     std::string pngFilePath = "./assets/Sprites/" + spriteName + ".png";
 
-    p_texture = Renderer::loadTexture(spriteName, pngFilePath);
+    texture = Renderer::loadTexture(spriteName, pngFilePath);
 
     std::ifstream jsonFile(jsonFilePath);
     nlohmann::json spriteData = nlohmann::json::parse(jsonFile);
@@ -94,7 +94,7 @@ void Sprite::setAnimation(std::string animationName)
 
 void Sprite::updateInternal(Vector2f& position, Vector2f& scale, Vector2f& rotationCenter, float rotation)
 {
-    Renderer::drawSprite(position, (SDL_Rect*)&sprites[currentSprite], p_texture, scale, rotationCenter, rotation);
+    Renderer::drawSprite(position, (SDL_Rect*)&sprites[currentSprite], texture, scale, rotationCenter, rotation);
 
     uint32_t currentTime = Bee::getTime();
     if (frameStartTime + sprites[currentSprite].duration <= currentTime && currentAnimation.direction != ANIMATION_NONE)

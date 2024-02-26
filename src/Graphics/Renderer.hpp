@@ -14,8 +14,8 @@ namespace Renderer
     void init(int windowWidth, int windowHeight);
     void clear();
     void display();
-    void drawTile(const Vector2i& position, SDL_Rect* p_srcRect, SDL_Texture* p_texture);
-    void drawSprite(const Vector2f& position, SDL_Rect* p_srcRect, SDL_Texture* p_texture, const Vector2f& scale, Vector2f& rotationCenter, float rotation);
+    void drawTile(const Vector2i& position, SDL_Rect* srcRect, SDL_Texture* texture);
+    void drawSprite(const Vector2f& position, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& scale, Vector2f& rotationCenter, float rotation);
     SDL_Texture* loadTexture(std::string textureName, std::string path);
     void unloadTexture(std::string textureName);
     void unloadAllTextures();

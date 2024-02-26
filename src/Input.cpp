@@ -37,11 +37,11 @@ void Input::update()
     std::copy(std::begin(buttonsPressed), std::end(buttonsPressed), std::begin(buttonsPressedOld));
 }
 
-void Input::handleInput(SDL_Event* p_event)
+void Input::handleInput(SDL_Event* event)
 {
     bool keyPressed;
 
-    if (p_event->type == SDL_KEYDOWN)
+    if (event->type == SDL_KEYDOWN)
     {
         keyPressed = true;
     }
@@ -50,6 +50,6 @@ void Input::handleInput(SDL_Event* p_event)
         keyPressed = false;
     }
 
-    InputButton index = keyMap[p_event->key.keysym.scancode];
+    InputButton index = keyMap[event->key.keysym.scancode];
     buttonsPressed[index] = keyPressed;
 }

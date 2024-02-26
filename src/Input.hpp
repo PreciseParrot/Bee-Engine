@@ -17,7 +17,7 @@ enum InputButton
 namespace Input
 {
     void init();
-    void handleInput(SDL_Event* p_event);
+    void handleInput(SDL_Event* event);
     void update();
     bool isButtonDown(InputButton button);
     bool isButtonPressed(InputButton button);

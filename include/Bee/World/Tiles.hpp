@@ -29,6 +29,6 @@ struct Tile
     int tilesetWidth, tilesetHeight;
     int animationIndex;
     uint32_t frameStartTime;
-    SDL_Texture* p_texure;
+    SDL_Texture* texture;
     std::vector<AnimationTileFrame> animationFrames;
 };

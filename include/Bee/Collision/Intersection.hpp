@@ -7,7 +7,7 @@ class Entity;
 
 struct Intersection
 {
-    Entity* p_entity;
-    WorldObject* p_worldObject;
+    Entity* entity;
+    WorldObject* worldObject;
     Vector2f mtv;
 };

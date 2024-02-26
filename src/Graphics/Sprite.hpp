@@ -47,7 +47,7 @@ private:
     std::string currentAnimationName;
     std::vector<AnimationSpriteFrame> sprites;
     std::map<std::string, FrameTag> frameTags;
-    SDL_Texture* p_texture = nullptr;
+    SDL_Texture* texture = nullptr;
     AnimationDirection currentAnimationDirection = ANIMATION_NONE;
     FrameTag currentAnimation;
 };

@@ -9,6 +9,6 @@ namespace Bee
     World* getCurrentWorld();
     float getDeltaTime();
     uint32_t getTime();
-    void setWorld(World* p_world);
+    void setWorld(World* world);
     void cleanUp();
 };

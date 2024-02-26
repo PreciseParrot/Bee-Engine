@@ -30,13 +30,13 @@ void Audio::init()
 void Audio::loadMusic(std::string musicName)
 {
     std::string fileName = "./assets/Music/" + musicName + ".ogg";
-    Mix_Music* p_music = Mix_LoadMUS(fileName.c_str());
-    if (p_music == nullptr)
+    Mix_Music* music = Mix_LoadMUS(fileName.c_str());
+    if (music == nullptr)
     {
         std::cout << "Error loading music: " << SDL_GetError() << std::endl;
         throw std::exception();
     }
-    musicMap.insert({musicName, p_music});
+    musicMap.insert({musicName, music});
 }
 
 void Audio::playMusic(std::string musicName, int loops)
@@ -52,13 +52,13 @@ void Audio::stopMusic()
 void Audio::loadSound(std::string soundName)
 {
     std::string fileName = "./assets/SFX/" + soundName + ".ogg";
-    Mix_Chunk* p_sound = Mix_LoadWAV(fileName.c_str());
-    if (p_sound == nullptr)
+    Mix_Chunk* sound = Mix_LoadWAV(fileName.c_str());
+    if (sound == nullptr)
     {
         std::cout << "Error loading sound: " << SDL_GetError() << std::endl;
         throw std::exception();
     }
-    soundMap.insert({soundName, p_sound});
+    soundMap.insert({soundName, sound});
 }
 
 int Audio::playSound(std::string soundName)
