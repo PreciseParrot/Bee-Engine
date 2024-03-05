@@ -19,7 +19,7 @@ void Entity::update()
 
 void Entity::updateInternal()
 {
-    sprite->updateInternal(position, scale, rotationCenter, rotation);
+    sprite->updateInternalEntity(position, scale, rotationCenter, rotation);
 }
 
 HitBox Entity::getHitBox() const

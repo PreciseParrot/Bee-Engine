@@ -10,9 +10,10 @@ add_library(${PROJECT_NAME} STATIC
     src/Collision/Collision.cpp
     src/Entity.cpp
     src/Input.cpp
+    src/Graphics/HUDObject.cpp
     src/Graphics/Renderer.cpp
-    src/World/World.cpp
     src/Graphics/Sprite.cpp
+    src/World/World.cpp
     src/Math/Vector2f.cpp
     src/Math/Vector2i.cpp
 )

@@ -11,6 +11,7 @@
 #include "Bee.hpp"
 #include "Graphics/Renderer.hpp"
 #include "Math/Vector2f.hpp"
+#include "Math/Vector2i.hpp"
 
 Sprite::Sprite() {}
 
@@ -21,7 +22,17 @@ void Sprite::loadSpriteSheet(std::string spriteName)
 
     texture = Renderer::loadTexture(spriteName, pngFilePath);
 
+    FrameTag frameTag;
+    frameTag.start = 0;    
+    frameTag.end = 0;
+    frameTag.direction = ANIMATION_NONE;
+    frameTags.insert({"no_animation", frameTag});
+
     std::ifstream jsonFile(jsonFilePath);
+    
+    if (jsonFile.fail())
+        return;
+
     nlohmann::json spriteData = nlohmann::json::parse(jsonFile);
 
     for (const nlohmann::json& spriteFrameJson : spriteData["frames"])
@@ -59,11 +70,6 @@ void Sprite::loadSpriteSheet(std::string spriteName)
 
         frameTags.insert({frameTagJson["name"].get<std::string>(), frameTag});
     }
-    FrameTag frameTag;
-    frameTag.start = 0;    
-    frameTag.end = 0;
-    frameTag.direction = ANIMATION_NONE;
-    frameTags.insert({"no_animation", frameTag});
 }
 
 void Sprite::setAnimation(std::string animationName)
@@ -92,10 +98,11 @@ void Sprite::setAnimation(std::string animationName)
     currentAnimationName = animationName;
 }
 
-void Sprite::updateInternal(Vector2f& position, Vector2f& scale, Vector2f& rotationCenter, float rotation)
+void Sprite::updateInternal()
 {
-    Renderer::drawSprite(position, (SDL_Rect*)&sprites[currentSprite], texture, scale, rotationCenter, rotation);
-
+    if (sprites.size() == 0)
+        return;
+  
     uint32_t currentTime = Bee::getTime();
     if (frameStartTime + sprites[currentSprite].duration <= currentTime && currentAnimation.direction != ANIMATION_NONE)
     {
@@ -138,6 +145,18 @@ void Sprite::updateInternal(Vector2f& position, Vector2f& scale, Vector2f& rotat
             }
         }
     }
+}
+
+void Sprite::updateInternalHUD(const Vector2i& position, const Vector2i& scale, const Vector2f& rotationCenter, float rotation)
+{
+    updateInternal();
+    Renderer::drawHUD(position, scale, (SDL_Rect*)&sprites[currentSprite], texture, rotationCenter, rotation);
+}
+
+void Sprite::updateInternalEntity(const Vector2f& position, const Vector2f& scale, const Vector2f& rotationCenter, float rotation)
+{
+    updateInternal();
+    Renderer::drawSprite(position, scale, (SDL_Rect*)&sprites[currentSprite], texture, rotationCenter, rotation);
 }
 
 Sprite::~Sprite()

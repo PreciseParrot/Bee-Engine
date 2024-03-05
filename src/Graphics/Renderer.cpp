@@ -70,7 +70,22 @@ void Renderer::drawTile(const Vector2i& position, SDL_Rect* srcRect, SDL_Texture
     SDL_RenderCopy(renderer, texture, srcRect, &dstRect);
 }
 
-void Renderer::drawSprite(const Vector2f& position, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& scale, Vector2f& rotationCenter, float rotation)
+void Renderer::drawHUD(const Vector2i& position, const Vector2i& scale, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, float rotation)
+{
+    SDL_Rect dstRect;
+    dstRect.x = position.x;
+    dstRect.y = position.y;
+    dstRect.w = scale.x;
+    dstRect.h = scale.y;
+
+    SDL_Point centerPoint;
+    centerPoint.x = dstRect.w * rotationCenter.x;
+    centerPoint.y = dstRect.h * rotationCenter.y;
+
+    SDL_RenderCopyEx(renderer, texture, srcRect, &dstRect, rotation, NULL, SDL_FLIP_NONE);
+}
+
+void Renderer::drawSprite(const Vector2f& position, const Vector2f& scale, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, float rotation)
 {
     SDL_Rect dstRect;
     dstRect.x = (position.x - scale.x / 2 - cameraPosition.x + viewPortWidth / 2) * windowWidth / viewPortWidth;

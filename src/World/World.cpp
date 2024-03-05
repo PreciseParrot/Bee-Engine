@@ -21,11 +21,11 @@ void World::updateInternal()
 {
     for (const TileLayer &layer : layers)
     {
-        for (int i = 0; i < roomHeight; i++)
+        for (int i = 0; i < worldHeight; i++)
         {
-            for (int j = 0; j < roomWidth; j++)
+            for (int j = 0; j < worldWidth; j++)
             {
-                int tileId = layer.tileIds[j + i * roomWidth];
+                int tileId = layer.tileIds[j + i * worldWidth];
                 if (tileId == 0) continue;
 
                 Vector2i pos;
@@ -67,11 +67,11 @@ void World::updateInternal()
 
     for (const TileLayer &layer : foregroundLayers)
     {
-        for (int i = 0; i < roomHeight; i++)
+        for (int i = 0; i < worldHeight; i++)
         {
-            for (int j = 0; j < roomWidth; j++)
+            for (int j = 0; j < worldWidth; j++)
             {
-                int tileId = layer.tileIds[j + i * roomWidth];
+                int tileId = layer.tileIds[j + i * worldWidth];
                 if (tileId == 0) continue;
 
                 Vector2i pos;
@@ -88,6 +88,11 @@ void World::updateInternal()
             }
         }   
     }
+
+    for (HUDObject* hudObject : hudObjects)
+    {
+        hudObject->updateInternal();
+    }
 }
 
 void World::addEntity(Entity* entity)
@@ -100,18 +105,26 @@ void World::removeEntity(Entity* entity)
     entities.erase(std::remove(entities.begin(), entities.end(), entity), entities.end());
 }
 
+void World::addHUDObject(HUDObject* hudObject)
+{
+    hudObjects.push_back(hudObject);
+}
+
+void World::removeHUDObject(HUDObject* hudObject)
+{
+    hudObjects.erase(std::remove(hudObjects.begin(), hudObjects.end(), hudObject), hudObjects.end());
+}
+
 std::string World::getTileType(const Vector2f& position) const
 {
-    int x = position.x;
-    int y = position.y;
-    if (x < 0) return "";
-    if (y < 0) return "";
-    if (x > roomWidth) return "";
-    if (y > roomHeight) return "";
+    if (position.x < 0) return "";
+    if (position.y < 0) return "";
+    if (position.x > worldWidth) return "";
+    if (position.y > worldHeight) return "";
     std::string type;
     for (const TileLayer& layer : layers)
     {
-        int tileId = layer.tileIds[x + y * roomWidth];
+        int tileId = layer.tileIds[position.x + position.y * worldWidth];
         if (tiles[tileId].type != "")
         {
             type = tiles[tileId].type;
@@ -229,8 +242,8 @@ void World::loadTilemap(const std::string tilemapName)
     }
 
     tinyxml2::XMLElement* mapXMLElement = tilemapXML.FirstChildElement("map");
-    roomWidth = mapXMLElement->IntAttribute("width");
-    roomHeight = mapXMLElement->IntAttribute("height");
+    worldWidth = mapXMLElement->IntAttribute("width");
+    worldHeight = mapXMLElement->IntAttribute("height");
     float tileWidth = mapXMLElement->IntAttribute("tilewidth");
     float tileHeight = mapXMLElement->IntAttribute("tileheight");
 

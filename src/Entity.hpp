@@ -36,7 +36,7 @@ public:
 private:
     float rotation = 0; 
     std::string name;
-    Sprite* sprite;
+    Sprite* sprite = nullptr;
     Vector2f position;
     Vector2f rotationCenter = {0.5f, 0.5f};
     Vector2f scale = {1.0f, 1.0f};

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "Bee/Math/Vector2f.hpp"
 #include "Bee/Math/Vector2i.hpp"
 
