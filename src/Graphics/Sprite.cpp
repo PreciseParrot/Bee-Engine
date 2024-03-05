@@ -22,11 +22,10 @@ void Sprite::loadSpriteSheet(std::string spriteName)
 
     texture = Renderer::loadTexture(spriteName, pngFilePath);
 
-    FrameTag frameTag;
-    frameTag.start = 0;    
-    frameTag.end = 0;
-    frameTag.direction = ANIMATION_NONE;
-    frameTags.insert({"no_animation", frameTag});
+    currentAnimation.start = 0;    
+    currentAnimation.end = 0;
+    currentAnimation.direction = ANIMATION_NONE;
+    frameTags.insert({"no_animation", currentAnimation});
 
     std::ifstream jsonFile(jsonFilePath);
     
@@ -100,11 +99,11 @@ void Sprite::setAnimation(std::string animationName)
 
 void Sprite::updateInternal()
 {
-    if (sprites.size() == 0)
+    if (sprites.size() == 0 || currentAnimation.direction == ANIMATION_NONE)
         return;
   
     uint32_t currentTime = Bee::getTime();
-    if (frameStartTime + sprites[currentSprite].duration <= currentTime && currentAnimation.direction != ANIMATION_NONE)
+    if (frameStartTime + sprites[currentSprite].duration <= currentTime)
     {
         frameStartTime = currentTime;
 
