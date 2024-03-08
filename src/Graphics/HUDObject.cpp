@@ -1,5 +1,7 @@
 #include "Graphics/HUDObject.hpp"
 
+#include "Graphics/Sprite.hpp"
+
 HUDObject::HUDObject()
 {
     sprite = new Sprite;
@@ -42,6 +44,16 @@ void HUDObject::setScale(int width, int height)
 void HUDObject::setScale(const Vector2i& scale)
 {
     this->scale = scale;
+}
+
+void HUDObject::setFont(std::string fontName, int size)
+{
+    sprite->setFont(fontName, size);
+}
+
+void HUDObject::setText(std::string text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+{
+    sprite->setText(text, red, green, blue, alpha);
 }
 
 HUDObject::~HUDObject()

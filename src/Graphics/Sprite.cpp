@@ -4,12 +4,14 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <stdint.h>
 
 #include <nlohmann/json.hpp>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "Bee.hpp"
-#include "Graphics/Renderer.hpp"
+#include "Renderer.hpp"
 #include "Math/Vector2f.hpp"
 #include "Math/Vector2i.hpp"
 
@@ -97,6 +99,31 @@ void Sprite::setAnimation(std::string animationName)
     currentAnimationName = animationName;
 }
 
+void Sprite::setFont(std::string fontName, int size)
+{
+    std::string fontpath = "./assets/Fonts/" + fontName + ".ttf";
+    font = TTF_OpenFont(fontpath.c_str(), size);
+
+    if (font == nullptr)
+    {
+        std::cout << "Error loading font" << std::endl;
+        throw std::exception();
+    }
+}
+
+void Sprite::setText(std::string text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+{
+    if (this->text == text)
+        return;
+
+    this->text = text;
+
+    SDL_Color color = {red, green, blue, alpha};
+    SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), color);
+    texture = Renderer::createTexture(surface);
+    SDL_FreeSurface(surface);
+}
+
 void Sprite::updateInternal()
 {
     if (sprites.size() == 0 || currentAnimation.direction == ANIMATION_NONE)
@@ -160,5 +187,5 @@ void Sprite::updateInternalEntity(const Vector2f& position, const Vector2f& scal
 
 Sprite::~Sprite()
 {
-
+    TTF_CloseFont(font);
 }

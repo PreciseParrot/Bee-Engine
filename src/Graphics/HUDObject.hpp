@@ -17,6 +17,8 @@ public:
     void setPosition(const Vector2i& position);
     void setScale(int width, int height);
     void setScale(const Vector2i& scale);
+    void setFont(std::string fontName, int size);
+    void setText(std::string text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
     virtual void update();
     virtual ~HUDObject();
 

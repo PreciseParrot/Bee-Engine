@@ -100,6 +100,11 @@ void Renderer::drawSprite(const Vector2f& position, const Vector2f& scale, SDL_R
     SDL_RenderCopyEx(renderer, texture, srcRect, &dstRect, rotation, &centerPoint, SDL_FLIP_NONE);
 }
 
+SDL_Texture* Renderer::createTexture(SDL_Surface* surface)
+{
+    return SDL_CreateTextureFromSurface(renderer, surface);
+}
+
 SDL_Texture* Renderer::loadTexture(std::string textureName, std::string path)
 {
     SDL_Texture* texture = nullptr;

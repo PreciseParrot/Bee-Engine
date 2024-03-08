@@ -2,7 +2,9 @@
 
 #include <algorithm>
 #include <iostream>
+
 #include <SDL2/SDL.h>
+#include <SDL_ttf.h>
 
 #include "Audio.hpp"
 #include "Graphics/Renderer.hpp"
@@ -31,6 +33,7 @@ void Bee::init(int windowWidth, int windowHeight)
     Renderer::init(windowWidth, windowHeight);
     Audio::init();
     Input::init();
+    TTF_Init();
 }
 
 void Bee::run()
@@ -111,5 +114,6 @@ void Bee::cleanUp()
 {
     Audio::cleanUp();
     Renderer::cleanUp();
+    TTF_Quit();
     SDL_Quit();
 }
