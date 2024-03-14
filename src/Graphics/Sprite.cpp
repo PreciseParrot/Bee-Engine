@@ -110,6 +110,7 @@ void Sprite::setText(std::string text, uint8_t red, uint8_t green, uint8_t blue,
         return;
 
     this->text = text;
+    SDL_DestroyTexture(texture);
 
     SDL_Color color = {red, green, blue, alpha};
     SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), color, 0);
