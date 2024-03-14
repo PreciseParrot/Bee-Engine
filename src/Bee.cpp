@@ -113,6 +113,7 @@ void Bee::setWorld(World* world)
 void Bee::cleanUp()
 {
     Audio::cleanUp();
+    Renderer::unloadAllFonts();
     Renderer::cleanUp();
     TTF_Quit();
     SDL_Quit();

@@ -101,14 +101,7 @@ void Sprite::setAnimation(std::string animationName)
 
 void Sprite::setFont(std::string fontName, int size)
 {
-    std::string fontpath = "./assets/Fonts/" + fontName + ".ttf";
-    font = TTF_OpenFont(fontpath.c_str(), size);
-
-    if (font == nullptr)
-    {
-        std::cout << "Error loading font" << std::endl;
-        throw std::exception();
-    }
+    font = Renderer::loadFont(fontName, size);
 }
 
 void Sprite::setText(std::string text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
@@ -119,9 +112,16 @@ void Sprite::setText(std::string text, uint8_t red, uint8_t green, uint8_t blue,
     this->text = text;
 
     SDL_Color color = {red, green, blue, alpha};
-    SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), color);
+    SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), color, 0);
     texture = Renderer::createTexture(surface);
     SDL_FreeSurface(surface);
+}
+
+Vector2i Sprite::getTextureSize()
+{
+    Vector2i textureSize;
+    SDL_QueryTexture(texture, NULL, NULL, &textureSize.x, &textureSize.y);
+    return textureSize;
 }
 
 void Sprite::updateInternal()

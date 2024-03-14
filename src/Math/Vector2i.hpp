@@ -13,4 +13,6 @@ struct Vector2i
     bool operator==(const Vector2i& other) const;
     Vector2i operator+(const Vector2i& other) const;
     Vector2i operator-(const Vector2i& other) const;
+    Vector2i operator *(float multiplier) const;
+    Vector2i operator /(float divider) const;
 };

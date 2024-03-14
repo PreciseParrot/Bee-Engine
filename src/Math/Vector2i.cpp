@@ -41,3 +41,13 @@ Vector2i Vector2i::operator-(const Vector2i& other) const
 {
     return Vector2i(x - other.x, y - other.y);
 }
+
+Vector2i Vector2i::operator *(float multiplier) const
+{
+    return Vector2i(x * multiplier, y * multiplier);
+}
+
+Vector2i Vector2i::operator /(float divider) const
+{
+    return Vector2i(x / divider, y / divider);
+}

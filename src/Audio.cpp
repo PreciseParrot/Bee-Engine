@@ -37,6 +37,7 @@ void Audio::loadMusic(std::string musicName)
         throw std::exception();
     }
     musicMap.insert({musicName, music});
+    std::cout << "Loaded " << musicName << " music" << std::endl;
 }
 
 void Audio::playMusic(std::string musicName, int loops)
@@ -59,6 +60,7 @@ void Audio::loadSound(std::string soundName)
         throw std::exception();
     }
     soundMap.insert({soundName, sound});
+    std::cout << "Loaded " << soundName << " sound" << std::endl;
 }
 
 int Audio::playSound(std::string soundName)

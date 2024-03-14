@@ -2,12 +2,15 @@
 
 #include <cmath>
 #include <exception>
+#include <filesystem>
 #include <iostream>
+#include <map>
 #include <unordered_map>
 #include <string>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "Math/Vector2f.hpp"
 #include "Math/Vector2i.hpp"
@@ -19,6 +22,7 @@ static float viewPortHeight = 9.0f;
 static SDL_Window* window;
 static SDL_Renderer* renderer;
 static std::unordered_map<std::string, SDL_Texture*> textureMap;
+static std::map<std::pair<std::string, int>, TTF_Font*> fontMap;
 static Vector2f cameraPosition;
 
 void Renderer::init(int winWidth, int winHeight)
@@ -128,21 +132,60 @@ SDL_Texture* Renderer::loadTexture(std::string textureName, std::string path)
     SDL_FreeSurface(surface);
 
     textureMap.insert(std::pair<std::string, SDL_Texture*>(textureName, texture));
+    std::cout << "Loaded " << textureName << " texture" << std::endl;
     return texture;
+}
+
+TTF_Font* Renderer::loadFont(std::string fontName, int size)
+{
+    if (fontMap.find({fontName, size}) != fontMap.end())
+    {
+        return fontMap[{fontName, size}];
+    }
+
+    std::string path = "./assets/Fonts/" + fontName + ".ttf";
+
+    if (!std::filesystem::exists(path))
+    {
+        path = "./assets/Fonts/" + fontName + ".otf";
+    }
+
+    TTF_Font* font = TTF_OpenFont(path.c_str(), size);
+
+    if (font == nullptr)
+    {
+        std::cout << "Error loading " << fontName << " font" << std::endl;
+        throw std::exception();
+    }
+
+    std::cout << "Loaded " + fontName + " font with size " << size << std::endl;
+    fontMap.insert({{fontName, size}, font});
+
+    return font;
+}
+
+void Renderer::unloadAllFonts()
+{
+    for (const auto& [key, font] : fontMap)
+    {
+        std::cout << "Unloaded " << key.first << " font with size " << key.second << std::endl;
+        TTF_CloseFont(font);
+    }
+    fontMap.clear();
 }
 
 void Renderer::unloadTexture(std::string textureName)
 {
-    SDL_DestroyTexture(textureMap.at(textureName));
+    SDL_DestroyTexture(textureMap[textureName]);
     textureMap.erase(textureName);
 }
 
 void Renderer::unloadAllTextures()
 {
-    for (const auto& [key, val] : textureMap)
+    for (const auto& [name, texture] : textureMap)
     {
-        std::cout << "Unloaded " << key << " texture" << std::endl;
-        SDL_DestroyTexture(val);
+        std::cout << "Unloaded " << name << " texture" << std::endl;
+        SDL_DestroyTexture(texture);
     }
     textureMap.clear();
 }

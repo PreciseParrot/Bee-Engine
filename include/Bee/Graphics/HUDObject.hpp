@@ -15,8 +15,10 @@ public:
     void updateInternal();
     void setAnimation(std::string animationName);
     void loadSpriteSheet(std::string spriteName);
+    Vector2i getSize();
     void setPosition(int x, int y);
     void setPosition(const Vector2i& position);
+    void setScale(float scale);
     void setScale(int width, int height);
     void setScale(const Vector2i& scale);
     void setFont(std::string fontName, int size);

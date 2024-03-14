@@ -4,6 +4,7 @@
 #include <string>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "Graphics/Sprite.hpp"
 #include "Math/Vector2f.hpp"
@@ -19,6 +20,8 @@ namespace Renderer
     void drawSprite(const Vector2f& position, const Vector2f& scale, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, float rotation);
     SDL_Texture* createTexture(SDL_Surface* surface);
     SDL_Texture* loadTexture(std::string textureName, std::string path);
+    TTF_Font* loadFont(std::string font, int size);
+    void unloadAllFonts();
     void unloadTexture(std::string textureName);
     void unloadAllTextures();
     void setWindowIcon(std::string path);
