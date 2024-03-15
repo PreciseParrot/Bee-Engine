@@ -137,15 +137,17 @@ std::vector<Intersection> World::getIntersections(const Entity* entity) const
 {
     std::vector<Intersection> intersections;
 
-    for (Entity* p_entityLoop : entities)
+    for (Entity* entityLoop : entities)
     {
-        if (entity == p_entityLoop) continue;
+        if (entity == entityLoop) continue;
 
         Intersection intersection;
-        intersection.entity = p_entityLoop;
+        intersection.entity = entityLoop;
         intersection.worldObject = NULL;
-        if (Collision::checkCollision(entity->getHitBox(), p_entityLoop->getHitBox(), &intersection))
+        if (Collision::checkCollision(entity->getHitBox(), entityLoop->getHitBox(), &intersection))
+        {
             intersections.push_back(intersection);
+        }
     }
 
     for (WorldObject* worldObject : worldObjects)
@@ -154,7 +156,9 @@ std::vector<Intersection> World::getIntersections(const Entity* entity) const
         intersection.entity = NULL;
         intersection.worldObject = worldObject;
         if (Collision::checkCollision(entity->getHitBox(), worldObject->hitBox, &intersection))
+        {
             intersections.push_back(intersection);
+        }
     }
 
     return intersections;

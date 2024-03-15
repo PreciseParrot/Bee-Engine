@@ -96,6 +96,11 @@ Vector2f expandingPolytopeAlgorithm(const std::vector<Vector2f>& simplex, const 
                 minNormal = normal;
                 minIndex = j;
             }
+
+            if (distance == 0)
+            {
+                return Vector2f();
+            }
         }
         Vector2f support = getMinkowskiPoint(hitBox1, hitBox2, minNormal);
         float sDistance = minNormal.dot(support);
@@ -108,7 +113,7 @@ Vector2f expandingPolytopeAlgorithm(const std::vector<Vector2f>& simplex, const 
     return minNormal * (minDistance + 0.05f * Bee::getDeltaTime()) * -1;
 }
 
-bool Collision::checkCollision(const HitBox& hitBox1, const HitBox& hitBox2, Intersection* p_intersection)
+bool Collision::checkCollision(const HitBox& hitBox1, const HitBox& hitBox2, Intersection* intersection)
 {
     std::vector<Vector2f> simplex;
 
@@ -159,7 +164,7 @@ bool Collision::checkCollision(const HitBox& hitBox1, const HitBox& hitBox2, Int
             continue;
         }
 
-        p_intersection->mtv = expandingPolytopeAlgorithm(simplex, hitBox1, hitBox2);
+        intersection->mtv = expandingPolytopeAlgorithm(simplex, hitBox1, hitBox2);
         return true;
     }
 }
