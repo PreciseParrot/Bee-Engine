@@ -17,8 +17,8 @@ void Log::write(const std::string& message)
 
 void Log::write(const std::string& source, LogLevel level, const std::string& message, const std::string& message2)
 {
-    auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    auto localTime = std::localtime(&time);
+    time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    tm* localTime = std::localtime(&time);
     std::stringstream output;
     
     switch (level)
