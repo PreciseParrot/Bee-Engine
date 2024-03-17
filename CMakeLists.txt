@@ -10,6 +10,7 @@ add_library(${PROJECT_NAME} STATIC
     src/Collision/Collision.cpp
     src/Entity.cpp
     src/Input.cpp
+    src/Log.cpp
     src/Graphics/HUDObject.cpp
     src/Graphics/Renderer.cpp
     src/Graphics/Sprite.cpp

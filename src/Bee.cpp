@@ -1,12 +1,9 @@
 #include "Bee.hpp"
 
-#include <algorithm>
-#include <iostream>
-
 #include <SDL2/SDL.h>
-#include <SDL_ttf.h>
 
 #include "Audio.hpp"
+#include "Log.hpp"
 #include "Graphics/Renderer.hpp"
 #include "World/World.hpp"
 
@@ -22,25 +19,24 @@ void Bee::init(int windowWidth, int windowHeight)
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
-        std::cout << "Error initializing SDL2: " << SDL_GetError() << std::endl;
+        Log::write("Engine", LOG_ERROR, "Error initializing SDL2: ", SDL_GetError());
         throw std::exception();
     }
-    std::cout << "Initialized SDL2" << std::endl;
+    Log::write("Engine", LOG_INFO, "Initialized SDL2");
 
     currentWorld = nullptr;
     nextWorld = nullptr;
 
-    Renderer::init(windowWidth, windowHeight);
     Audio::init();
     Input::init();
-    TTF_Init();
+    Renderer::init(windowWidth, windowHeight);
 }
 
 void Bee::run()
 {
     if (!nextWorld)
     {
-        std::cout << "No world loaded" << std::endl;
+        Log::write("Engine", LOG_ERROR, "No world loaded");
         return;
     }
 
@@ -115,6 +111,5 @@ void Bee::cleanUp()
     Audio::cleanUp();
     Renderer::unloadAllFonts();
     Renderer::cleanUp();
-    TTF_Quit();
     SDL_Quit();
 }

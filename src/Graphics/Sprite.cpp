@@ -11,6 +11,7 @@
 #include <SDL2/SDL_ttf.h>
 
 #include "Bee.hpp"
+#include "Log.hpp"
 #include "Renderer.hpp"
 #include "Math/Vector2f.hpp"
 #include "Math/Vector2i.hpp"
@@ -83,7 +84,7 @@ void Sprite::setAnimation(std::string animationName)
     }
     catch(const std::exception& e)
     {
-        std::cerr << "Animation: " << animationName << " not found\n";
+        Log::write("Sprite", LOG_WARNING, "Animation: " + animationName + " not found");
     }
 
     if (currentAnimation.direction == ANIMATION_REVERSE)

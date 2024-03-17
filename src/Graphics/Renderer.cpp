@@ -3,7 +3,6 @@
 #include <cmath>
 #include <exception>
 #include <filesystem>
-#include <iostream>
 #include <map>
 #include <unordered_map>
 #include <string>
@@ -12,6 +11,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
+#include "Log.hpp"
 #include "Math/Vector2f.hpp"
 #include "Math/Vector2i.hpp"
 
@@ -27,30 +27,37 @@ static Vector2f cameraPosition;
 
 void Renderer::init(int winWidth, int winHeight)
 {
+    std::string error;
     windowWidth = winWidth;
     windowHeight = winHeight;
 
     if (IMG_Init(IMG_INIT_PNG) == 0)
     {
-        std::cout << "Error initializing SDL2_image: " << SDL_GetError() << std::endl;
+        Log::write("Renderer", LOG_ERROR, "Error initializing SDL2_image: ", SDL_GetError());
+        throw std::exception();
+    }
+
+    if (TTF_Init() == -1)
+    {
+        Log::write("Renderer", LOG_ERROR, "Error initializing SDL2_ttf: ", SDL_GetError());
         throw std::exception();
     }
 
     window = SDL_CreateWindow("Bee Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, 0);
     if (window == nullptr)
     {
-        std::cout << "Error creating Window: " << SDL_GetError() << std::endl;
+        Log::write("Renderer", LOG_ERROR, "Error creating Window: ", SDL_GetError());
         throw std::exception();
     }
 
     renderer = SDL_CreateRenderer(window, -1, 0);
     if (renderer == nullptr)
     {
-        std::cout << "Error creating renderer: " << SDL_GetError() << std::endl;
+        Log::write("Renderer", LOG_ERROR, "Error creating renderer: ", SDL_GetError());
         throw std::exception();
     }
 
-    std::cout << "Initialized renderer" << std::endl;
+    Log::write("Renderer", LOG_INFO, "Initialized renderer");
 }
 
 void Renderer::clear()
@@ -116,24 +123,17 @@ SDL_Texture* Renderer::loadTexture(std::string textureName, std::string path)
     if (textureMap.find(textureName) != textureMap.end())
         return textureMap[textureName];
     
-    SDL_Surface* surface = IMG_Load(path.c_str());
-    if (surface == nullptr)
-    {
-        std::cout << "Error loading image" << std::endl;
-        throw std::exception();
-    }
-
-    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    texture = IMG_LoadTexture(renderer, path.c_str());
     if (texture == nullptr)
     {
-        std::cout << "Error creating texture: " << SDL_GetError() << std::endl;
+        Log::write("Renderer", LOG_ERROR, "Error loading texture: ", SDL_GetError());
         throw std::exception();
     }
-    SDL_FreeSurface(surface);
 
     textureMap.insert(std::pair<std::string, SDL_Texture*>(textureName, texture));
-    std::cout << "Loaded " << textureName << " texture" << std::endl;
+    Log::write("Renderer", LOG_INFO, "Loaded " + textureName + " texture");
     return texture;
+
 }
 
 TTF_Font* Renderer::loadFont(std::string fontName, int size)
@@ -154,11 +154,11 @@ TTF_Font* Renderer::loadFont(std::string fontName, int size)
 
     if (font == nullptr)
     {
-        std::cout << "Error loading " << fontName << " font" << std::endl;
+        Log::write("Renderer", LOG_ERROR, "Error loading " + fontName + " font");
         throw std::exception();
     }
 
-    std::cout << "Loaded " + fontName + " font with size " << size << std::endl;
+    Log::write("Renderer", LOG_INFO, "Loaded " + fontName + " font with size " + std::to_string(size));
     fontMap.insert({{fontName, size}, font});
 
     return font;
@@ -168,7 +168,7 @@ void Renderer::unloadAllFonts()
 {
     for (const auto& [key, font] : fontMap)
     {
-        std::cout << "Unloaded " << key.first << " font with size " << key.second << std::endl;
+        Log::write("Renderer", LOG_INFO, "Unloaded " + key.first + " font with size " + std::to_string(key.second));
         TTF_CloseFont(font);
     }
     fontMap.clear();
@@ -184,7 +184,7 @@ void Renderer::unloadAllTextures()
 {
     for (const auto& [name, texture] : textureMap)
     {
-        std::cout << "Unloaded " << name << " texture" << std::endl;
+        Log::write("Renderer", LOG_INFO, "Unloaded " + name + " texture");
         SDL_DestroyTexture(texture);
     }
     textureMap.clear();
@@ -195,7 +195,7 @@ void Renderer::setWindowIcon(std::string path)
     SDL_Surface* surface = IMG_Load(path.c_str());
     if (surface == nullptr)
     {
-        std::cout << "Error loading image" << std::endl;
+        Log::write("Renderer", LOG_INFO, "Error loading image: ", SDL_GetError());
         throw std::exception();
     }
     SDL_SetWindowIcon(window, surface);
@@ -236,4 +236,5 @@ void Renderer::cleanUp()
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     IMG_Quit();
+    TTF_Quit();
 }
