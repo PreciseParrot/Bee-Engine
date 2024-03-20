@@ -7,7 +7,8 @@
 #include <sstream>
 
 #ifdef _WIN32
-    #include <windows.h>
+#include <windows.h>
+HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 #endif
 
 void Log::write(const std::string& message)
@@ -35,30 +36,34 @@ void Log::write(const std::string& source, LogLevel level, const std::string& me
     }
 
     #ifdef _WIN32
-        switch (level)
-        {
-            case LOG_INFO:
-                std::cout << output.str();
-                break;
-            case LOG_WARNING:
-                std::cout << output.str();
-                break;
-            case LOG_ERROR:
-                std::cout << output.str();
-                break;
-        }
+    switch (level)
+    {
+        case LOG_INFO:
+            std::cout << output.str();
+            break;
+        case LOG_WARNING:
+            SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN);
+            std::cout << output.str();
+            SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+            break;
+        case LOG_ERROR:
+            SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
+            std::cout << output.str();
+            SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+            break;
+    }
     #elif __linux__
-        switch (level)
-        {
-            case LOG_INFO:
-                std::cout << output.str();
-                break;
-            case LOG_WARNING:
-                std::cout << "\033[33m" << output.str() << "\033[0m";
-                break;
-            case LOG_ERROR:
-                std::cout << "\033[31m" << output.str() << "\033[0m";
-                break;
-        }
+    switch (level)
+    {
+        case LOG_INFO:
+            std::cout << output.str();
+            break;
+        case LOG_WARNING:
+            std::cout << "\033[33m" << output.str() << "\033[0m";
+            break;
+        case LOG_ERROR:
+            std::cout << "\033[31m" << output.str() << "\033[0m";
+            break;
+    }
     #endif
 }
