@@ -5,6 +5,8 @@
 #include "Audio.hpp"
 #include "Log.hpp"
 #include "Graphics/Renderer.hpp"
+#include "Input/Controller.hpp"
+#include "Input/Keyboard.hpp"
 #include "World/World.hpp"
 
 static bool gameRunning = true;
@@ -28,7 +30,8 @@ void Bee::init(int windowWidth, int windowHeight)
     nextWorld = nullptr;
 
     Audio::init();
-    Input::init();
+    Controller::init();
+    Keyboard::init();
     Renderer::init(windowWidth, windowHeight);
 }
 
@@ -65,10 +68,22 @@ void Bee::run()
             switch (event.type)
             {
                 case SDL_KEYDOWN:
-                    Input::handleInput(&event);
+                    Keyboard::handleInput(&event);
                     break;
                 case SDL_KEYUP:
-                    Input::handleInput(&event);
+                    Keyboard::handleInput(&event);
+                    break;
+                case SDL_CONTROLLERBUTTONDOWN:
+                    Controller::handleInput(&event);
+                    break;
+                case SDL_CONTROLLERBUTTONUP:
+                    Controller::handleInput(&event);
+                    break;
+                case SDL_CONTROLLERDEVICEADDED:
+                    Controller::connectController(&event);
+                    break;
+                case SDL_CONTROLLERDEVICEREMOVED:
+                    Controller::disconnectController(&event);
                     break;
                 case SDL_QUIT:
                     gameRunning = false;
@@ -80,7 +95,8 @@ void Bee::run()
         currentWorld->updateInternal();
         currentWorld->update();
         Renderer::display();
-        Input::update();
+        Controller::update();
+        Keyboard::update();
 
         deltaTime = (float)(loopTicks - loopTicksLast) / SDL_GetPerformanceFrequency();
     }
@@ -111,5 +127,6 @@ void Bee::cleanUp()
     Audio::cleanUp();
     Renderer::unloadAllFonts();
     Renderer::cleanUp();
+    Controller::cleanUp();
     SDL_Quit();
 }

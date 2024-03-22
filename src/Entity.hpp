@@ -3,7 +3,6 @@
 #include <string>
 
 #include "Audio.hpp"
-#include "Input.hpp"
 #include "Collision/HitBox.hpp"
 #include "Collision/Intersection.hpp"
 #include "Graphics/Sprite.hpp"

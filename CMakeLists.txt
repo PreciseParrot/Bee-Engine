@@ -9,11 +9,12 @@ add_library(${PROJECT_NAME} STATIC
     src/Bee.cpp
     src/Collision/Collision.cpp
     src/Entity.cpp
-    src/Input.cpp
     src/Log.cpp
     src/Graphics/HUDObject.cpp
     src/Graphics/Renderer.cpp
     src/Graphics/Sprite.cpp
+    src/Input/Controller.cpp
+    src/Input/Keyboard.cpp
     src/World/World.cpp
     src/Math/Vector2f.cpp
     src/Math/Vector2i.cpp
