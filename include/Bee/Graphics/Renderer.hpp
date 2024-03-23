@@ -7,6 +7,7 @@
 
 namespace Renderer
 {
+    Vector2i getScreenSize();
     void setWindowIcon(std::string path);
     void setWindowTitle(std::string title);
     void setCameraPosition(float x, float y);

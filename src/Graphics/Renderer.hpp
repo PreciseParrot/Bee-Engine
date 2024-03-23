@@ -13,8 +13,7 @@
 namespace Renderer
 {
     void init(int windowWidth, int windowHeight);
-    void clear();
-    void display();
+    void update();
     void drawTile(const Vector2i& position, SDL_Rect* srcRect, SDL_Texture* texture);
     void drawHUD(const Vector2i& position, const Vector2i& scale, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, float rotation);
     void drawSprite(const Vector2f& position, const Vector2f& scale, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, float rotation);
@@ -22,8 +21,8 @@ namespace Renderer
     SDL_Texture* loadTexture(std::string textureName, std::string path);
     TTF_Font* loadFont(std::string font, int size);
     void unloadAllFonts();
-    void unloadTexture(std::string textureName);
     void unloadAllTextures();
+    Vector2i getScreenSize();
     void setWindowIcon(std::string path);
     void setWindowTitle(std::string title);
     void setCameraPosition(float x, float y);

@@ -91,10 +91,9 @@ void Bee::run()
             }
         }
 
-        Renderer::clear();
+        Renderer::update();
         currentWorld->updateInternal();
         currentWorld->update();
-        Renderer::display();
         Controller::update();
         Keyboard::update();
 

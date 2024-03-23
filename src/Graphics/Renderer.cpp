@@ -17,20 +17,19 @@
 
 static int windowWidth = 0;
 static int windowHeight = 0;
+static int screenWidth = 0;
+static int screenHeight = 0;
 static float viewPortWidth = 16.0f;
 static float viewPortHeight = 9.0f;
-static SDL_Window* window;
-static SDL_Renderer* renderer;
+static SDL_Window* window = nullptr;
+static SDL_Renderer* renderer = nullptr;
+static SDL_Texture* targetTexture = nullptr;
 static std::unordered_map<std::string, SDL_Texture*> textureMap;
 static std::map<std::pair<std::string, int>, TTF_Font*> fontMap;
 static Vector2f cameraPosition;
 
 void Renderer::init(int winWidth, int winHeight)
 {
-    std::string error;
-    windowWidth = winWidth;
-    windowHeight = winHeight;
-
     if (IMG_Init(IMG_INIT_PNG) == 0)
     {
         Log::write("Renderer", LOG_ERROR, "Error initializing SDL2_image: ", SDL_GetError());
@@ -43,40 +42,78 @@ void Renderer::init(int winWidth, int winHeight)
         throw std::exception();
     }
 
-    window = SDL_CreateWindow("Bee Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, 0);
+    window = SDL_CreateWindow("Bee Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, winWidth, winHeight, 0);
     if (window == nullptr)
     {
         Log::write("Renderer", LOG_ERROR, "Error creating Window: ", SDL_GetError());
         throw std::exception();
     }
 
-    renderer = SDL_CreateRenderer(window, -1, 0);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_ACCELERATED);
     if (renderer == nullptr)
     {
         Log::write("Renderer", LOG_ERROR, "Error creating renderer: ", SDL_GetError());
         throw std::exception();
     }
 
+    SDL_SetWindowResizable(window, SDL_TRUE);
+
     Log::write("Renderer", LOG_INFO, "Initialized renderer");
 }
 
-void Renderer::clear()
+void Renderer::update()
 {
-    SDL_RenderClear(renderer);
-}
+    int width;
+    int height;
 
-void Renderer::display()
-{
+    SDL_GetWindowSize(window, &width, &height);
+
+    if (width != windowWidth || height != windowHeight)
+    {
+        windowWidth = width;
+        windowHeight = height;
+
+        float widthFactor = windowWidth / viewPortWidth;
+        float heightFactor = windowHeight / viewPortHeight;
+
+        if (widthFactor > heightFactor)
+        {
+            screenWidth = windowWidth * heightFactor / widthFactor;
+            screenHeight = windowHeight;
+        }
+        else
+        {
+            screenWidth = windowWidth;
+            screenHeight = windowHeight * widthFactor / heightFactor;
+        }
+
+        SDL_SetRenderTarget(renderer, NULL);
+        SDL_DestroyTexture(targetTexture);
+        targetTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, screenWidth, screenHeight);
+        SDL_SetRenderTarget(renderer, targetTexture);
+    }
+
+    SDL_Rect dstRect;
+    dstRect.x = (windowWidth - screenWidth) / 2;
+    dstRect.y = (windowHeight - screenHeight) / 2;
+    dstRect.w = screenWidth;
+    dstRect.h = screenHeight;
+
+    SDL_SetRenderTarget(renderer, NULL);
+    SDL_RenderCopy(renderer, targetTexture, NULL, &dstRect);
     SDL_RenderPresent(renderer);
+    SDL_RenderClear(renderer);
+    SDL_SetRenderTarget(renderer, targetTexture);
+    SDL_RenderClear(renderer);
 }
 
 void Renderer::drawTile(const Vector2i& position, SDL_Rect* srcRect, SDL_Texture* texture)
 {
     SDL_Rect dstRect;
-    dstRect.x = ceilf((position.x - cameraPosition.x + viewPortWidth / 2) * windowWidth / viewPortWidth);
-    dstRect.y = ceilf((position.y - cameraPosition.y + viewPortHeight / 2) * windowHeight / viewPortHeight);
-    dstRect.h = ceilf(windowHeight / viewPortHeight);
-    dstRect.w = ceilf(windowWidth / viewPortWidth);
+    dstRect.x = ceilf((position.x - cameraPosition.x + viewPortWidth / 2) * screenWidth / viewPortWidth);
+    dstRect.y = ceilf((position.y - cameraPosition.y + viewPortHeight / 2) * screenHeight / viewPortHeight);
+    dstRect.h = ceilf(screenHeight / viewPortHeight);
+    dstRect.w = ceilf(screenWidth / viewPortWidth);
 
     SDL_RenderCopy(renderer, texture, srcRect, &dstRect);
 }
@@ -99,10 +136,10 @@ void Renderer::drawHUD(const Vector2i& position, const Vector2i& scale, SDL_Rect
 void Renderer::drawSprite(const Vector2f& position, const Vector2f& scale, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, float rotation)
 {
     SDL_Rect dstRect;
-    dstRect.x = (position.x - scale.x / 2 - cameraPosition.x + viewPortWidth / 2) * windowWidth / viewPortWidth;
-    dstRect.y = (position.y - scale.y / 2 - cameraPosition.y + viewPortHeight / 2) * windowHeight / viewPortHeight;
-    dstRect.h = windowHeight / viewPortHeight * scale.x;
-    dstRect.w = windowWidth / viewPortWidth * scale.y;
+    dstRect.x = (position.x - scale.x / 2 - cameraPosition.x + viewPortWidth / 2) * screenWidth / viewPortWidth;
+    dstRect.y = (position.y - scale.y / 2 - cameraPosition.y + viewPortHeight / 2) * screenHeight / viewPortHeight;
+    dstRect.h = ceilf(screenHeight / viewPortHeight * scale.x);
+    dstRect.w = ceilf(screenWidth / viewPortWidth * scale.y);
 
     SDL_Point centerPoint;
     centerPoint.x = dstRect.w * rotationCenter.x;
@@ -174,12 +211,6 @@ void Renderer::unloadAllFonts()
     fontMap.clear();
 }
 
-void Renderer::unloadTexture(std::string textureName)
-{
-    SDL_DestroyTexture(textureMap[textureName]);
-    textureMap.erase(textureName);
-}
-
 void Renderer::unloadAllTextures()
 {
     for (const auto& [name, texture] : textureMap)
@@ -188,6 +219,11 @@ void Renderer::unloadAllTextures()
         SDL_DestroyTexture(texture);
     }
     textureMap.clear();
+}
+
+Vector2i Renderer::getScreenSize()
+{
+    return Vector2i(screenWidth, screenHeight);
 }
 
 void Renderer::setWindowIcon(std::string path)
@@ -233,6 +269,7 @@ void Renderer::setViewportSize(const Vector2f& viewportSize)
 void Renderer::cleanUp()
 {
     unloadAllTextures();
+    SDL_DestroyTexture(targetTexture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     IMG_Quit();
