@@ -27,12 +27,6 @@ void Vector2f::normalize()
     y *= scale;
 }
 
-void Vector2f::operator =(const Vector2f& other)
-{
-    x = other.x;
-    y = other.y;
-}
-
 void Vector2f::operator +=(const Vector2f& other)
 {
     x += other.x;

@@ -53,7 +53,6 @@ void World::updateInternal()
             {
                 tile.animationIndex = 0;
             }
-            int row;
             tile.currentX = (tile.animationFrames[tile.animationIndex].tileId % tile.columns) * tile.width;
             tile.currentY = (tile.animationFrames[tile.animationIndex].tileId / tile.columns) * tile.height;
         }

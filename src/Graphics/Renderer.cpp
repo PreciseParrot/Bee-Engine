@@ -130,7 +130,7 @@ void Renderer::drawHUD(const Vector2i& position, const Vector2i& scale, SDL_Rect
     centerPoint.x = dstRect.w * rotationCenter.x;
     centerPoint.y = dstRect.h * rotationCenter.y;
 
-    SDL_RenderCopyEx(renderer, texture, srcRect, &dstRect, rotation, NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, texture, srcRect, &dstRect, rotation, &centerPoint, SDL_FLIP_NONE);
 }
 
 void Renderer::drawSprite(const Vector2f& position, const Vector2f& scale, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, float rotation)

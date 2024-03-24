@@ -14,7 +14,7 @@ Vector2f tripleProduct(const Vector2f& in1, const Vector2f& in2, const Vector2f&
 {
     float x1, x2, x3, out1x, out2x;
     float y1, y2, y3, out1y, out2y;
-    float z1, z2, z3, out1z, out2z;
+    float z1, z2, z3, out1z;
 
     x1 = in1.x;
     y1 = in1.y;
@@ -34,7 +34,6 @@ Vector2f tripleProduct(const Vector2f& in1, const Vector2f& in2, const Vector2f&
 
     out2x = out1y * z3 - out1z * y3;
     out2y = out1z * x3 - out1x * z3;
-    out2z = out1x * y3 - out1y * x3;
 
     return Vector2f(out2x, out2y);
 }
@@ -70,7 +69,7 @@ Vector2f expandingPolytopeAlgorithm(const std::vector<Vector2f>& simplex, const 
 
     while (true)
     {
-        for (int i = 0; i < polytope.size(); i++)
+        for (size_t i = 0; i < polytope.size(); i++)
         {
             int j = (i+1) % polytope.size();
 

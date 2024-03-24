@@ -147,7 +147,6 @@ void Sprite::updateInternal()
 
         if (currentAnimation.direction == ANIMATION_FORWARD)
         {
-            currentAnimationDirection == ANIMATION_FORWARD;
             if (currentSprite > currentAnimation.end)
             {
                 currentSprite = currentAnimation.start;
@@ -155,7 +154,6 @@ void Sprite::updateInternal()
         }
         else if (currentAnimation.direction == ANIMATION_REVERSE)
         {
-            currentAnimationDirection == ANIMATION_REVERSE;
             if (currentSprite < currentAnimation.start)
             {
                 currentSprite = currentAnimation.end;
