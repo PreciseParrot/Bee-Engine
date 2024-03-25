@@ -1,16 +1,16 @@
 #include "World.hpp"
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 #include <string>
 #include <vector>
 
 #include <tinyxml2.h>
-#include <nlohmann/json.hpp>
 
 #include "Bee.hpp"
 #include "Entity.hpp"
+#include "Log.hpp"
 #include "Collision/Collision.hpp"
 #include "Collision/Intersection.hpp"
 #include "Graphics/Renderer.hpp"
@@ -171,7 +171,7 @@ void World::loadTileset(const std::string source, int firstId)
     tilesetXML.LoadFile(tileSetPath.c_str());
     if (tilesetXML.Error())
     {
-        std::cout << "Could not load tileset: " << tilesetXML.ErrorName() << std::endl;
+        Log::write("World", LogLevel::Error, "Could not load tileset: ", tilesetXML.ErrorName());
         return;
     }
 
@@ -182,8 +182,8 @@ void World::loadTileset(const std::string source, int firstId)
     int height = tilesetXMLElement->IntAttribute("tileheight");
     int columns = tilesetXMLElement->IntAttribute("columns");
     int tileCount = tilesetXMLElement->IntAttribute("tilecount");
-    std::filesystem::path tilesetTexture = imageXMLElement->Attribute("source");
-    SDL_Texture* texture = Renderer::loadTexture(tilesetTexture.replace_extension().string(), "./assets/Worlds/Tilesets/" + tilesetTexture.string());
+    std::filesystem::path tilesetTexturePath = imageXMLElement->Attribute("source");
+    SDL_Texture* texture = Renderer::loadTexture(tilesetTexturePath.replace_extension().string(), "./assets/Worlds/Tilesets/" + tilesetTexturePath.string());
 
     for (int id = 0; id < tileCount; id++)
     {
@@ -225,6 +225,7 @@ void World::loadTileset(const std::string source, int firstId)
             }
         }
     }
+    Log::write("World", LogLevel::Info, "Loaded " + tilesetTexturePath.replace_extension().string() + " tileset");
 }
 
 void World::loadTilemap(const std::string tilemapName)
@@ -240,7 +241,7 @@ void World::loadTilemap(const std::string tilemapName)
     tilemapXML.LoadFile(tileMapPath.c_str());
     if (tilemapXML.Error())
     {
-        std::cout << "Could not load tilemap: " << tilemapXML.ErrorName() << std::endl;
+        Log::write("World", LogLevel::Error, "Could not load tilemap: ", tilemapXML.ErrorName());
         return;
     }
 
@@ -351,6 +352,7 @@ void World::loadTilemap(const std::string tilemapName)
             worldObjects.push_back(worldObject);
         }
     }
+    Log::write("World", LogLevel::Info, "Loaded " + tilemapName + " tilemap");
 }
 
 void World::update() {}

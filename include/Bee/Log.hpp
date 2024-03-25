@@ -2,11 +2,11 @@
 
 #include <string>
 
-enum LogLevel
+enum class LogLevel
 {
-    LOG_INFO,
-    LOG_WARNING,
-    LOG_ERROR
+    Info,
+    Warning,
+    Error
 };
 
 namespace Log

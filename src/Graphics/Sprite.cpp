@@ -84,7 +84,7 @@ void Sprite::setAnimation(std::string animationName)
     }
     catch(const std::exception& e)
     {
-        Log::write("Sprite", LOG_WARNING, "Animation: " + animationName + " not found");
+        Log::write("Sprite", LogLevel::Warning, "Animation: " + animationName + " not found");
     }
 
     if (currentAnimation.direction == ANIMATION_REVERSE)

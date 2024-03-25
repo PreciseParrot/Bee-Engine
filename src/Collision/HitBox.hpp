@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+
 #include "Math/Vector2f.hpp"
 
 struct HitBox

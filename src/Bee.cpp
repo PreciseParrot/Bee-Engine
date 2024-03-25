@@ -21,10 +21,10 @@ void Bee::init(int windowWidth, int windowHeight)
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
-        Log::write("Engine", LOG_ERROR, "Error initializing SDL2: ", SDL_GetError());
+        Log::write("Engine", LogLevel::Error, "Error initializing SDL2: ", SDL_GetError());
         throw std::exception();
     }
-    Log::write("Engine", LOG_INFO, "Initialized SDL2");
+    Log::write("Engine", LogLevel::Info, "Initialized SDL2");
 
     currentWorld = nullptr;
     nextWorld = nullptr;
@@ -39,7 +39,7 @@ void Bee::run()
 {
     if (!nextWorld)
     {
-        Log::write("Engine", LOG_ERROR, "No world loaded");
+        Log::write("Engine", LogLevel::Error, "No world loaded");
         return;
     }
 
