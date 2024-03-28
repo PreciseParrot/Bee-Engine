@@ -18,7 +18,7 @@ public:
     void addHUDObject(HUDObject* hudObject);
     void removeHUDObject(HUDObject* hudObject);
     void loadTilemap(std::string tilemapName);
-    std::string getTileType(const Vector2f& position) const;
+    std::string getTileData(const Vector2f& position, std::string index) const;
     std::vector<Intersection> getIntersections(const Entity* entity) const;
     virtual void update();
     virtual void onLoad();

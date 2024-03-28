@@ -167,7 +167,7 @@ SDL_Texture* Renderer::loadTexture(std::string textureName, std::string path)
         throw std::exception();
     }
 
-    textureMap.insert(std::pair<std::string, SDL_Texture*>(textureName, texture));
+    textureMap.insert({textureName, texture});
     Log::write("Renderer", LogLevel::Info, "Loaded " + textureName + " texture");
     return texture;
 

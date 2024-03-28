@@ -114,22 +114,25 @@ void World::removeHUDObject(HUDObject* hudObject)
     hudObjects.erase(std::remove(hudObjects.begin(), hudObjects.end(), hudObject), hudObjects.end());
 }
 
-std::string World::getTileType(const Vector2f& position) const
+std::string World::getTileData(const Vector2f& position, std::string index) const
 {
     if (position.x < 0) return "";
     if (position.y < 0) return "";
     if (position.x > worldWidth) return "";
     if (position.y > worldHeight) return "";
-    std::string type;
+
+    int tileId = 0;
+
     for (const TileLayer& layer : layers)
     {
-        int tileId = layer.tileIds[position.x + position.y * worldWidth];
-        if (tiles[tileId].type != "")
-        {
-            type = tiles[tileId].type;
-        }
+        int tileIdT = layer.tileIds[(int)position.x + (int)position.y * worldWidth];
+        if (tileIdT != 0) tileId = tileIdT;
     }
-    return type;
+
+    if (tiles[tileId].data.find(index) == tiles[tileId].data.end())
+        return "";
+
+    return tiles[tileId].data.at(index);
 }
 
 std::vector<Intersection> World::getIntersections(const Entity* entity) const
@@ -205,13 +208,22 @@ void World::loadTileset(const std::string source, int firstId)
         tiles.insert(tiles.begin() + id + firstId, tile);
     }
 
-    for (const tinyxml2::XMLElement* element = tilesetXMLElement->FirstChildElement("tile"); element != NULL; element = element->NextSiblingElement("tile"))
+    for (const tinyxml2::XMLElement* tileXMLElement = tilesetXMLElement->FirstChildElement("tile"); tileXMLElement != NULL; tileXMLElement = tileXMLElement->NextSiblingElement("tile"))
     {
-        int id = element->IntAttribute("id");
-        const char* tileType = element->Attribute("type");
-        if (tileType) tiles[id + firstId].type = element->Attribute("type");
+        int id = tileXMLElement->IntAttribute("id");
+        const char* tileType = tileXMLElement->Attribute("type");
+        if (tileType) tiles[id + firstId].data.insert({"type", tileType});
 
-        const tinyxml2::XMLElement* animationXML = element->FirstChildElement("animation");
+        const tinyxml2::XMLElement* propertiesXMLElement = tileXMLElement->FirstChildElement("properties");
+        if (propertiesXMLElement)
+        {
+            for (const tinyxml2::XMLElement* propertyXMLElement = propertiesXMLElement->FirstChildElement("property"); propertyXMLElement != NULL; propertyXMLElement = propertyXMLElement->NextSiblingElement("property"))
+            {
+                tiles[id + firstId].data.insert({propertyXMLElement->Attribute("name"), propertyXMLElement->Attribute("value")});
+            }
+        }
+
+        const tinyxml2::XMLElement* animationXML = tileXMLElement->FirstChildElement("animation");
         if (animationXML)
         {
             for (const tinyxml2::XMLElement* animElement = animationXML->FirstChildElement("frame"); animElement != NULL; animElement = animElement->NextSiblingElement("frame"))
@@ -278,7 +290,6 @@ void World::loadTilemap(const std::string tilemapName)
     }
 
     Tile nullTile;
-    nullTile.type = "";
     nullTile.animated = false;
     nullTile.height = 0;
     nullTile.width = 0;

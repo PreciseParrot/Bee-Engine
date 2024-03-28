@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <SDL2/SDL.h>
@@ -29,5 +30,6 @@ struct Tile
     uint32_t animationIndex;
     uint32_t frameStartTime;
     SDL_Texture* texture;
+    std::unordered_map<std::string, std::string> data;
     std::vector<AnimationTileFrame> animationFrames;
 };
