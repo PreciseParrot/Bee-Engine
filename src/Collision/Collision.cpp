@@ -108,7 +108,7 @@ Vector2f expandingPolytopeAlgorithm(const std::vector<Vector2f>& simplex, const 
         minDistance = FLT_MAX;
         polytope.insert(polytope.begin() + minIndex, support);
     }
-    return minNormal * (minDistance + 0.05f * Bee::getDeltaTime()) * -1;
+    return minNormal * minDistance * -1;
 }
 
 bool Collision::checkCollision(const HitBox& hitBox1, const HitBox& hitBox2, Intersection* intersection)
@@ -116,12 +116,10 @@ bool Collision::checkCollision(const HitBox& hitBox1, const HitBox& hitBox2, Int
     std::vector<Vector2f> simplex;
 
     Vector2f currentDirection(-1, 0);
-    currentDirection.normalize();
 
     simplex.push_back(getMinkowskiPoint(hitBox1, hitBox2, currentDirection));
 
     currentDirection = origin - simplex[0];
-    currentDirection.normalize();
 
     while (true)
     {
@@ -136,7 +134,6 @@ bool Collision::checkCollision(const HitBox& hitBox1, const HitBox& hitBox2, Int
         {
             Vector2f directionAB = simplex[0] - simplex[1];
             Vector2f directionAO = origin - simplex[1];
-            directionAB.normalize();
 
             currentDirection = tripleProduct(directionAB, directionAO, directionAB);
             continue;
