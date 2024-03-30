@@ -14,9 +14,11 @@ public:
     World();
     void updateInternal();
     void addEntity(Entity* entity);
-    void removeEntity(Entity* entity);
+    Entity* removeEntity(Entity* entity);
+    void deleteAllEntities();
     void addHUDObject(HUDObject* hudObject);
-    void removeHUDObject(HUDObject* hudObject);
+    HUDObject* removeHUDObject(HUDObject* hudObject);
+    void deleteAllHUDObjects();
     void loadTilemap(std::string tilemapName);
     std::string getTileData(const Vector2f& position, std::string index) const;
     std::vector<Intersection> getIntersections(const Entity* entity) const;

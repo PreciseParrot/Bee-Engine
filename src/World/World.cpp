@@ -96,22 +96,69 @@ void World::updateInternal()
 
 void World::addEntity(Entity* entity)
 {
-    entities.push_back(entity);
+    if (std::find(entities.begin(), entities.end(), entity) == entities.end())
+    {
+        entities.push_back(entity);
+    }
+    else
+    {
+        Log::write("World", LogLevel::Warning, "Entity already in world");
+    }
+    Log::write("World", LogLevel::Info, std::to_string(entities.size()) + " entities");
 }
 
-void World::removeEntity(Entity* entity)
+Entity* World::removeEntity(Entity* entity)
 {
-    entities.erase(std::remove(entities.begin(), entities.end(), entity), entities.end());
+    if (std::find(entities.begin(), entities.end(), entity) != entities.end())
+    {
+        entities.erase(std::remove(entities.begin(), entities.end(), entity), entities.end());
+        return entity;
+    }
+
+    return nullptr;
+}
+
+void World::deleteAllEntities()
+{
+    for (Entity* entity : entities)
+    {
+        delete entity;
+    }
+
+    entities.clear();
 }
 
 void World::addHUDObject(HUDObject* hudObject)
 {
-    hudObjects.push_back(hudObject);
+    if (std::find(hudObjects.begin(), hudObjects.end(), hudObject) == hudObjects.end())
+    {
+        hudObjects.push_back(hudObject);
+    }
+    else
+    {
+        Log::write("World", LogLevel::Warning, "HUD Object already in world");
+    }
 }
 
-void World::removeHUDObject(HUDObject* hudObject)
+HUDObject* World::removeHUDObject(HUDObject* hudObject)
 {
-    hudObjects.erase(std::remove(hudObjects.begin(), hudObjects.end(), hudObject), hudObjects.end());
+    if (std::find(hudObjects.begin(), hudObjects.end(), hudObject) != hudObjects.end())
+    {
+        hudObjects.erase(std::remove(hudObjects.begin(), hudObjects.end(), hudObject), hudObjects.end());
+        return hudObject;
+    }
+
+    return nullptr;
+}
+
+void World::deleteAllHUDObjects()
+{
+    for (HUDObject* hudObject : hudObjects)
+    {
+        delete hudObject;
+    }
+
+    hudObjects.clear();
 }
 
 std::string World::getTileData(const Vector2f& position, std::string index) const
