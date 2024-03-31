@@ -49,7 +49,7 @@ void Renderer::init(int winWidth, int winHeight)
         throw std::exception();
     }
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == nullptr)
     {
         Log::write("Renderer", LogLevel::Error, "Error creating renderer: ", SDL_GetError());
