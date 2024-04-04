@@ -104,7 +104,6 @@ void World::addEntity(Entity* entity)
     {
         Log::write("World", LogLevel::Warning, "Entity already in world");
     }
-    Log::write("World", LogLevel::Info, std::to_string(entities.size()) + " entities");
 }
 
 Entity* World::removeEntity(Entity* entity)

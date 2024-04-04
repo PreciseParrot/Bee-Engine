@@ -56,6 +56,8 @@ float Entity::getRotation() const
 void Entity::loadSpriteSheet(std::string spriteName)
 {
     sprite->loadSpriteSheet(spriteName);
+    setScale(1);
+    setHitboxScale(1);
 }
 
 void Entity::moveOffset(const Vector2f& offset)
@@ -84,6 +86,13 @@ void Entity::setRotation(float rotation)
     this->rotation = rotation;
 }
 
+void Entity::setScale(float scale)
+{
+    Vector2i textureSize = sprite->getTextureSize();
+    this->scale.x = (float)textureSize.x / textureSize.y * scale;
+    this->scale.y = scale;
+}
+
 void Entity::setScale(float x, float y)
 {
     scale.x = x;
@@ -93,6 +102,25 @@ void Entity::setScale(float x, float y)
 void Entity::setScale(const Vector2f& scale)
 {
     this->scale = scale;
+}
+
+void Entity::setFont(std::string fontName, int size)
+{
+    sprite->setFont(fontName, size);
+}
+
+void Entity::setText(std::string text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+{
+    sprite->setText(text, red, green, blue, alpha);
+    setScale(1);
+    setHitboxScale(1);
+}
+
+void Entity::setHitboxScale(float scale)
+{
+    Vector2i textureSize = sprite->getTextureSize();
+    this->hitboxScale.x = (float)textureSize.x / textureSize.y * scale;
+    this->hitboxScale.y = scale;
 }
 
 void Entity::setHitboxScale(float x, float y)

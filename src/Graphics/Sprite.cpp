@@ -32,8 +32,7 @@ void Sprite::loadSpriteSheet(std::string spriteName)
 
     std::ifstream jsonFile(jsonFilePath);
     
-    if (jsonFile.fail())
-        return;
+    if (jsonFile.fail()) return;
 
     nlohmann::json spriteData = nlohmann::json::parse(jsonFile);
 
@@ -107,8 +106,7 @@ void Sprite::setFont(std::string fontName, int size)
 
 void Sprite::setText(std::string text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
 {
-    if (this->text == text)
-        return;
+    if (this->text == text) return;
 
     this->text = text;
     SDL_DestroyTexture(texture);
@@ -122,7 +120,17 @@ void Sprite::setText(std::string text, uint8_t red, uint8_t green, uint8_t blue,
 Vector2i Sprite::getTextureSize()
 {
     Vector2i textureSize;
-    SDL_QueryTexture(texture, NULL, NULL, &textureSize.x, &textureSize.y);
+
+    if (sprites.size() == 0)
+    {
+        SDL_QueryTexture(texture, NULL, NULL, &textureSize.x, &textureSize.y);
+    }
+    else
+    {
+        textureSize.x = sprites[0].w;
+        textureSize.y = sprites[0].h;
+    }
+    
     return textureSize;
 }
 
@@ -187,5 +195,5 @@ void Sprite::updateInternalEntity(const Vector2f& position, const Vector2f& scal
 
 Sprite::~Sprite()
 {
-    TTF_CloseFont(font);
+
 }

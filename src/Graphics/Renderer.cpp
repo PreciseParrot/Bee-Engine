@@ -138,8 +138,8 @@ void Renderer::drawSprite(const Vector2f& position, const Vector2f& scale, SDL_R
     SDL_Rect dstRect;
     dstRect.x = (position.x - scale.x / 2 - cameraPosition.x + viewPortWidth / 2) * screenWidth / viewPortWidth;
     dstRect.y = (position.y - scale.y / 2 - cameraPosition.y + viewPortHeight / 2) * screenHeight / viewPortHeight;
-    dstRect.h = ceilf(screenHeight / viewPortHeight * scale.x);
-    dstRect.w = ceilf(screenWidth / viewPortWidth * scale.y);
+    dstRect.w = ceilf(screenWidth / viewPortWidth * scale.x);
+    dstRect.h = ceilf(screenHeight / viewPortHeight * scale.y);
 
     SDL_Point centerPoint;
     centerPoint.x = dstRect.w * rotationCenter.x;

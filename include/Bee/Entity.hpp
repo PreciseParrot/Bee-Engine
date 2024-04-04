@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdint.h>
 #include <string>
 
 #include "Bee/Collision/HitBox.hpp"
@@ -23,8 +24,12 @@ public:
     void setPosition(float x, float y);
     void setPosition(const Vector2f& position);
     void setRotation(float rotation);
+    void setScale(float scale);
     void setScale(float x, float y);
     void setScale(const Vector2f& scale);
+    void setFont(std::string fontName, int size);
+    void setText(std::string text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+    void setHitboxScale(float scale);
     void setHitboxScale(float x, float y);
     void setHitboxScale(const Vector2f& scale);
     virtual void update();
