@@ -17,13 +17,13 @@ void Audio::init()
     if (Mix_Init(MIX_INIT_OPUS) == 0)
     {
         Log::write("Audio", LogLevel::Error, "Error initializing SDL2_mixer: ", SDL_GetError());
-        throw std::exception();
+        exit(EXIT_FAILURE);
     }
 
     if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096) == -1)
     {
         Log::write("Audio", LogLevel::Error, "Error openening audio device: ", SDL_GetError());
-        throw std::exception();
+        exit(EXIT_FAILURE);
     }
 
     Log::write("Audio", LogLevel::Info, "Initialized audio engine");
@@ -35,11 +35,13 @@ void Audio::loadMusic(std::string musicName)
     Mix_Music* music = Mix_LoadMUS(fileName.c_str());
     if (music == nullptr)
     {
-        Log::write("Audio", LogLevel::Error, "Error loading music: ", SDL_GetError());
-        throw std::exception();
+        Log::write("Audio", LogLevel::Warning, "Can't load music: ", SDL_GetError());
     }
-    musicMap.insert({musicName, music});
-    Log::write("Audio", LogLevel::Info, "Loaded " + musicName + " music");
+    else
+    {
+        musicMap.insert({musicName, music});
+        Log::write("Audio", LogLevel::Info, "Loaded " + musicName + " music");
+    }
 }
 
 void Audio::playMusic(std::string musicName, int loops)
@@ -58,11 +60,13 @@ void Audio::loadSound(std::string soundName)
     Mix_Chunk* sound = Mix_LoadWAV(fileName.c_str());
     if (sound == nullptr)
     {
-        Log::write("Audio", LogLevel::Error, "Error loading sound: ", SDL_GetError());
-        throw std::exception();
+        Log::write("Audio", LogLevel::Error, "Can't load sound: ", SDL_GetError());
     }
-    soundMap.insert({soundName, sound});
-    Log::write("Audio", LogLevel::Info, "Loaded " + soundName + " sound");
+    else
+    {
+        soundMap.insert({soundName, sound});
+        Log::write("Audio", LogLevel::Info, "Loaded " + soundName + " sound");
+    }
 }
 
 int Audio::playSound(std::string soundName)

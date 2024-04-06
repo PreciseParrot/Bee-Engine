@@ -1,5 +1,6 @@
 #include "Bee.hpp"
 
+#include <stdlib.h>
 #include <SDL2/SDL.h>
 
 #include "Audio.hpp"
@@ -22,7 +23,7 @@ void Bee::init(int windowWidth, int windowHeight)
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
         Log::write("Engine", LogLevel::Error, "Error initializing SDL2: ", SDL_GetError());
-        throw std::exception();
+        exit(EXIT_FAILURE);
     }
     Log::write("Engine", LogLevel::Info, "Initialized SDL2");
 

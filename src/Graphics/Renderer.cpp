@@ -33,27 +33,27 @@ void Renderer::init(int winWidth, int winHeight)
     if (IMG_Init(IMG_INIT_PNG) == 0)
     {
         Log::write("Renderer", LogLevel::Error, "Error initializing SDL2_image: ", SDL_GetError());
-        throw std::exception();
+        exit(EXIT_FAILURE);
     }
 
     if (TTF_Init() == -1)
     {
         Log::write("Renderer", LogLevel::Error, "Error initializing SDL2_ttf: ", SDL_GetError());
-        throw std::exception();
+        exit(EXIT_FAILURE);
     }
 
     window = SDL_CreateWindow("Bee Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, winWidth, winHeight, 0);
     if (window == nullptr)
     {
         Log::write("Renderer", LogLevel::Error, "Error creating Window: ", SDL_GetError());
-        throw std::exception();
+        exit(EXIT_FAILURE);
     }
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == nullptr)
     {
         Log::write("Renderer", LogLevel::Error, "Error creating renderer: ", SDL_GetError());
-        throw std::exception();
+        exit(EXIT_FAILURE);
     }
 
     SDL_SetWindowResizable(window, SDL_TRUE);
@@ -163,14 +163,14 @@ SDL_Texture* Renderer::loadTexture(std::string textureName, std::string path)
     texture = IMG_LoadTexture(renderer, path.c_str());
     if (texture == nullptr)
     {
-        Log::write("Renderer", LogLevel::Error, "Error loading texture: ", SDL_GetError());
-        throw std::exception();
+        Log::write("Renderer", LogLevel::Warning, "Can't load texture: ", SDL_GetError());
     }
-
-    textureMap.insert({textureName, texture});
-    Log::write("Renderer", LogLevel::Info, "Loaded " + textureName + " texture");
+    else
+    {
+        textureMap.insert({textureName, texture});
+        Log::write("Renderer", LogLevel::Info, "Loaded " + textureName + " texture");
+    }
     return texture;
-
 }
 
 TTF_Font* Renderer::loadFont(std::string fontName, int size)
@@ -191,13 +191,13 @@ TTF_Font* Renderer::loadFont(std::string fontName, int size)
 
     if (font == nullptr)
     {
-        Log::write("Renderer", LogLevel::Error, "Error loading " + fontName + " font");
-        throw std::exception();
+        Log::write("Renderer", LogLevel::Warning, "Can't load " + fontName + " font: ", SDL_GetError());
     }
-
-    Log::write("Renderer", LogLevel::Info, "Loaded " + fontName + " font with size " + std::to_string(size));
-    fontMap.insert({{fontName, size}, font});
-
+    else
+    {
+        Log::write("Renderer", LogLevel::Info, "Loaded " + fontName + " font with size " + std::to_string(size));
+        fontMap.insert({{fontName, size}, font});
+    }
     return font;
 }
 
@@ -231,8 +231,8 @@ void Renderer::setWindowIcon(std::string path)
     SDL_Surface* surface = IMG_Load(path.c_str());
     if (surface == nullptr)
     {
-        Log::write("Renderer", LogLevel::Info, "Error loading image: ", SDL_GetError());
-        throw std::exception();
+        Log::write("Renderer", LogLevel::Warning, "Can't load image: ", SDL_GetError());
+        return;
     }
     SDL_SetWindowIcon(window, surface);
     SDL_FreeSurface(surface);
