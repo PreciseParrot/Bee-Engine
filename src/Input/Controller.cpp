@@ -13,7 +13,7 @@ static Vector2f controllerDeadzone(0.1f, 0.1f);
 
 void Controller::init()
 {
-    controllerMap.insert({SDL_CONTROLLER_BUTTON_INVALID, ControllerButton::null});
+    controllerMap.insert({SDL_CONTROLLER_BUTTON_INVALID, ControllerButton::unknown});
     controllerMap.insert({SDL_CONTROLLER_BUTTON_A, ControllerButton::a});
     controllerMap.insert({SDL_CONTROLLER_BUTTON_B, ControllerButton::b});
     controllerMap.insert({SDL_CONTROLLER_BUTTON_X, ControllerButton::x});
@@ -106,8 +106,8 @@ void Controller::handleInput(SDL_Event* event)
 
     if (event->type == SDL_CONTROLLERBUTTONDOWN) buttonPressed = true;
 
-    ControllerButton controllerIndex = controllerMap[(SDL_GameControllerButton)event->jbutton.button];
-    buttonsPressed[static_cast<int>(controllerIndex)] = buttonPressed;
+    ControllerButton buttonIndex = controllerMap[(SDL_GameControllerButton)event->jbutton.button];
+    buttonsPressed[static_cast<int>(buttonIndex)] = buttonPressed;
 }
 
 void Controller::connectController(SDL_Event* event)

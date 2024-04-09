@@ -7,6 +7,8 @@
 
 namespace Renderer
 {
+    Vector2f getCameraPosition();
+    Vector2f getViewPortSize();
     Vector2i getScreenSize();
     void setWindowIcon(std::string path);
     void setWindowTitle(std::string title);

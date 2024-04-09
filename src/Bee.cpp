@@ -1,6 +1,5 @@
 #include "Bee.hpp"
 
-#include <stdlib.h>
 #include <SDL2/SDL.h>
 
 #include "Audio.hpp"
@@ -8,6 +7,7 @@
 #include "Graphics/Renderer.hpp"
 #include "Input/Controller.hpp"
 #include "Input/Keyboard.hpp"
+#include "Input/Mouse.hpp"
 #include "World/World.hpp"
 
 static bool gameRunning = true;
@@ -86,6 +86,18 @@ void Bee::run()
                 case SDL_CONTROLLERDEVICEREMOVED:
                     Controller::disconnectController(&event);
                     break;
+                case SDL_MOUSEBUTTONDOWN:
+                    Mouse::handleInput(&event);
+                    break;
+                case SDL_MOUSEBUTTONUP:
+                    Mouse::handleInput(&event);
+                    break;
+                case SDL_MOUSEWHEEL:
+                    Mouse::handleInput(&event);
+                    break;
+                case SDL_MOUSEMOTION:
+                    Mouse::handleInput(&event);
+                    break;
                 case SDL_QUIT:
                     gameRunning = false;
                     break;
@@ -97,6 +109,7 @@ void Bee::run()
         currentWorld->update();
         Controller::update();
         Keyboard::update();
+        Mouse::update();
 
         deltaTime = (float)(loopTicks - loopTicksLast) / SDL_GetPerformanceFrequency();
     }

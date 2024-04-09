@@ -11,7 +11,7 @@ static std::bitset<64> keysPressedOld;
 
 void Keyboard::init()
 {
-    keyMap.insert({SDL_SCANCODE_UNKNOWN, Key::null});
+    keyMap.insert({SDL_SCANCODE_UNKNOWN, Key::unknown});
     keyMap.insert({SDL_SCANCODE_A, Key::a});
     keyMap.insert({SDL_SCANCODE_B, Key::b});
     keyMap.insert({SDL_SCANCODE_C, Key::c});

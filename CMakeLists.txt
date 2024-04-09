@@ -15,6 +15,7 @@ add_library(${PROJECT_NAME} STATIC
     src/Graphics/Sprite.cpp
     src/Input/Controller.cpp
     src/Input/Keyboard.cpp
+    src/Input/Mouse.cpp
     src/World/World.cpp
     src/Math/Vector2f.cpp
     src/Math/Vector2i.cpp

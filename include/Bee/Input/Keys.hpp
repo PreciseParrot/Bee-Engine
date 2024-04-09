@@ -2,7 +2,7 @@
 
 enum class Key : int
 {
-    null,
+    unknown,
     a,
     b,
     c,

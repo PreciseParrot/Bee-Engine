@@ -221,6 +221,16 @@ void Renderer::unloadAllTextures()
     textureMap.clear();
 }
 
+Vector2f Renderer::getCameraPosition()
+{
+    return cameraPosition;
+}
+
+Vector2f Renderer::getViewPortSize()
+{
+    return Vector2f(viewPortWidth, viewPortHeight);
+}
+
 Vector2i Renderer::getScreenSize()
 {
     return Vector2i(screenWidth, screenHeight);
