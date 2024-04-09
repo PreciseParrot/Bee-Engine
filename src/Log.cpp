@@ -1,5 +1,7 @@
 #include "Log.hpp"
 
+#include <stdarg.h>
+#include <cstdio>
 #include <chrono>
 #include <iomanip>
 #include <iostream>
@@ -11,13 +13,27 @@
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 #endif
 
-void Log::write(const std::string& message)
+static const int bufferSize = 200; 
+
+void Log::write(const std::string& format, ...)
 {
-    Log::write("Debug", LogLevel::Info, message);
+    char buffer[bufferSize];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(buffer, bufferSize, format.c_str(), args);
+    va_end(args);
+    Log::write("Debug", LogLevel::Info, buffer);
 }
 
-void Log::write(const std::string& source, LogLevel level, const std::string& message, const std::string& message2)
+void Log::write(const std::string& source, LogLevel level, const std::string& format, ...)
 {
+    int bufferPosition = 0;
+    char buffer[bufferSize];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(buffer, bufferSize, format.c_str(), args);
+    va_end(args);
+
     time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     tm* localTime = std::localtime(&time);
     std::stringstream output;
@@ -25,13 +41,13 @@ void Log::write(const std::string& source, LogLevel level, const std::string& me
     switch (level)
     {
         case LogLevel::Info:
-            output << "[" << std::setw(2) << std::setfill('0') << localTime->tm_hour << ":"<< std::setw(2) << std::setfill('0')  << localTime->tm_min << ":"<< std::setw(2) << std::setfill('0')  << localTime->tm_sec << "] [" << source << "] " << "[INFO] " << message << message2;
+            output << "[" << std::setw(2) << std::setfill('0') << localTime->tm_hour << ":"<< std::setw(2) << std::setfill('0')  << localTime->tm_min << ":"<< std::setw(2) << std::setfill('0')  << localTime->tm_sec << "] [" << source << "] " << "[INFO] " << buffer;
             break;
         case LogLevel::Warning:
-            output << "[" << std::setw(2) << std::setfill('0') << localTime->tm_hour << ":"<< std::setw(2) << std::setfill('0')  << localTime->tm_min << ":"<< std::setw(2) << std::setfill('0')  << localTime->tm_sec << "] [" << source << "] " << "[WARNING] " << message << message2;
+            output << "[" << std::setw(2) << std::setfill('0') << localTime->tm_hour << ":"<< std::setw(2) << std::setfill('0')  << localTime->tm_min << ":"<< std::setw(2) << std::setfill('0')  << localTime->tm_sec << "] [" << source << "] " << "[INFO] " << buffer;
             break;
         case LogLevel::Error:
-            output << "[" << std::setw(2) << std::setfill('0') << localTime->tm_hour << ":"<< std::setw(2) << std::setfill('0')  << localTime->tm_min << ":"<< std::setw(2) << std::setfill('0')  << localTime->tm_sec << "] [" << source << "] " << "[ERROR] " << message << message2;
+            output << "[" << std::setw(2) << std::setfill('0') << localTime->tm_hour << ":"<< std::setw(2) << std::setfill('0')  << localTime->tm_min << ":"<< std::setw(2) << std::setfill('0')  << localTime->tm_sec << "] [" << source << "] " << "[INFO] " << buffer;
             break;
     }
 

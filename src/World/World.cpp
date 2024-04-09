@@ -220,7 +220,7 @@ void World::loadTileset(const std::string source, int firstId)
     tilesetXML.LoadFile(tileSetPath.c_str());
     if (tilesetXML.Error())
     {
-        Log::write("World", LogLevel::Error, "Could not load tileset: ", tilesetXML.ErrorName());
+        Log::write("World", LogLevel::Error, "Could not load tileset: %s", tilesetXML.ErrorName());
         return;
     }
 
@@ -232,7 +232,7 @@ void World::loadTileset(const std::string source, int firstId)
     int columns = tilesetXMLElement->IntAttribute("columns");
     int tileCount = tilesetXMLElement->IntAttribute("tilecount");
     std::filesystem::path tilesetTexturePath = imageXMLElement->Attribute("source");
-    SDL_Texture* texture = Renderer::loadTexture(tilesetTexturePath.replace_extension().string(), "./assets/Worlds/Tilesets/" + tilesetTexturePath.string());
+    SDL_Texture* texture = Renderer::loadTexture(tilesetTexturePath.replace_extension().string(), "./assets/Worlds/Tilesets/" + tilesetTexturePath.replace_extension().string() + ".png");
 
     for (int id = 0; id < tileCount; id++)
     {
@@ -283,7 +283,7 @@ void World::loadTileset(const std::string source, int firstId)
             }
         }
     }
-    Log::write("World", LogLevel::Info, "Loaded " + tilesetTexturePath.replace_extension().string() + " tileset");
+    Log::write("World", LogLevel::Info, "Loaded %s tileset", tilesetTexturePath.replace_extension().string().c_str());
 }
 
 void World::loadTilemap(const std::string tilemapName)
@@ -299,7 +299,7 @@ void World::loadTilemap(const std::string tilemapName)
     tilemapXML.LoadFile(tileMapPath.c_str());
     if (tilemapXML.Error())
     {
-        Log::write("World", LogLevel::Error, "Could not load tilemap: ", tilemapXML.ErrorName());
+        Log::write("World", LogLevel::Error, "Could not load tilemap: %s", tilemapXML.ErrorName());
         return;
     }
 
@@ -409,7 +409,7 @@ void World::loadTilemap(const std::string tilemapName)
             worldObjects.push_back(worldObject);
         }
     }
-    Log::write("World", LogLevel::Info, "Loaded " + tilemapName + " tilemap");
+    Log::write("World", LogLevel::Info, "Loaded %s tilemap", tilemapName.c_str());
 }
 
 void World::update() {}

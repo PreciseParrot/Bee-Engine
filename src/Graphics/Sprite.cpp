@@ -77,13 +77,13 @@ void Sprite::setAnimation(std::string animationName)
 {
     if (currentAnimationName == animationName) return;
 
-    try
+    if (frameTags.find(animationName) != frameTags.end())
     {
         currentAnimation = frameTags.at(animationName);
     }
-    catch(const std::exception& e)
+    else
     {
-        Log::write("Sprite", LogLevel::Warning, "Animation " + animationName + " not found");
+        Log::write("Sprite", LogLevel::Warning, "Animation: %s not found", animationName);
     }
 
     if (currentAnimation.direction == ANIMATION_REVERSE)
