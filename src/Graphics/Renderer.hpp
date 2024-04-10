@@ -25,6 +25,7 @@ namespace Renderer
     Vector2f getCameraPosition();
     Vector2f getViewPortSize();
     Vector2i getScreenSize();
+    Vector2i getWindowSize();
     void setWindowIcon(std::string path);
     void setWindowTitle(std::string title);
     void setCameraPosition(float x, float y);

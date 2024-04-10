@@ -236,6 +236,11 @@ Vector2i Renderer::getScreenSize()
     return Vector2i(screenWidth, screenHeight);
 }
 
+Vector2i Renderer::getWindowSize()
+{
+    return Vector2i(windowWidth, windowHeight);
+}
+
 void Renderer::setWindowIcon(std::string path)
 {
     SDL_Surface* surface = IMG_Load(path.c_str());
