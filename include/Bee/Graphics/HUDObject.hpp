@@ -15,7 +15,8 @@ public:
     void updateInternal();
     void setAnimation(std::string animationName);
     void loadSpriteSheet(std::string spriteName);
-    Vector2i getSize();
+    Vector2i getSize() const;
+    bool isCursorOnMe() const;
     void setPosition(int x, int y);
     void setPosition(const Vector2i& position);
     void setScale(float scale);

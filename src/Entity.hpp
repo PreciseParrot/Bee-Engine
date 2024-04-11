@@ -18,6 +18,7 @@ public:
     std::string getName() const;
     Vector2f getPosition() const;
     float getRotation() const;
+    bool isCursorOnMe() const;
     void loadSpriteSheet(std::string spriteName);
     void moveOffset(const Vector2f& offset);
     void setAnimation(std::string animationName);

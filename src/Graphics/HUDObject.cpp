@@ -1,6 +1,8 @@
 #include "Graphics/HUDObject.hpp"
 
+#include "Collision/Collision.hpp"
 #include "Graphics/Sprite.hpp"
+#include "Input/Mouse.hpp"
 
 HUDObject::HUDObject()
 {
@@ -25,9 +27,27 @@ void HUDObject::loadSpriteSheet(std::string spriteName)
     setScale(1);
 }
 
-Vector2i HUDObject::getSize()
+Vector2i HUDObject::getSize() const
 {
     return sprite->getTextureSize();
+}
+
+bool HUDObject::isCursorOnMe() const
+{
+    HitBox hitBox;
+    HitBox cursor;
+    Intersection intersection;
+    Vector2i center = position + scale / 2;
+    Vector2i cursorPosition = Mouse::getMouseScreenPosition();
+
+    hitBox.hitBoxPoints.push_back(Vector2f(center.x - (scale.x / 2 * cosf(rotation * M_PI / 180) - (scale.y / 2 * sinf(rotation * M_PI / 180))), center.y - (scale.x / 2 * sinf(rotation * M_PI / 180) + (scale.y / 2 * cosf(rotation * M_PI / 180)))));
+    hitBox.hitBoxPoints.push_back(Vector2f(center.x + (scale.x / 2 * cosf(rotation * M_PI / 180) - (scale.y / 2 * sinf(rotation * M_PI / 180))), center.y + (scale.x / 2 * sinf(rotation * M_PI / 180) + (scale.y / 2 * cosf(rotation * M_PI / 180)))));
+    hitBox.hitBoxPoints.push_back(Vector2f(center.x - (scale.x / 2 * cosf(rotation * M_PI / 180) + (scale.y / 2 * sinf(rotation * M_PI / 180))), center.y - (scale.x / 2 * sinf(rotation * M_PI / 180) - (scale.y / 2 * cosf(rotation * M_PI / 180)))));
+    hitBox.hitBoxPoints.push_back(Vector2f(center.x + (scale.x / 2 * cosf(rotation * M_PI / 180) + (scale.y / 2 * sinf(rotation * M_PI / 180))), center.y + (scale.x / 2 * sinf(rotation * M_PI / 180) - (scale.y / 2 * cosf(rotation * M_PI / 180)))));
+
+    cursor.hitBoxPoints.push_back(Vector2f(cursorPosition.x, cursorPosition.y));
+    
+    return Collision::checkCollision(hitBox, cursor, &intersection);
 }
 
 void HUDObject::setPosition(int x, int y)

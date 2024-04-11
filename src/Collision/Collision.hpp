@@ -5,5 +5,5 @@
 
 namespace Collision
 {
-    bool checkCollision(const HitBox& hitBox1, const HitBox& hitBox2, Intersection* p_intersection);
+    bool checkCollision(const HitBox& hitBox1, const HitBox& hitBox2, Intersection* intersection);
 }

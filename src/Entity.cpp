@@ -5,6 +5,8 @@
 
 #include "Audio.hpp"
 #include "Bee.hpp"
+#include "Collision/Collision.hpp"
+#include "Input/Mouse.hpp"
 #include "Math/Vector2f.hpp"
 
 Entity::Entity()
@@ -51,6 +53,15 @@ Vector2f Entity::getPosition() const
 float Entity::getRotation() const
 {
     return rotation;
+}
+
+bool Entity::isCursorOnMe() const
+{
+    Intersection intersection;
+    HitBox hitBox;
+    hitBox.hitBoxPoints.push_back(Mouse::getMouseWorldPosition());
+
+    return Collision::checkCollision(getHitBox(), hitBox, &intersection);
 }
 
 void Entity::loadSpriteSheet(std::string spriteName)

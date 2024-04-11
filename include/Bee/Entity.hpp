@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include <string>
 
-#include "Bee/Collision/HitBox.hpp"
 #include "Bee/Collision/Intersection.hpp"
 #include "Bee/Math/Vector2f.hpp"
 
@@ -17,6 +16,7 @@ public:
     std::string getName() const;
     Vector2f getPosition() const;
     float getRotation() const;
+    bool isCursorOnMe() const;
     void loadSpriteSheet(std::string spriteName);
     void moveOffset(const Vector2f& offset);
     void setAnimation(std::string animationName);
