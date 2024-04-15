@@ -90,6 +90,7 @@ void Renderer::update()
         SDL_SetRenderTarget(renderer, NULL);
         SDL_DestroyTexture(targetTexture);
         targetTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, screenWidth, screenHeight);
+        SDL_RenderClear(renderer);
         SDL_SetRenderTarget(renderer, targetTexture);
     }
 
@@ -102,7 +103,6 @@ void Renderer::update()
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderCopy(renderer, targetTexture, NULL, &dstRect);
     SDL_RenderPresent(renderer);
-    SDL_RenderClear(renderer);
     SDL_SetRenderTarget(renderer, targetTexture);
     SDL_RenderClear(renderer);
 }
@@ -153,7 +153,7 @@ SDL_Texture* Renderer::createTexture(SDL_Surface* surface)
     return SDL_CreateTextureFromSurface(renderer, surface);
 }
 
-SDL_Texture* Renderer::loadTexture(std::string textureName, std::string path)
+SDL_Texture* Renderer::loadTexture(const std::string& textureName, const std::string& path)
 {
     SDL_Texture* texture = nullptr;
 
@@ -173,7 +173,7 @@ SDL_Texture* Renderer::loadTexture(std::string textureName, std::string path)
     return texture;
 }
 
-TTF_Font* Renderer::loadFont(std::string fontName, int size)
+TTF_Font* Renderer::loadFont(const std::string& fontName, int size)
 {
     if (fontMap.find({fontName, size}) != fontMap.end())
     {
@@ -241,7 +241,7 @@ Vector2i Renderer::getWindowSize()
     return Vector2i(windowWidth, windowHeight);
 }
 
-void Renderer::setWindowIcon(std::string path)
+void Renderer::setWindowIcon(const std::string& path)
 {
     SDL_Surface* surface = IMG_Load(path.c_str());
     if (surface == nullptr)
@@ -253,7 +253,7 @@ void Renderer::setWindowIcon(std::string path)
     SDL_FreeSurface(surface);
 }
 
-void Renderer::setWindowTitle(std::string title)
+void Renderer::setWindowTitle(const std::string& title)
 {
     SDL_SetWindowTitle(window, title.c_str());
 }

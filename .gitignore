@@ -1,6 +1,6 @@
 # Directories
-.build/
-build*
+build/
+docs/output/
 
 # Prerequisites
 *.d

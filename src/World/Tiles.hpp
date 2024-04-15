@@ -20,7 +20,6 @@ struct TileLayer
 
 struct Tile
 {
-    std::string type;
     bool animated;
     int currentX, currentY;
     int x, y;

@@ -16,12 +16,12 @@ void HUDObject::updateInternal()
     sprite->updateInternalHUD(position, scale, rotationCenter, rotation);
 }
 
-void HUDObject::setAnimation(std::string animationName)
+void HUDObject::setAnimation(const std::string& animationName)
 {
     sprite->setAnimation(animationName);
 }
 
-void HUDObject::loadSpriteSheet(std::string spriteName) 
+void HUDObject::setSprite(const std::string& spriteName) 
 {
     sprite->loadSpriteSheet(spriteName);
     setScale(1);
@@ -78,12 +78,12 @@ void HUDObject::setScale(const Vector2i& scale)
     this->scale = scale;
 }
 
-void HUDObject::setFont(std::string fontName, int size)
+void HUDObject::setFont(const std::string& fontName, int size)
 {
     sprite->setFont(fontName, size);
 }
 
-void HUDObject::setText(std::string text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+void HUDObject::setText(const std::string& text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
 {
     sprite->setText(text, red, green, blue, alpha);
     setScale(1);

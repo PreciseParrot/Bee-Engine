@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.27.6)
+cmake_minimum_required(VERSION 3.27)
 
 project(bee VERSION 0.0.1)
 
@@ -63,9 +63,5 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME} 
-    INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include   
-)
-
-target_sources(${PROJECT_NAME}
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
+    INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
 )

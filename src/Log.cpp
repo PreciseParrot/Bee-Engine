@@ -27,7 +27,6 @@ void Log::write(const std::string& format, ...)
 
 void Log::write(const std::string& source, LogLevel level, const std::string& format, ...)
 {
-    int bufferPosition = 0;
     char buffer[bufferSize];
     va_list args;
     va_start(args, format);

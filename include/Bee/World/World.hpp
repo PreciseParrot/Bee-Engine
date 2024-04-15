@@ -5,8 +5,10 @@
 #include "Bee/Entity.hpp"
 #include "Bee/Collision/Intersection.hpp"
 #include "Bee/Graphics/HUDObject.hpp"
-#include "Bee/World/Tiles.hpp"
 #include "Bee/World/WorldObject.hpp"
+
+struct Tile;
+struct TileLayer;
 
 class World
 {

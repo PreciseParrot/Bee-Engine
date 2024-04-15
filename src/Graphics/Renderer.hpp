@@ -1,6 +1,13 @@
+/**
+ * @file Renderer.hpp
+ * @author PerciseParrot
+ * 
+ * @copyright Copyright (c) 2024 PerciseParrot
+ * 
+ */
+
 #pragma once
 
-#include <map>
 #include <string>
 
 #include <SDL2/SDL.h>
@@ -12,25 +19,102 @@
 
 namespace Renderer
 {
+    /*Internal only functions start here*/
+
     void init(int windowWidth, int windowHeight);
     void update();
     void drawTile(const Vector2i& position, SDL_Rect* srcRect, SDL_Texture* texture);
     void drawHUD(const Vector2i& position, const Vector2i& scale, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, float rotation);
     void drawSprite(const Vector2f& position, const Vector2f& scale, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, float rotation);
     SDL_Texture* createTexture(SDL_Surface* surface);
-    SDL_Texture* loadTexture(std::string textureName, std::string path);
-    TTF_Font* loadFont(std::string font, int size);
-    void unloadAllFonts();
-    void unloadAllTextures();
-    Vector2f getCameraPosition();
-    Vector2f getViewPortSize();
-    Vector2i getScreenSize();
-    Vector2i getWindowSize();
-    void setWindowIcon(std::string path);
-    void setWindowTitle(std::string title);
-    void setCameraPosition(float x, float y);
-    void setCameraPosition(const Vector2f& cameraPosition);
-    void setViewportSize(float width, float height);
-    void setViewportSize(const Vector2f& viewportSize);
+    SDL_Texture* loadTexture(const std::string& textureName, const std::string& path);
+    TTF_Font* loadFont(const std::string& font, int size);
     void cleanUp();
+
+    /*Internal only functions end here*/
+
+
+    /**
+     * @brief Unload all loaded fonts.
+     * 
+     */
+    void unloadAllFonts();
+
+    /**
+     * @brief Unload all loaded textures.
+     * 
+     */
+    void unloadAllTextures();
+
+    /**
+     * @brief Get the position of the camera in the world.
+     * 
+     * @return the camera position in world coordinates
+     */
+    Vector2f getCameraPosition();
+
+    /**
+     * @brief Get the size of the viewport.
+     * 
+     * @return the size of the viewport
+     */
+    Vector2f getViewPortSize();
+
+    /**
+     * @brief Get the size of the internal screen. 
+     * 
+     * @return the size of the internal screen
+     */
+    Vector2i getScreenSize();
+
+    /**
+     * @brief Get the size of the window
+     * 
+     * @return the size of the window
+     */
+    Vector2i getWindowSize();
+
+    /**
+     * @brief Set the icon for the window.
+     * 
+     * @param path a file path from where to load the image from
+     */
+    void setWindowIcon(const std::string& path);
+
+    /**
+     * @brief Set the title for the Window
+     * 
+     * @param title the title for the window
+     */
+    void setWindowTitle(const std::string& title);
+
+    /**
+     * @brief Set the position of the camera
+     * 
+     * @param x the x position of the camera in world coordinates
+     * @param y the y position of the camera in world coordinates
+     */
+    void setCameraPosition(float x, float y);
+
+    /**
+     * @brief Set the position of the camera
+     * 
+     * @param cameraPosition the position of the camera in world coordinates
+     */
+    void setCameraPosition(const Vector2f& cameraPosition);
+
+    /**
+     * @brief Set the size of the viewport
+     * 
+     * @param width the width of the viewport
+     * @param height the height of the viewport
+     */
+    void setViewportSize(float width, float height);
+
+    /**
+     * @brief Set the size of the viewport
+     * 
+     * @param viewportSize the size of the viewport
+     */
+    void setViewportSize(const Vector2f& viewportSize);
 };
