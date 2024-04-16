@@ -46,6 +46,12 @@ void Bee::run()
 
     currentWorld = nextWorld;
     nextWorld = nullptr;
+    
+    if (!currentWorld->isInitialized())
+    {
+        currentWorld->initInternal();
+        currentWorld->init();
+    }
     currentWorld->onLoad();
 
     while (gameRunning)
@@ -60,6 +66,12 @@ void Bee::run()
             currentWorld->onUnLoad();
             currentWorld = nextWorld;
             nextWorld = nullptr;
+
+            if (!currentWorld->isInitialized())
+            {
+                currentWorld->initInternal();
+                currentWorld->init();
+            }
             currentWorld->onLoad();
         }
 

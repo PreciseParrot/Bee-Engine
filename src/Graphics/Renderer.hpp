@@ -1,9 +1,5 @@
 /**
  * @file Renderer.hpp
- * @author PerciseParrot
- * 
- * @copyright Copyright (c) 2024 PerciseParrot
- * 
  */
 
 #pragma once

@@ -17,6 +17,16 @@
 
 World::World() {}
 
+bool World::isInitialized()
+{
+    return initialized;
+}
+
+void World::initInternal()
+{
+    initialized = true;
+}
+
 void World::updateInternal()
 {
     for (const TileLayer &layer : layers)
@@ -160,7 +170,7 @@ void World::deleteAllHUDObjects()
     hudObjects.clear();
 }
 
-std::string World::getTileData(const Vector2f& position, std::string index) const
+std::string World::getTileData(const Vector2f& position, const std::string& index) const
 {
     if (position.x < 0) return "";
     if (position.y < 0) return "";
@@ -286,7 +296,7 @@ void World::loadTileset(const std::string source, int firstId)
     Log::write("World", LogLevel::Info, "Loaded %s tileset", tilesetTexturePath.replace_extension().string().c_str());
 }
 
-void World::loadTilemap(const std::string tilemapName)
+void World::loadTilemap(const std::string& tilemapName)
 {
     const std::string tileMapPath = "./assets/Worlds/" + tilemapName + ".tmx";
 
@@ -411,6 +421,8 @@ void World::loadTilemap(const std::string tilemapName)
     }
     Log::write("World", LogLevel::Info, "Loaded %s tilemap", tilemapName.c_str());
 }
+
+void World::init() {}
 
 void World::update() {}
 
