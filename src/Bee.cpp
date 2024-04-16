@@ -36,6 +36,77 @@ void Bee::init(int windowWidth, int windowHeight)
     Renderer::init(windowWidth, windowHeight);
 }
 
+static void mainLoop()
+{
+    loopTicksLast = loopTicks;
+    loopTicks = SDL_GetPerformanceCounter();
+    currentTime = SDL_GetTicks();
+
+    if (nextWorld)
+    {
+        currentWorld->onUnLoad();
+        currentWorld = nextWorld;
+        nextWorld = nullptr;
+
+        if (!currentWorld->isInitialized())
+        {
+            currentWorld->initInternal();
+            currentWorld->init();
+        }
+        currentWorld->onLoad();
+    }
+
+    SDL_Event event;
+    while (SDL_PollEvent(&event))
+    {
+        switch (event.type)
+        {
+            case SDL_KEYDOWN:
+                Keyboard::handleInput(&event);
+                break;
+            case SDL_KEYUP:
+                Keyboard::handleInput(&event);
+                break;
+            case SDL_CONTROLLERBUTTONDOWN:
+                Controller::handleInput(&event);
+                break;
+            case SDL_CONTROLLERBUTTONUP:
+                Controller::handleInput(&event);
+                break;
+            case SDL_CONTROLLERDEVICEADDED:
+                Controller::connectController(&event);
+                break;
+            case SDL_CONTROLLERDEVICEREMOVED:
+                Controller::disconnectController(&event);
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                Mouse::handleInput(&event);
+                break;
+            case SDL_MOUSEBUTTONUP:
+                Mouse::handleInput(&event);
+                break;
+            case SDL_MOUSEWHEEL:
+                Mouse::handleInput(&event);
+                break;
+            case SDL_MOUSEMOTION:
+                Mouse::handleInput(&event);
+                break;
+            case SDL_QUIT:
+                gameRunning = false;
+                break;
+        }
+    }
+
+    Renderer::update();
+    currentWorld->updateInternal();
+    currentWorld->update();
+    Controller::update();
+    Keyboard::update();
+    Mouse::update();
+
+    deltaTime = (float)(loopTicks - loopTicksLast) / SDL_GetPerformanceFrequency();
+}
+
 void Bee::run()
 {
     if (!nextWorld)
@@ -56,75 +127,9 @@ void Bee::run()
 
     while (gameRunning)
     {
-        loopTicksLast = loopTicks;
-        loopTicks = SDL_GetPerformanceCounter();
-
-        currentTime = SDL_GetTicks();
-
-        if (nextWorld)
-        {
-            currentWorld->onUnLoad();
-            currentWorld = nextWorld;
-            nextWorld = nullptr;
-
-            if (!currentWorld->isInitialized())
-            {
-                currentWorld->initInternal();
-                currentWorld->init();
-            }
-            currentWorld->onLoad();
-        }
-
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
-            switch (event.type)
-            {
-                case SDL_KEYDOWN:
-                    Keyboard::handleInput(&event);
-                    break;
-                case SDL_KEYUP:
-                    Keyboard::handleInput(&event);
-                    break;
-                case SDL_CONTROLLERBUTTONDOWN:
-                    Controller::handleInput(&event);
-                    break;
-                case SDL_CONTROLLERBUTTONUP:
-                    Controller::handleInput(&event);
-                    break;
-                case SDL_CONTROLLERDEVICEADDED:
-                    Controller::connectController(&event);
-                    break;
-                case SDL_CONTROLLERDEVICEREMOVED:
-                    Controller::disconnectController(&event);
-                    break;
-                case SDL_MOUSEBUTTONDOWN:
-                    Mouse::handleInput(&event);
-                    break;
-                case SDL_MOUSEBUTTONUP:
-                    Mouse::handleInput(&event);
-                    break;
-                case SDL_MOUSEWHEEL:
-                    Mouse::handleInput(&event);
-                    break;
-                case SDL_MOUSEMOTION:
-                    Mouse::handleInput(&event);
-                    break;
-                case SDL_QUIT:
-                    gameRunning = false;
-                    break;
-            }
-        }
-
-        Renderer::update();
-        currentWorld->updateInternal();
-        currentWorld->update();
-        Controller::update();
-        Keyboard::update();
-        Mouse::update();
-
-        deltaTime = (float)(loopTicks - loopTicksLast) / SDL_GetPerformanceFrequency();
+        mainLoop();
     }
+    currentWorld->onUnLoad();
 }
 
 World* Bee::getCurrentWorld()
