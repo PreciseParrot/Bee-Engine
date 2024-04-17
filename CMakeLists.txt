@@ -17,6 +17,7 @@ add_library(${PROJECT_NAME} STATIC
     src/Input/Keyboard.cpp
     src/Input/Mouse.cpp
     src/World/World.cpp
+    src/World/WorldObject.cpp
     src/Math/Vector2f.cpp
     src/Math/Vector2i.cpp
 )

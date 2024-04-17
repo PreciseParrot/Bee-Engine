@@ -37,12 +37,12 @@ Vector2f tripleProduct(const Vector2f& in1, const Vector2f& in2, const Vector2f&
     return Vector2f(out2x, out2y);
 }
 
-Vector2f getSupportPoint(const Hitbox& hitBox, const Vector2f& directionVector)
+Vector2f getSupportPoint(const Hitbox& hitbox, const Vector2f& directionVector)
 {
     float largestDotProduct = -FLT_MAX;
     Vector2f supportPoint;
 
-    for (const Vector2f& point : hitBox.hitBoxPoints)
+    for (const Vector2f& point : hitbox.hitBoxPoints)
     {
         float dotProduct = point.dot(directionVector);
         if (dotProduct > largestDotProduct)

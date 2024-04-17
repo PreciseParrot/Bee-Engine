@@ -213,7 +213,7 @@ std::vector<Intersection> World::getIntersections(const Entity* entity) const
         Intersection intersection;
         intersection.entity = NULL;
         intersection.worldObject = worldObject;
-        if (Collision::checkCollision(entity->getHitBox(), worldObject->hitBox, &intersection))
+        if (Collision::checkCollision(entity->getHitBox(), worldObject->getHitbox(), &intersection))
         {
             intersections.push_back(intersection);
         }
@@ -374,12 +374,14 @@ void World::loadTilemap(const std::string& tilemapName)
             float width = object->FloatAttribute("width") / tileWidth;
             float height = object->FloatAttribute("height") / tileHeight;
 
-            if (name) worldObject->name = name;
-            if (type) worldObject->type = type;
+            if (name) worldObject->setData("name", name);
+            if (type) worldObject->setData("type", type);
 
+            Hitbox hitbox;
             tinyxml2::XMLElement* polygon = object->FirstChildElement("polygon");
             tinyxml2::XMLElement* ellipse = object->FirstChildElement("ellipse");
             tinyxml2::XMLElement* point = object->FirstChildElement("point");
+
             if (polygon)
             {
                 std::vector<Vector2f> polygonPoints;
@@ -398,7 +400,7 @@ void World::loadTilemap(const std::string& tilemapName)
                 }
                 for (const Vector2f& polygonPoint : polygonPoints)
                 {
-                    worldObject->hitBox.hitBoxPoints.push_back(polygonPoint + Vector2f(x, y));
+                    hitbox.hitBoxPoints.push_back(polygonPoint + Vector2f(x, y));
                 }
             }
             else if (ellipse)
@@ -411,11 +413,12 @@ void World::loadTilemap(const std::string& tilemapName)
             }
             else
             {
-                worldObject->hitBox.hitBoxPoints.push_back(Vector2f(x, y));
-                worldObject->hitBox.hitBoxPoints.push_back(Vector2f(x, y + height));
-                worldObject->hitBox.hitBoxPoints.push_back(Vector2f(x + width, y));
-                worldObject->hitBox.hitBoxPoints.push_back(Vector2f(x + width, y + height));
+                hitbox.hitBoxPoints.push_back(Vector2f(x, y));
+                hitbox.hitBoxPoints.push_back(Vector2f(x, y + height));
+                hitbox.hitBoxPoints.push_back(Vector2f(x + width, y));
+                hitbox.hitBoxPoints.push_back(Vector2f(x + width, y + height));
             }
+            worldObject->setHitbox(hitbox);
             worldObjects.push_back(worldObject);
         }
     }
@@ -432,8 +435,8 @@ void World::onUnLoad() {}
 
 World::~World()
 {
-    for (Entity* entity : entities)
+    for (WorldObject* worldObject : worldObjects)
     {
-        delete entity;
+        delete worldObject;
     }
 }

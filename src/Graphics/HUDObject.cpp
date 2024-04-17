@@ -34,20 +34,20 @@ Vector2i HUDObject::getSize() const
 
 bool HUDObject::isCursorOnMe() const
 {
-    Hitbox hitBox;
+    Hitbox hitbox;
     Hitbox cursor;
     Intersection intersection;
     Vector2i center = position + scale / 2;
     Vector2i cursorPosition = Mouse::getMouseScreenPosition();
 
-    hitBox.hitBoxPoints.push_back(Vector2f(center.x - (scale.x / 2 * cosf(rotation * M_PI / 180) - (scale.y / 2 * sinf(rotation * M_PI / 180))), center.y - (scale.x / 2 * sinf(rotation * M_PI / 180) + (scale.y / 2 * cosf(rotation * M_PI / 180)))));
-    hitBox.hitBoxPoints.push_back(Vector2f(center.x + (scale.x / 2 * cosf(rotation * M_PI / 180) - (scale.y / 2 * sinf(rotation * M_PI / 180))), center.y + (scale.x / 2 * sinf(rotation * M_PI / 180) + (scale.y / 2 * cosf(rotation * M_PI / 180)))));
-    hitBox.hitBoxPoints.push_back(Vector2f(center.x - (scale.x / 2 * cosf(rotation * M_PI / 180) + (scale.y / 2 * sinf(rotation * M_PI / 180))), center.y - (scale.x / 2 * sinf(rotation * M_PI / 180) - (scale.y / 2 * cosf(rotation * M_PI / 180)))));
-    hitBox.hitBoxPoints.push_back(Vector2f(center.x + (scale.x / 2 * cosf(rotation * M_PI / 180) + (scale.y / 2 * sinf(rotation * M_PI / 180))), center.y + (scale.x / 2 * sinf(rotation * M_PI / 180) - (scale.y / 2 * cosf(rotation * M_PI / 180)))));
+    hitbox.hitBoxPoints.push_back(Vector2f(center.x - (scale.x / 2 * cosf(rotation * M_PI / 180) - (scale.y / 2 * sinf(rotation * M_PI / 180))), center.y - (scale.x / 2 * sinf(rotation * M_PI / 180) + (scale.y / 2 * cosf(rotation * M_PI / 180)))));
+    hitbox.hitBoxPoints.push_back(Vector2f(center.x + (scale.x / 2 * cosf(rotation * M_PI / 180) - (scale.y / 2 * sinf(rotation * M_PI / 180))), center.y + (scale.x / 2 * sinf(rotation * M_PI / 180) + (scale.y / 2 * cosf(rotation * M_PI / 180)))));
+    hitbox.hitBoxPoints.push_back(Vector2f(center.x - (scale.x / 2 * cosf(rotation * M_PI / 180) + (scale.y / 2 * sinf(rotation * M_PI / 180))), center.y - (scale.x / 2 * sinf(rotation * M_PI / 180) - (scale.y / 2 * cosf(rotation * M_PI / 180)))));
+    hitbox.hitBoxPoints.push_back(Vector2f(center.x + (scale.x / 2 * cosf(rotation * M_PI / 180) + (scale.y / 2 * sinf(rotation * M_PI / 180))), center.y + (scale.x / 2 * sinf(rotation * M_PI / 180) - (scale.y / 2 * cosf(rotation * M_PI / 180)))));
 
     cursor.hitBoxPoints.push_back(Vector2f(cursorPosition.x, cursorPosition.y));
     
-    return Collision::checkCollision(hitBox, cursor, &intersection);
+    return Collision::checkCollision(hitbox, cursor, &intersection);
 }
 
 void HUDObject::setPosition(int x, int y)

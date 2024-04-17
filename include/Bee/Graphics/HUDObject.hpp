@@ -12,10 +12,6 @@
 
 class Sprite;
 
-/**
- * @brief The HUDObject class.
- * 
- */
 class HUDObject
 {
 public:
