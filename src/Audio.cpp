@@ -1,6 +1,5 @@
 #include "Audio.hpp"
 
-#include <iostream>
 #include <unordered_map>
 #include <string>
 
@@ -29,8 +28,11 @@ void Audio::init()
     Log::write("Audio", LogLevel::Info, "Initialized audio engine");
 }
 
-void Audio::loadMusic(std::string musicName)
+void Audio::loadMusic(const std::string& musicName)
 {
+    if (musicMap.find(musicName) != musicMap.end())
+        return;
+
     std::string fileName = "./assets/Music/" + musicName + ".ogg";
     Mix_Music* music = Mix_LoadMUS(fileName.c_str());
     if (music == nullptr)
@@ -44,8 +46,9 @@ void Audio::loadMusic(std::string musicName)
     }
 }
 
-void Audio::playMusic(std::string musicName, int loops)
+void Audio::playMusic(const std::string& musicName, int loops)
 {
+    loadMusic(musicName);
     Mix_PlayMusic(musicMap.at(musicName), loops);
 }
 
@@ -54,8 +57,11 @@ void Audio::stopMusic()
     Mix_HaltMusic();
 }
 
-void Audio::loadSound(std::string soundName)
+void Audio::loadSound(const std::string& soundName)
 {
+    if (soundMap.find(soundName) != soundMap.end())
+        return;
+
     std::string fileName = "./assets/SFX/" + soundName + ".ogg";
     Mix_Chunk* sound = Mix_LoadWAV(fileName.c_str());
     if (sound == nullptr)
@@ -69,8 +75,10 @@ void Audio::loadSound(std::string soundName)
     }
 }
 
-int Audio::playSound(std::string soundName)
+int Audio::playSound(const std::string& soundName)
 {
+    loadSound(soundName);
+
     int channel = Mix_PlayChannel(-1, soundMap.at(soundName), 0);
     if (channel == -1)
     {
@@ -91,6 +99,7 @@ void Audio::unloadAllMusic()
         Log::write("Audio", LogLevel::Info, "Unloaded %s music", musicName.c_str());
         Mix_FreeMusic(music);
     }
+    musicMap.clear();
 }
 
 void Audio::unloadAllSounds()
@@ -100,6 +109,7 @@ void Audio::unloadAllSounds()
         Log::write("Audio", LogLevel::Info, "Unloaded %s sound", soundName.c_str());
         Mix_FreeChunk(sound);
     }
+    soundMap.clear();
 }
 
 void Audio::cleanUp()

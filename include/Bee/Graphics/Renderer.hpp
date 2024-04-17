@@ -9,6 +9,12 @@
 #include "Bee/Math/Vector2f.hpp"
 #include "Bee/Math/Vector2i.hpp"
 
+/**
+ * @namespace Renderer
+ * 
+ * @brief All the renderer and window related functions.
+ * 
+ */
 namespace Renderer
 {
     /**
@@ -52,16 +58,16 @@ namespace Renderer
     Vector2i getWindowSize();
 
     /**
-     * @brief Set the icon for the window.
+     * @brief Set the icon of the window.
      * 
      * @param path a file path from where to load the image from
      */
     void setWindowIcon(const std::string& path);
 
     /**
-     * @brief Set the title for the Window
+     * @brief Set the title of the Window
      * 
-     * @param title the title for the window
+     * @param title the title of the window
      */
     void setWindowTitle(const std::string& title);
 

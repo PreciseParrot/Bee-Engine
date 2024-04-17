@@ -155,12 +155,10 @@ SDL_Texture* Renderer::createTexture(SDL_Surface* surface)
 
 SDL_Texture* Renderer::loadTexture(const std::string& textureName, const std::string& path)
 {
-    SDL_Texture* texture = nullptr;
-
     if (textureMap.find(textureName) != textureMap.end())
         return textureMap[textureName];
     
-    texture = IMG_LoadTexture(renderer, path.c_str());
+    SDL_Texture* texture = IMG_LoadTexture(renderer, path.c_str());
     if (texture == nullptr)
     {
         Log::write("Renderer", LogLevel::Warning, "Can't load texture: %s", SDL_GetError());

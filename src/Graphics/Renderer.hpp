@@ -13,6 +13,12 @@
 #include "Math/Vector2f.hpp"
 #include "Math/Vector2i.hpp"
 
+/**
+ * @namespace Renderer
+ * 
+ * @brief All the renderer and window related functions.
+ * 
+ */
 namespace Renderer
 {
     /*Internal functions start here*/
