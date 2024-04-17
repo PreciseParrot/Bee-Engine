@@ -49,7 +49,7 @@ void Renderer::init(int winWidth, int winHeight)
         exit(EXIT_FAILURE);
     }
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_ACCELERATED);
     if (renderer == nullptr)
     {
         Log::write("Renderer", LogLevel::Error, "Error creating renderer: %s", SDL_GetError());
@@ -109,13 +109,13 @@ void Renderer::update()
 
 void Renderer::drawTile(const Vector2i& position, SDL_Rect* srcRect, SDL_Texture* texture)
 {
-    SDL_Rect dstRect;
-    dstRect.x = ceilf((position.x - cameraPosition.x + viewPortWidth / 2) * screenWidth / viewPortWidth);
-    dstRect.y = ceilf((position.y - cameraPosition.y + viewPortHeight / 2) * screenHeight / viewPortHeight);
-    dstRect.h = ceilf(screenHeight / viewPortHeight);
-    dstRect.w = ceilf(screenWidth / viewPortWidth);
+    SDL_FRect dstRect;
+    dstRect.x = (position.x - cameraPosition.x + viewPortWidth / 2) * screenWidth / viewPortWidth;
+    dstRect.y = (position.y - cameraPosition.y + viewPortHeight / 2) * screenHeight / viewPortHeight;
+    dstRect.h = screenHeight / viewPortHeight;
+    dstRect.w = screenWidth / viewPortWidth;
 
-    SDL_RenderCopy(renderer, texture, srcRect, &dstRect);
+    SDL_RenderCopyF(renderer, texture, srcRect, &dstRect);
 }
 
 void Renderer::drawHUD(const Vector2i& position, const Vector2i& scale, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, float rotation)
@@ -135,17 +135,17 @@ void Renderer::drawHUD(const Vector2i& position, const Vector2i& scale, SDL_Rect
 
 void Renderer::drawSprite(const Vector2f& position, const Vector2f& scale, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, float rotation)
 {
-    SDL_Rect dstRect;
+    SDL_FRect dstRect;
     dstRect.x = (position.x - scale.x / 2 - cameraPosition.x + viewPortWidth / 2) * screenWidth / viewPortWidth;
     dstRect.y = (position.y - scale.y / 2 - cameraPosition.y + viewPortHeight / 2) * screenHeight / viewPortHeight;
-    dstRect.w = ceilf(screenWidth / viewPortWidth * scale.x);
-    dstRect.h = ceilf(screenHeight / viewPortHeight * scale.y);
+    dstRect.w = screenWidth / viewPortWidth * scale.x;
+    dstRect.h = screenHeight / viewPortHeight * scale.y;
 
-    SDL_Point centerPoint;
+    SDL_FPoint centerPoint;
     centerPoint.x = dstRect.w * rotationCenter.x;
     centerPoint.y = dstRect.h * rotationCenter.y;
 
-    SDL_RenderCopyEx(renderer, texture, srcRect, &dstRect, rotation, &centerPoint, SDL_FLIP_NONE);
+    SDL_RenderCopyExF(renderer, texture, srcRect, &dstRect, rotation, &centerPoint, SDL_FLIP_NONE);
 }
 
 SDL_Texture* Renderer::createTexture(SDL_Surface* surface)

@@ -11,12 +11,12 @@
 #include "World/World.hpp"
 
 static bool gameRunning = true;
-static float deltaTime;
-static uint32_t currentTime;
+static float deltaTime = 0;
+static uint32_t currentTime = 0;
 static Uint64 loopTicks = 0;
 static Uint64 loopTicksLast = 0;
-static World* nextWorld;
-static World* currentWorld;
+static World* nextWorld = nullptr;
+static World* currentWorld = nullptr;
 
 void Bee::init(int windowWidth, int windowHeight)
 {
@@ -26,9 +26,6 @@ void Bee::init(int windowWidth, int windowHeight)
         exit(EXIT_FAILURE);
     }
     Log::write("Engine", LogLevel::Info, "Initialized SDL2");
-
-    currentWorld = nullptr;
-    nextWorld = nullptr;
 
     Audio::init();
     Controller::init();
