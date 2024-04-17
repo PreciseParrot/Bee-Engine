@@ -49,7 +49,7 @@ void Renderer::init(int winWidth, int winHeight)
         exit(EXIT_FAILURE);
     }
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == nullptr)
     {
         Log::write("Renderer", LogLevel::Error, "Error creating renderer: %s", SDL_GetError());
@@ -101,6 +101,7 @@ void Renderer::update()
     dstRect.h = screenHeight;
 
     SDL_SetRenderTarget(renderer, NULL);
+    SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, targetTexture, NULL, &dstRect);
     SDL_RenderPresent(renderer);
     SDL_SetRenderTarget(renderer, targetTexture);
@@ -112,8 +113,8 @@ void Renderer::drawTile(const Vector2i& position, SDL_Rect* srcRect, SDL_Texture
     SDL_FRect dstRect;
     dstRect.x = (position.x - cameraPosition.x + viewPortWidth / 2) * screenWidth / viewPortWidth;
     dstRect.y = (position.y - cameraPosition.y + viewPortHeight / 2) * screenHeight / viewPortHeight;
-    dstRect.h = screenHeight / viewPortHeight;
-    dstRect.w = screenWidth / viewPortWidth;
+    dstRect.h = screenHeight / viewPortHeight + 0.02f;
+    dstRect.w = screenWidth / viewPortWidth + 0.02f;
 
     SDL_RenderCopyF(renderer, texture, srcRect, &dstRect);
 }
@@ -281,6 +282,7 @@ void Renderer::setViewportSize(const Vector2f& viewportSize)
 
 void Renderer::cleanUp()
 {
+    unloadAllFonts();
     unloadAllTextures();
     SDL_DestroyTexture(targetTexture);
     SDL_DestroyRenderer(renderer);

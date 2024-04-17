@@ -19,6 +19,7 @@ namespace Bee
     void init(int windowWidth, int windowHeight);
     void run();
     void cleanUp();
+    void stop();
 
     /**
      * @brief Get the current world.

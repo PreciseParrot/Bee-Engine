@@ -10,7 +10,7 @@
 #include "Input/Mouse.hpp"
 #include "World/World.hpp"
 
-static bool gameRunning = true;
+static bool gameRunning = false;
 static float deltaTime = 0;
 static uint32_t currentTime = 0;
 static Uint64 loopTicks = 0;
@@ -20,6 +20,8 @@ static World* currentWorld = nullptr;
 
 void Bee::init(int windowWidth, int windowHeight)
 {
+    atexit(Bee::cleanUp);
+
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
         Log::write("Engine", LogLevel::Error, "Error initializing SDL2: %s", SDL_GetError());
@@ -114,6 +116,7 @@ void Bee::run()
 
     currentWorld = nextWorld;
     nextWorld = nullptr;
+    gameRunning = true;
     
     if (!currentWorld->isInitialized())
     {
@@ -127,6 +130,11 @@ void Bee::run()
         mainLoop();
     }
     currentWorld->onUnLoad();
+}
+
+void Bee::stop()
+{
+    gameRunning = false;
 }
 
 World* Bee::getCurrentWorld()
@@ -152,7 +160,6 @@ void Bee::setWorld(World* world)
 void Bee::cleanUp()
 {
     Audio::cleanUp();
-    Renderer::unloadAllFonts();
     Renderer::cleanUp();
     Controller::cleanUp();
     SDL_Quit();
