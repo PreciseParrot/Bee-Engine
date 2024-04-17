@@ -2,11 +2,11 @@
 
 #include <string>
 
-#include "Collision/HitBox.hpp"
+#include "Collision/Hitbox.hpp"
 
 struct WorldObject
 {
     std::string name;
     std::string type;
-    HitBox hitBox;
+    Hitbox hitBox;
 };

@@ -1,10 +1,7 @@
 #include "Sprite.hpp"
 
 #include <fstream>
-#include <iostream>
-#include <map>
 #include <string>
-#include <stdint.h>
 
 #include <nlohmann/json.hpp>
 #include <SDL2/SDL.h>
@@ -18,7 +15,7 @@
 
 Sprite::Sprite() {}
 
-void Sprite::loadSpriteSheet(std::string spriteName)
+void Sprite::setSprite(const std::string& spriteName)
 {
     std::string jsonFilePath = "./assets/Sprites/" + spriteName + ".json";
     std::string pngFilePath = "./assets/Sprites/" + spriteName + ".png";
@@ -73,7 +70,7 @@ void Sprite::loadSpriteSheet(std::string spriteName)
     }
 }
 
-void Sprite::setAnimation(std::string animationName)
+void Sprite::setAnimation(const std::string& animationName)
 {
     if (currentAnimationName == animationName) return;
 
@@ -99,12 +96,12 @@ void Sprite::setAnimation(std::string animationName)
     currentAnimationName = animationName;
 }
 
-void Sprite::setFont(std::string fontName, int size)
+void Sprite::setFont(const std::string& fontName, int size)
 {
     font = Renderer::loadFont(fontName, size);
 }
 
-void Sprite::setText(std::string text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+void Sprite::setText(const std::string& text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
 {
     if (this->text == text) return;
 

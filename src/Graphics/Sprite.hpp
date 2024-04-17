@@ -15,10 +15,10 @@ class Sprite
 {
 public:
     Sprite();
-    void loadSpriteSheet(std::string spriteName);
-    void setAnimation(std::string animationName);
-    void setFont(std::string fontName, int size);
-    void setText(std::string text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+    void setSprite(const std::string& spriteName);
+    void setAnimation(const std::string& animationName);
+    void setFont(const std::string& fontName, int size);
+    void setText(const std::string& text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
     Vector2i getTextureSize();
     void updateInternalEntity(const Vector2f& position, const Vector2f& scale, const Vector2f& rotationCenter, float rotation);
     void updateInternalHUD(const Vector2i& position, const Vector2i& scale, const Vector2f& rotationCenter, float rotation);

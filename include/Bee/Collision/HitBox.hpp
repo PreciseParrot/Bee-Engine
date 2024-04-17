@@ -4,7 +4,7 @@
 
 #include "Bee/Math/Vector2f.hpp"
 
-struct HitBox
+struct Hitbox
 {
     std::vector<Vector2f> hitBoxPoints;
 };

@@ -8,5 +8,5 @@ struct WorldObject
 {
     std::string name;
     std::string type;
-    HitBox hitBox;
+    Hitbox hitBox;
 };

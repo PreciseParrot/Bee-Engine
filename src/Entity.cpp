@@ -24,9 +24,9 @@ void Entity::updateInternal()
     sprite->updateInternalEntity(position, scale, rotationCenter, rotation);
 }
 
-HitBox Entity::getHitBox() const
+Hitbox Entity::getHitBox() const
 {
-    HitBox hitBox;
+    Hitbox hitBox;
 
     hitBox.hitBoxPoints.push_back(Vector2f(position.x - (hitboxScale.x / 2 * cosf(rotation * M_PI / 180) - (hitboxScale.y / 2 * sinf(rotation * M_PI / 180))), position.y - (hitboxScale.x / 2 * sinf(rotation * M_PI / 180) + (hitboxScale.y / 2 * cosf(rotation * M_PI / 180)))));
     hitBox.hitBoxPoints.push_back(Vector2f(position.x + (hitboxScale.x / 2 * cosf(rotation * M_PI / 180) - (hitboxScale.y / 2 * sinf(rotation * M_PI / 180))), position.y + (hitboxScale.x / 2 * sinf(rotation * M_PI / 180) + (hitboxScale.y / 2 * cosf(rotation * M_PI / 180)))));
@@ -58,15 +58,15 @@ float Entity::getRotation() const
 bool Entity::isCursorOnMe() const
 {
     Intersection intersection;
-    HitBox hitBox;
+    Hitbox hitBox;
     hitBox.hitBoxPoints.push_back(Mouse::getMouseWorldPosition());
 
     return Collision::checkCollision(getHitBox(), hitBox, &intersection);
 }
 
-void Entity::loadSpriteSheet(std::string spriteName)
+void Entity::setSprite(const std::string& spriteName)
 {
-    sprite->loadSpriteSheet(spriteName);
+    sprite->setSprite(spriteName);
     setScale(1);
     setHitboxScale(1);
 }
@@ -76,7 +76,7 @@ void Entity::moveOffset(const Vector2f& offset)
     position += offset;
 }
 
-void Entity::setName(std::string name)
+void Entity::setName(const std::string& name)
 {
     this->name = name;
 }
@@ -110,17 +110,17 @@ void Entity::setScale(float x, float y)
     scale.y = y;
 }
 
-void Entity::setScale(const Vector2f& scale)
+void Entity::setScale(const Vector2f& size)
 {
-    this->scale = scale;
+    scale = size;
 }
 
-void Entity::setFont(std::string fontName, int size)
+void Entity::setFont(const std::string& fontName, int size)
 {
     sprite->setFont(fontName, size);
 }
 
-void Entity::setText(std::string text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+void Entity::setText(const std::string& text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
 {
     sprite->setText(text, red, green, blue, alpha);
     setScale(1);
@@ -134,18 +134,18 @@ void Entity::setHitboxScale(float scale)
     this->hitboxScale.y = scale;
 }
 
-void Entity::setHitboxScale(float x, float y)
+void Entity::setHitboxScale(float width, float height)
 {
-    hitboxScale.x = x;
-    hitboxScale.y = y;
+    hitboxScale.x = width;
+    hitboxScale.y = height;
 }
 
-void Entity::setHitboxScale(const Vector2f& scale)
+void Entity::setHitboxScale(const Vector2f& size)
 {
-    hitboxScale = scale;
+    hitboxScale = size;
 }
 
-void Entity::setAnimation(std::string animationName)
+void Entity::setAnimation(const std::string& animationName)
 {
     sprite->setAnimation(animationName);
 }

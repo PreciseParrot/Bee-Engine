@@ -37,7 +37,7 @@ Vector2f tripleProduct(const Vector2f& in1, const Vector2f& in2, const Vector2f&
     return Vector2f(out2x, out2y);
 }
 
-Vector2f getSupportPoint(const HitBox& hitBox, const Vector2f& directionVector)
+Vector2f getSupportPoint(const Hitbox& hitBox, const Vector2f& directionVector)
 {
     float largestDotProduct = -FLT_MAX;
     Vector2f supportPoint;
@@ -54,12 +54,12 @@ Vector2f getSupportPoint(const HitBox& hitBox, const Vector2f& directionVector)
     return supportPoint;
 }
 
-Vector2f getMinkowskiPoint(const HitBox& hitBox1, const HitBox& hitBox2, const Vector2f& directionVector)
+Vector2f getMinkowskiPoint(const Hitbox& hitBox1, const Hitbox& hitBox2, const Vector2f& directionVector)
 {
     return getSupportPoint(hitBox1, directionVector) - getSupportPoint(hitBox2, directionVector * -1);
 }
 
-Vector2f expandingPolytopeAlgorithm(const std::vector<Vector2f>& simplex, const HitBox& hitBox1, const HitBox& hitBox2)
+Vector2f expandingPolytopeAlgorithm(const std::vector<Vector2f>& simplex, const Hitbox& hitBox1, const Hitbox& hitBox2)
 {
     int minIndex = 0;
     float minDistance = FLT_MAX;
@@ -111,7 +111,7 @@ Vector2f expandingPolytopeAlgorithm(const std::vector<Vector2f>& simplex, const 
     return minNormal * minDistance * -1;
 }
 
-bool Collision::checkCollision(const HitBox& hitBox1, const HitBox& hitBox2, Intersection* intersection)
+bool Collision::checkCollision(const Hitbox& hitBox1, const Hitbox& hitBox2, Intersection* intersection)
 {
     std::vector<Vector2f> simplex;
 

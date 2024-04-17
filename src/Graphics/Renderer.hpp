@@ -15,7 +15,7 @@
 
 namespace Renderer
 {
-    /*Internal only functions start here*/
+    /*Internal functions start here*/
 
     void init(int windowWidth, int windowHeight);
     void update();
@@ -27,7 +27,7 @@ namespace Renderer
     TTF_Font* loadFont(const std::string& font, int size);
     void cleanUp();
 
-    /*Internal only functions end here*/
+    /*Internal functions end here*/
 
 
     /**
@@ -71,16 +71,16 @@ namespace Renderer
     Vector2i getWindowSize();
 
     /**
-     * @brief Set the icon for the window.
+     * @brief Set the icon of the window.
      * 
      * @param path a file path from where to load the image from
      */
     void setWindowIcon(const std::string& path);
 
     /**
-     * @brief Set the title for the Window
+     * @brief Set the title of the Window
      * 
-     * @param title the title for the window
+     * @param title the title of the window
      */
     void setWindowTitle(const std::string& title);
 

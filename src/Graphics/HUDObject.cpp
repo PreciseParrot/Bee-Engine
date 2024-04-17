@@ -23,8 +23,8 @@ void HUDObject::setAnimation(const std::string& animationName)
 
 void HUDObject::setSprite(const std::string& spriteName) 
 {
-    sprite->loadSpriteSheet(spriteName);
-    setScale(1);
+    sprite->setSprite(spriteName);
+    setSize(1);
 }
 
 Vector2i HUDObject::getSize() const
@@ -34,8 +34,8 @@ Vector2i HUDObject::getSize() const
 
 bool HUDObject::isCursorOnMe() const
 {
-    HitBox hitBox;
-    HitBox cursor;
+    Hitbox hitBox;
+    Hitbox cursor;
     Intersection intersection;
     Vector2i center = position + scale / 2;
     Vector2i cursorPosition = Mouse::getMouseScreenPosition();
@@ -61,19 +61,19 @@ void HUDObject::setPosition(const Vector2i& position)
     this->position = position;
 }
 
-void HUDObject::setScale(float scale)
+void HUDObject::setSize(float scale)
 {
     Vector2i textureSize = sprite->getTextureSize();
     this->scale = textureSize * scale;
 }
 
-void HUDObject::setScale(int width, int height)
+void HUDObject::setSize(int width, int height)
 {
     scale.x = width;
     scale.y = height;
 }
 
-void HUDObject::setScale(const Vector2i& scale)
+void HUDObject::setSize(const Vector2i& scale)
 {
     this->scale = scale;
 }
@@ -86,7 +86,7 @@ void HUDObject::setFont(const std::string& fontName, int size)
 void HUDObject::setText(const std::string& text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
 {
     sprite->setText(text, red, green, blue, alpha);
-    setScale(1);
+    setSize(1);
 }
 
 HUDObject::~HUDObject()

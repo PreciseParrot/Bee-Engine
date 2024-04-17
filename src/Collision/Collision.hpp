@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Collision/HitBox.hpp"
+#include "Collision/Hitbox.hpp"
 #include "Collision/Intersection.hpp"
 
 namespace Collision
 {
-    bool checkCollision(const HitBox& hitBox1, const HitBox& hitBox2, Intersection* intersection);
+    bool checkCollision(const Hitbox& hitBox1, const Hitbox& hitBox2, Intersection* intersection);
 }
