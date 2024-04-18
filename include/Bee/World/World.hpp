@@ -18,23 +18,23 @@ class World
 {
 public:
     /**
-     * @brief Construct a new World object
+     * @brief Default constructor.
      * 
      */
     World();
 
     /**
-     * @brief Add an Entity to the world.
+     * @brief Add an entity to the world.
      * 
      * @param entity the pointer to the entity
      */
     void addEntity(Entity* entity);
 
     /**
-     * @brief Remove an Entity from the world.
+     * @brief Remove an entity from the world.
      * 
      * @param entity the pointer to the entity
-     * @return the pointer to the Entity if the Entity could be removed, NULL otherwise.
+     * @return the pointer to the entity if the entity could be removed, NULL otherwise.
      */
     Entity* removeEntity(Entity* entity);
 
@@ -45,22 +45,22 @@ public:
     void deleteAllEntities();
 
     /**
-     * @brief Add a HUDObject to the world.
+     * @brief Add a HUD object to the world.
      * 
-     * @param hudObject the pointer to the HUDObject
+     * @param hudObject the pointer to the HUD object
      */
     void addHUDObject(HUDObject* hudObject);
 
     /**
-     * @brief Remove a HUDObject from the world.
+     * @brief Remove a HUD object from the world.
      * 
-     * @param hudObject the pointer to the HUDObject
-     * @return the pointer to the HUDObject if the HUDObject could be removed, NULL otherwise. 
+     * @param hudObject the pointer to the HUD object
+     * @return the pointer to the HUD object if the HUD object could be removed, NULL otherwise. 
      */
     HUDObject* removeHUDObject(HUDObject* hudObject);
 
     /**
-     * @brief Removes all HUDObjects from the world and deletes them.
+     * @brief Removes all HUD objects from the world and deletes them.
      * 
      */
     void deleteAllHUDObjects();
@@ -82,7 +82,7 @@ public:
     std::string getTileData(const Vector2f& position, const std::string& index) const;
 
     /**
-     * @brief Get all the intersection with entities and world objects of an entity.
+     * @brief Get all intersections with entities and world objects of an entity.
      * 
      * @param entity the pointer of the entity
      * @return all intersections of the entity.
@@ -90,31 +90,31 @@ public:
     std::vector<Intersection> getIntersections(const Entity* entity) const;
 
     /**
-     * @brief The init function has to be implemented in every inhereting class. This function is called when the world is initialized.
+     * @brief The init function can be implemented in inhereting classes. This function is called when the world is initialized.
      * 
      */
     virtual void init();
 
     /**
-     * @brief The update function has to be implemented in every inhereting class. This function is called once every frame.
+     * @brief The update function can be implemented in inhereting classes. This function is called once every frame.
      * 
      */
     virtual void update();
 
     /**
-     * @brief The onLoad function has to be implemented in every inhereting class. This function is called everytime the world is loaded.
+     * @brief The onLoad function can be implemented in inhereting classes. This function is called everytime the world is loaded.
      * 
      */
     virtual void onLoad();
 
     /**
-     * @brief The onUnload function has to be implemented in every inhereting class. This function is called everytime the world is unloaded.
+     * @brief The onUnload function can be implemented in inhereting classes. This function is called everytime the world is unloaded.
      * 
      */
     virtual void onUnLoad();
 
     /**
-     * @brief The destructor function can to be implemented in inhereting classes.
+     * @brief The destructor can be implemented in inhereting classes.
      * 
      */
     virtual ~World();

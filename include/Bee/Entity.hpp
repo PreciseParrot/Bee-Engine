@@ -170,7 +170,7 @@ public:
     void setHitboxScale(const Vector2f& size);
 
     /**
-     * @brief The update function has to be implemented in every inhereting class. This function is called once every frame.
+     * @brief The update function can be implemented in inhereting classes. This function is called once every frame.
      * 
      */
     virtual void update();

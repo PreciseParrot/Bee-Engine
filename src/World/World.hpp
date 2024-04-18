@@ -96,31 +96,31 @@ public:
     std::vector<Intersection> getIntersections(const Entity* entity) const;
 
     /**
-     * @brief The init function has to be implemented in every inhereting class. This function is called when the world is initialized.
+     * @brief The init function can be implemented in inhereting classes. This function is called when the world is initialized.
      * 
      */
     virtual void init();
 
     /**
-     * @brief The update function has to be implemented in every inhereting class. This function is called once every frame.
+     * @brief The update function can be implemented in inhereting classes. This function is called once every frame.
      * 
      */
     virtual void update();
 
     /**
-     * @brief The onLoad function has to be implemented in every inhereting class. This function is called everytime the world is loaded.
+     * @brief The onLoad function can be implemented in inhereting classes. This function is called everytime the world is loaded.
      * 
      */
     virtual void onLoad();
 
     /**
-     * @brief The onUnload function has to be implemented in every inhereting class. This function is called everytime the world is unloaded.
+     * @brief The onUnload function can be implemented in inhereting classes. This function is called everytime the world is unloaded.
      * 
      */
     virtual void onUnLoad();
 
     /**
-     * @brief The destructor can to be implemented in inhereting classes.
+     * @brief The destructor can be implemented in inhereting classes.
      * 
      */
     virtual ~World();
