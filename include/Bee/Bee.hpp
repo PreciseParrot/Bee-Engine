@@ -17,6 +17,7 @@
 namespace Bee
 {
     void init(int windowWidth, int windowHeight);
+    void onInit(void (*func)());
     void run();
     void cleanUp();
     void stop();

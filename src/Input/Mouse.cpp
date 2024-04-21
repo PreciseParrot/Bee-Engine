@@ -24,15 +24,16 @@ void Mouse::handleInput(SDL_Event* event)
     bool buttonPressed = false;
 
     if (event->type == SDL_MOUSEBUTTONDOWN) buttonPressed = true;
-    if (event->type == SDL_MOUSEMOTION)
-    {
-        Vector2i screenDifference = Renderer::getWindowSize() - Renderer::getScreenSize();
-        mousePositon.x = event->motion.x - screenDifference.x / 2;
-        mousePositon.y = event->motion.y - screenDifference.y / 2;
-    }
 
     MouseButton buttonIndex = mouseMap[event->button.button];
     buttonsPressed[static_cast<int>(buttonIndex)] = buttonPressed;
+}
+
+void Mouse::handleMovement(SDL_Event* event)
+{
+    Vector2i screenDifference = Renderer::getWindowSize() - Renderer::getScreenSize();
+    mousePositon.x = event->motion.x - screenDifference.x / 2;
+    mousePositon.y = event->motion.y - screenDifference.y / 2;
 }
 
 void Mouse::update()

@@ -25,6 +25,7 @@ namespace Renderer
 
     void init(int windowWidth, int windowHeight);
     void update();
+    void handleEvent(SDL_Event* event);
     void drawTile(const Vector2i& position, SDL_Rect* srcRect, SDL_Texture* texture);
     void drawHUD(const Vector2i& position, const Vector2i& scale, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, float rotation);
     void drawSprite(const Vector2f& position, const Vector2f& scale, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, float rotation);

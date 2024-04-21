@@ -5,6 +5,8 @@
 
 #include <SDL2/SDL.h>
 
+#include "Log.hpp"
+
 static std::unordered_map<SDL_GameControllerButton, ControllerButton> controllerMap;
 static std::bitset<32> buttonsPressed;
 static std::bitset<32> buttonsPressedOld;
@@ -13,6 +15,12 @@ static Vector2f controllerDeadzone(0.1f, 0.1f);
 
 void Controller::init()
 {
+    if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0)
+    {
+        Log::write("Input", LogLevel::Error, "Error initializing controller subsystem: %s", SDL_GetError());
+        exit(EXIT_FAILURE);
+    }
+
     controllerMap.insert({SDL_CONTROLLER_BUTTON_INVALID, ControllerButton::unknown});
     controllerMap.insert({SDL_CONTROLLER_BUTTON_A, ControllerButton::a});
     controllerMap.insert({SDL_CONTROLLER_BUTTON_B, ControllerButton::b});
@@ -36,6 +44,8 @@ void Controller::init()
             controller = SDL_GameControllerOpen(i);
         }
     }
+
+    Log::write("Input", LogLevel::Info, "Initialized input");
 }
 
 bool Controller::isButtonDown(ControllerButton button)

@@ -30,6 +30,12 @@ static Vector2f cameraPosition;
 
 void Renderer::init(int winWidth, int winHeight)
 {
+    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
+    {
+        Log::write("Renderer", LogLevel::Error, "Error initializing video system: %s", SDL_GetError());
+        exit(EXIT_FAILURE);
+    }
+
     if (IMG_Init(IMG_INIT_PNG) == 0)
     {
         Log::write("Renderer", LogLevel::Error, "Error initializing SDL2_image: %s", SDL_GetError());
@@ -63,15 +69,26 @@ void Renderer::init(int winWidth, int winHeight)
 
 void Renderer::update()
 {
-    int width;
-    int height;
+    SDL_Rect dstRect;
+    dstRect.x = (windowWidth - screenWidth) / 2;
+    dstRect.y = (windowHeight - screenHeight) / 2;
+    dstRect.w = screenWidth;
+    dstRect.h = screenHeight;
 
-    SDL_GetWindowSize(window, &width, &height);
+    SDL_SetRenderTarget(renderer, NULL);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, targetTexture, NULL, &dstRect);
+    SDL_RenderPresent(renderer);
+    SDL_SetRenderTarget(renderer, targetTexture);
+    SDL_RenderClear(renderer);
+}
 
-    if (width != windowWidth || height != windowHeight)
+void Renderer::handleEvent(SDL_Event* event)
+{
+    if (event->window.event == SDL_WINDOWEVENT_RESIZED)
     {
-        windowWidth = width;
-        windowHeight = height;
+        windowWidth = event->window.data1;
+        windowHeight = event->window.data2;
 
         float widthFactor = windowWidth / viewPortWidth;
         float heightFactor = windowHeight / viewPortHeight;
@@ -93,19 +110,6 @@ void Renderer::update()
         SDL_RenderClear(renderer);
         SDL_SetRenderTarget(renderer, targetTexture);
     }
-
-    SDL_Rect dstRect;
-    dstRect.x = (windowWidth - screenWidth) / 2;
-    dstRect.y = (windowHeight - screenHeight) / 2;
-    dstRect.w = screenWidth;
-    dstRect.h = screenHeight;
-
-    SDL_SetRenderTarget(renderer, NULL);
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, targetTexture, NULL, &dstRect);
-    SDL_RenderPresent(renderer);
-    SDL_SetRenderTarget(renderer, targetTexture);
-    SDL_RenderClear(renderer);
 }
 
 void Renderer::drawTile(const Vector2i& position, SDL_Rect* srcRect, SDL_Texture* texture)

@@ -13,6 +13,12 @@ static std::unordered_map<std::string, Mix_Chunk*> soundMap;
 
 void Audio::init()
 {
+    if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0)
+    {
+        Log::write("Audio", LogLevel::Error, "Error initializing audio system: %s", SDL_GetError());
+        exit(EXIT_FAILURE);
+    }
+
     if (Mix_Init(MIX_INIT_OPUS) == 0)
     {
         Log::write("Audio", LogLevel::Error, "Error initializing SDL2_mixer: %s", SDL_GetError());

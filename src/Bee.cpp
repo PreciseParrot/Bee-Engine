@@ -10,6 +10,8 @@
 #include "Input/Mouse.hpp"
 #include "World/World.hpp"
 
+static void (*initFunc)() = nullptr;
+static bool initialized = false;
 static bool gameRunning = false;
 static float deltaTime = 0;
 static uint32_t currentTime = 0;
@@ -22,17 +24,33 @@ void Bee::init(int windowWidth, int windowHeight)
 {
     atexit(Bee::cleanUp);
 
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+    if (SDL_Init(0) < 0)
     {
         Log::write("Engine", LogLevel::Error, "Error initializing SDL2: %s", SDL_GetError());
         exit(EXIT_FAILURE);
     }
     Log::write("Engine", LogLevel::Info, "Initialized SDL2");
 
+    Renderer::init(windowWidth, windowHeight);
     Audio::init();
     Controller::init();
     Keyboard::init();
-    Renderer::init(windowWidth, windowHeight);
+    Mouse::init();
+
+    SDL_Event event;
+    event.window.event = SDL_WINDOWEVENT_RESIZED;
+    event.window.data1 = windowWidth;
+    event.window.data2 = windowHeight;
+    Renderer::handleEvent(&event);
+
+    if (initFunc) (*initFunc)();
+
+    initialized = true;
+}
+
+void Bee::onInit(void (*func)())
+{
+    initFunc = func;
 }
 
 static void mainLoop()
@@ -88,7 +106,10 @@ static void mainLoop()
                 Mouse::handleInput(&event);
                 break;
             case SDL_MOUSEMOTION:
-                Mouse::handleInput(&event);
+                Mouse::handleMovement(&event);
+                break;
+            case SDL_WINDOWEVENT:
+                Renderer::handleEvent(&event);
                 break;
             case SDL_QUIT:
                 gameRunning = false;
@@ -108,6 +129,11 @@ static void mainLoop()
 
 void Bee::run()
 {
+    if (!initialized)
+    {
+        Bee::init(1280, 720);
+    }
+
     if (!nextWorld)
     {
         Log::write("Engine", LogLevel::Error, "No world loaded");

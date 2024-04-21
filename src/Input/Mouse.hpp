@@ -22,6 +22,7 @@ namespace Mouse
 
     void init();
     void handleInput(SDL_Event* event);
+    void handleMovement(SDL_Event* event);
     void update();
 
     /*Internal functions end here*/
