@@ -61,7 +61,7 @@ static void mainLoop()
 
     if (nextWorld)
     {
-        currentWorld->onUnLoad();
+        currentWorld->onUnload();
         currentWorld = nextWorld;
         nextWorld = nullptr;
 
@@ -155,7 +155,7 @@ void Bee::run()
     {
         mainLoop();
     }
-    currentWorld->onUnLoad();
+    currentWorld->onUnload();
 }
 
 void Bee::stop()

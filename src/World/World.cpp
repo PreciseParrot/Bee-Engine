@@ -116,6 +116,35 @@ void World::addEntity(Entity* entity)
     }
 }
 
+Entity* World::getEntityByName(const std::string& name)
+{
+    for (Entity* entity : entities)
+    {
+        if (entity->getName() == name)
+            return entity;
+    }
+
+    return nullptr;
+}
+
+std::vector<Entity*> World::getEntitiesByName(const std::string& name)
+{
+    std::vector<Entity*> matchingEntities;
+
+    for (Entity* entity : entities)
+    {
+        if (entity->getName() == name)
+            matchingEntities.push_back(entity);
+    }
+
+    return matchingEntities;
+}
+
+std::vector<Entity*> World::getAllEntities()
+{
+    return entities;
+}
+
 Entity* World::removeEntity(Entity* entity)
 {
     if (std::find(entities.begin(), entities.end(), entity) != entities.end())
@@ -147,6 +176,11 @@ void World::addHUDObject(HUDObject* hudObject)
     {
         Log::write("World", LogLevel::Warning, "HUD Object already in world");
     }
+}
+
+std::vector<HUDObject*> World::getAllHUDObjects()
+{
+    return hudObjects;
 }
 
 HUDObject* World::removeHUDObject(HUDObject* hudObject)
@@ -431,7 +465,7 @@ void World::update() {}
 
 void World::onLoad() {}
 
-void World::onUnLoad() {}
+void World::onUnload() {}
 
 World::~World()
 {

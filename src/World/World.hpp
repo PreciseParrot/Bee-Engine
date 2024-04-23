@@ -37,6 +37,29 @@ public:
     void addEntity(Entity* entity);
 
     /**
+     * @brief Get an entity in the world by name.
+     * 
+     * @param name the name of the entity
+     * @return the first entity in the world that has the specified name.
+     */
+    Entity* getEntityByName(const std::string& name);
+
+    /**
+     * @brief Get entities in the world by name.
+     * 
+     * @param name the name of the entities
+     * @return all entites in the world that have the specifed name.
+     */
+    std::vector<Entity*> getEntitiesByName(const std::string& name);
+
+    /**
+     * @brief Get all the entities in the world.
+     * 
+     * @return all the entities in the world.
+     */
+    std::vector<Entity*> getAllEntities();
+
+    /**
      * @brief Remove an entity from the world.
      * 
      * @param entity the pointer to the entity
@@ -56,6 +79,13 @@ public:
      * @param hudObject the pointer to the HUD object
      */
     void addHUDObject(HUDObject* hudObject);
+
+    /**
+     * @brief Get all the HUD objects in the world.
+     * 
+     * @return all the HUD objects in the world.
+     */
+    std::vector<HUDObject*> getAllHUDObjects();
 
     /**
      * @brief Remove a HUD object from the world.
@@ -117,7 +147,7 @@ public:
      * @brief The onUnload function can be implemented in inhereting classes. This function is called everytime the world is unloaded.
      * 
      */
-    virtual void onUnLoad();
+    virtual void onUnload();
 
     /**
      * @brief The destructor can be implemented in inhereting classes.
