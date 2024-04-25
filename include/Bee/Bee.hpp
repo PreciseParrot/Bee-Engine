@@ -6,7 +6,20 @@
 
 #include <cstdint>
 
-#include "Bee/World/World.hpp"
+#include "Audio.hpp"
+#include "Entity.hpp"
+#include "Log.hpp"
+#include "Collision/Hitbox.hpp"
+#include "Collision/Intersection.hpp"
+#include "Graphics/HUDObject.hpp"
+#include "Graphics/Renderer.hpp"
+#include "Input/Controller.hpp"
+#include "Input/Keyboard.hpp"
+#include "Input/Mouse.hpp"
+#include "Math/Vector2f.hpp"
+#include "Math/Vector2i.hpp"
+#include "World/World.hpp"
+#include "World/WorldObject.hpp"
 
 /**
  * @namespace Bee
