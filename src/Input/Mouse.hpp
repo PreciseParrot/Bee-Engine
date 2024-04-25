@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <SDL2/SDL.h>
 
 #include "Input/MouseButtons.hpp"
@@ -24,6 +26,7 @@ namespace Mouse
     void handleInput(SDL_Event* event);
     void handleMovement(SDL_Event* event);
     void update();
+    void cleanUp();
 
     /*Internal functions end here*/
 
@@ -56,4 +59,13 @@ namespace Mouse
      * @return the position of the mouse in world coordinates.
      */
     Vector2f getMouseWorldPosition();
+
+    /**
+     * @brief Create a custom mouse cursor.
+     * 
+     * @param path a file path from where to load the image from
+     * @param hotX the X hotspot of the cursor
+     * @param hotY the Y hotspot of the cursor
+     */
+    void createCustomCursor(const std::string& path, int hotX, int hotY);
 }

@@ -115,10 +115,10 @@ void Renderer::handleEvent(SDL_Event* event)
 void Renderer::drawTile(const Vector2i& position, SDL_Rect* srcRect, SDL_Texture* texture)
 {
     SDL_FRect dstRect;
-    dstRect.x = (position.x - cameraPosition.x + viewPortWidth / 2) * screenWidth / viewPortWidth;
-    dstRect.y = (position.y - cameraPosition.y + viewPortHeight / 2) * screenHeight / viewPortHeight;
-    dstRect.h = screenHeight / viewPortHeight + 0.02f;
-    dstRect.w = screenWidth / viewPortWidth + 0.02f;
+    dstRect.x = ((position.x - cameraPosition.x + viewPortWidth / 2) * screenWidth / viewPortWidth);
+    dstRect.y = ((position.y - cameraPosition.y + viewPortHeight / 2) * screenHeight / viewPortHeight);
+    dstRect.h = screenHeight / viewPortHeight + 0.04f;
+    dstRect.w = screenWidth / viewPortWidth + 0.04f;
 
     SDL_RenderCopyF(renderer, texture, srcRect, &dstRect);
 }

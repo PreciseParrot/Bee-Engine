@@ -4,9 +4,12 @@
 #include <unordered_map>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
+#include "Log.hpp"
 #include "Graphics/Renderer.hpp"
 
+static SDL_Cursor* cursor = nullptr;
 static std::unordered_map<uint8_t, MouseButton> mouseMap;
 static std::bitset<16> buttonsPressed;
 static std::bitset<16> buttonsPressedOld;
@@ -67,4 +70,33 @@ Vector2f Mouse::getMouseWorldPosition()
     position.y = viewportSize.y * (float)mousePositon.y / screenSize.y - viewportSize.y / 2.0f + cameraPosition.y;
 
     return position;
+}
+
+void Mouse::createCustomCursor(const std::string& path, int hotX, int hotY)
+{
+    SDL_Surface* surface = IMG_Load(path.c_str());
+    if (surface == NULL)
+    {
+        Log::write("Input", LogLevel::Warning, "Can't load image: %s", SDL_GetError());
+        return;
+    }
+
+    SDL_FreeCursor(cursor);
+
+    cursor = SDL_CreateColorCursor(surface, hotX, hotY);
+    if (cursor == NULL)
+    {
+        Log::write("Input", LogLevel::Warning, "Can't create cursor: %s", SDL_GetError());
+    }
+    else
+    {
+        SDL_SetCursor(cursor);
+    }
+
+    SDL_FreeSurface(surface);
+}
+
+void Mouse::cleanUp()
+{
+    SDL_FreeCursor(cursor);
 }

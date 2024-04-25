@@ -118,8 +118,8 @@ static void mainLoop()
     }
 
     Renderer::update();
-    currentWorld->updateInternal();
     currentWorld->update();
+    currentWorld->updateInternal();
     Controller::update();
     Keyboard::update();
     Mouse::update();
@@ -143,7 +143,7 @@ void Bee::run()
     currentWorld = nextWorld;
     nextWorld = nullptr;
     gameRunning = true;
-    
+
     if (!currentWorld->isInitialized())
     {
         currentWorld->initInternal();
@@ -188,5 +188,6 @@ void Bee::cleanUp()
     Audio::cleanUp();
     Renderer::cleanUp();
     Controller::cleanUp();
+    Mouse::cleanUp();
     SDL_Quit();
 }
