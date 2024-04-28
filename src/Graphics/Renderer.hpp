@@ -78,6 +78,13 @@ namespace Renderer
     Vector2i getWindowSize();
 
     /**
+     * @brief Set the window to fullscreen or windowed mode.
+     * 
+     * @param fullscreen true for fullscreen and false for windowed mode
+     */
+    void setFullscreen(bool fullscreen);
+
+    /**
      * @brief Set the icon of the window.
      * 
      * @param path a file path from where to load the image from

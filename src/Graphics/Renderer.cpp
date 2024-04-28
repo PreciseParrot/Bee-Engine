@@ -1,7 +1,6 @@
 #include "Renderer.hpp"
 
 #include <cmath>
-#include <exception>
 #include <filesystem>
 #include <map>
 #include <unordered_map>
@@ -15,18 +14,15 @@
 #include "Math/Vector2f.hpp"
 #include "Math/Vector2i.hpp"
 
-static int windowWidth = 0;
-static int windowHeight = 0;
-static int screenWidth = 0;
-static int screenHeight = 0;
-static float viewPortWidth = 16.0f;
-static float viewPortHeight = 9.0f;
 static SDL_Window* window = nullptr;
 static SDL_Renderer* renderer = nullptr;
 static SDL_Texture* targetTexture = nullptr;
-static std::unordered_map<std::string, SDL_Texture*> textureMap;
 static std::map<std::pair<std::string, int>, TTF_Font*> fontMap;
+static std::unordered_map<std::string, SDL_Texture*> textureMap;
 static Vector2f cameraPosition;
+static Vector2f viewportSize(16.0f, 9.0f);
+static Vector2i screenSize;
+static Vector2i windowSize;
 
 void Renderer::init(int winWidth, int winHeight)
 {
@@ -70,10 +66,10 @@ void Renderer::init(int winWidth, int winHeight)
 void Renderer::update()
 {
     SDL_Rect dstRect;
-    dstRect.x = (windowWidth - screenWidth) / 2;
-    dstRect.y = (windowHeight - screenHeight) / 2;
-    dstRect.w = screenWidth;
-    dstRect.h = screenHeight;
+    dstRect.x = (windowSize.x - screenSize.x) / 2;
+    dstRect.y = (windowSize.y - screenSize.y) / 2;
+    dstRect.w = screenSize.x;
+    dstRect.h = screenSize.y;
 
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderClear(renderer);
@@ -87,26 +83,26 @@ void Renderer::handleEvent(SDL_Event* event)
 {
     if (event->window.event == SDL_WINDOWEVENT_RESIZED)
     {
-        windowWidth = event->window.data1;
-        windowHeight = event->window.data2;
+        windowSize.x = event->window.data1;
+        windowSize.y = event->window.data2;
 
-        float widthFactor = windowWidth / viewPortWidth;
-        float heightFactor = windowHeight / viewPortHeight;
+        float widthFactor = windowSize.x / viewportSize.x;
+        float heightFactor = windowSize.y / viewportSize.y;
 
         if (widthFactor > heightFactor)
         {
-            screenWidth = windowWidth * heightFactor / widthFactor;
-            screenHeight = windowHeight;
+            screenSize.x = windowSize.x * heightFactor / widthFactor;
+            screenSize.y = windowSize.y;
         }
         else
         {
-            screenWidth = windowWidth;
-            screenHeight = windowHeight * widthFactor / heightFactor;
+            screenSize.x = windowSize.x;
+            screenSize.y = windowSize.y * widthFactor / heightFactor;
         }
 
         SDL_SetRenderTarget(renderer, NULL);
         SDL_DestroyTexture(targetTexture);
-        targetTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, screenWidth, screenHeight);
+        targetTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, screenSize.x, screenSize.y);
         SDL_RenderClear(renderer);
         SDL_SetRenderTarget(renderer, targetTexture);
     }
@@ -115,10 +111,10 @@ void Renderer::handleEvent(SDL_Event* event)
 void Renderer::drawTile(const Vector2i& position, SDL_Rect* srcRect, SDL_Texture* texture)
 {
     SDL_FRect dstRect;
-    dstRect.x = ((position.x - cameraPosition.x + viewPortWidth / 2) * screenWidth / viewPortWidth);
-    dstRect.y = ((position.y - cameraPosition.y + viewPortHeight / 2) * screenHeight / viewPortHeight);
-    dstRect.h = screenHeight / viewPortHeight + 0.04f;
-    dstRect.w = screenWidth / viewPortWidth + 0.04f;
+    dstRect.x = ((position.x - cameraPosition.x + viewportSize.x / 2) * screenSize.x / viewportSize.x);
+    dstRect.y = ((position.y - cameraPosition.y + viewportSize.y / 2) * screenSize.y / viewportSize.y);
+    dstRect.h = screenSize.y / viewportSize.y + 0.04f;
+    dstRect.w = screenSize.x / viewportSize.x + 0.04f;
 
     SDL_RenderCopyF(renderer, texture, srcRect, &dstRect);
 }
@@ -141,10 +137,10 @@ void Renderer::drawHUD(const Vector2i& position, const Vector2i& scale, SDL_Rect
 void Renderer::drawSprite(const Vector2f& position, const Vector2f& scale, SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, float rotation)
 {
     SDL_FRect dstRect;
-    dstRect.x = (position.x - scale.x / 2 - cameraPosition.x + viewPortWidth / 2) * screenWidth / viewPortWidth;
-    dstRect.y = (position.y - scale.y / 2 - cameraPosition.y + viewPortHeight / 2) * screenHeight / viewPortHeight;
-    dstRect.w = screenWidth / viewPortWidth * scale.x;
-    dstRect.h = screenHeight / viewPortHeight * scale.y;
+    dstRect.x = (position.x - scale.x / 2 - cameraPosition.x + viewportSize.x / 2) * screenSize.x / viewportSize.x;
+    dstRect.y = (position.y - scale.y / 2 - cameraPosition.y + viewportSize.y / 2) * screenSize.y / viewportSize.y;
+    dstRect.w = screenSize.x / viewportSize.x * scale.x;
+    dstRect.h = screenSize.y / viewportSize.y * scale.y;
 
     SDL_FPoint centerPoint;
     centerPoint.x = dstRect.w * rotationCenter.x;
@@ -231,17 +227,37 @@ Vector2f Renderer::getCameraPosition()
 
 Vector2f Renderer::getViewPortSize()
 {
-    return Vector2f(viewPortWidth, viewPortHeight);
+    return viewportSize;
 }
 
 Vector2i Renderer::getScreenSize()
 {
-    return Vector2i(screenWidth, screenHeight);
+    return screenSize;
 }
 
 Vector2i Renderer::getWindowSize()
 {
-    return Vector2i(windowWidth, windowHeight);
+    return windowSize;
+}
+
+void Renderer::setFullscreen(bool fullscreen)
+{
+    if (fullscreen)
+    {
+		SDL_Rect displaySize;
+        SDL_Event event;
+		SDL_GetDisplayBounds(SDL_GetWindowDisplayIndex(window), &displaySize);
+        event.window.event = SDL_WINDOWEVENT_RESIZED;
+        event.window.data1 = displaySize.w;
+        event.window.data2 = displaySize.h;
+        Renderer::handleEvent(&event);
+
+        SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    }
+    else
+    {
+        SDL_SetWindowFullscreen(window, 0);
+    }
 }
 
 void Renderer::setWindowIcon(const std::string& path)
@@ -274,14 +290,13 @@ void Renderer::setCameraPosition(const Vector2f& newCameraPosition)
 
 void Renderer::setViewportSize(float width, float height)
 {
-    viewPortWidth = width;  
-    viewPortHeight = height;
+    viewportSize.x = width;  
+    viewportSize.y = height;
 }
 
-void Renderer::setViewportSize(const Vector2f& viewportSize)
+void Renderer::setViewportSize(const Vector2f& viewport)
 {
-    viewPortWidth = viewportSize.x;
-    viewPortHeight = viewportSize.y;  
+    viewportSize = viewport;
 }
 
 void Renderer::cleanUp()
