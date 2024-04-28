@@ -48,6 +48,18 @@ void Keyboard::init()
     keyMap.insert({SDL_SCANCODE_7, Key::a7});
     keyMap.insert({SDL_SCANCODE_8, Key::a8});
     keyMap.insert({SDL_SCANCODE_9, Key::a9});
+    keyMap.insert({SDL_SCANCODE_F1, Key::f1});
+    keyMap.insert({SDL_SCANCODE_F2, Key::f2});
+    keyMap.insert({SDL_SCANCODE_F3, Key::f3});
+    keyMap.insert({SDL_SCANCODE_F4, Key::f4});
+    keyMap.insert({SDL_SCANCODE_F5, Key::f5});
+    keyMap.insert({SDL_SCANCODE_F6, Key::f6});
+    keyMap.insert({SDL_SCANCODE_F7, Key::f7});
+    keyMap.insert({SDL_SCANCODE_F8, Key::f8});
+    keyMap.insert({SDL_SCANCODE_F9, Key::f9});
+    keyMap.insert({SDL_SCANCODE_F10, Key::f10});
+    keyMap.insert({SDL_SCANCODE_F11, Key::f11});
+    keyMap.insert({SDL_SCANCODE_F12, Key::f12});
     keyMap.insert({SDL_SCANCODE_LEFT, Key::left});
     keyMap.insert({SDL_SCANCODE_RIGHT, Key::right});
     keyMap.insert({SDL_SCANCODE_UP, Key::up});
