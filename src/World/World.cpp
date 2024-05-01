@@ -411,6 +411,16 @@ void World::loadTilemap(const std::string& tilemapName)
             if (name) worldObject->setData("name", name);
             if (type) worldObject->setData("type", type);
 
+            tinyxml2::XMLElement* properties = object->FirstChildElement("properties");
+
+            if (properties)
+            {
+                for (tinyxml2::XMLElement* property = properties->FirstChildElement("property"); property != NULL; property = property->NextSiblingElement("property"))
+                {
+                    worldObject->setData(property->Attribute("name"), property->Attribute("value"));
+                }
+            }
+
             Hitbox hitbox;
             tinyxml2::XMLElement* polygon = object->FirstChildElement("polygon");
             tinyxml2::XMLElement* ellipse = object->FirstChildElement("ellipse");
