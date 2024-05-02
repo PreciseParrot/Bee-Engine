@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_map>
 
 #include "Bee/Collision/Intersection.hpp"
 #include "Bee/Math/Vector2f.hpp"
@@ -36,6 +37,14 @@ public:
     std::string getName() const;
 
     /**
+     * @brief Get the data of the entity. Use `"name"` to get the name and `"type"` to get the class of entity.
+     * 
+     * @param index the name the data variable
+     * @return the data of the world object.
+     */
+    std::string getData(const std::string& index) const;
+
+    /**
      * @brief Get the position of the entity.
      * 
      * @return the position of this entitiy in world coordinates.
@@ -48,6 +57,13 @@ public:
      * @return the rotation of the entity in degrees.
      */
     float getRotation() const;
+
+    /**
+     * @brief Move the entity by a given offset.
+     * 
+     * @param offset the offset to move the entity by.
+     */
+    void moveOffset(const Vector2f& offset);
 
     /**
      * @brief Check if the cursor is on the entity.
@@ -64,11 +80,12 @@ public:
     void setSprite(const std::string& spriteName);
 
     /**
-     * @brief Move the entity by a given offset.
+     * @brief Set the data of the entity.
      * 
-     * @param offset the offset to move the entity by.
+     * @param index the name of the data variable
+     * @param data the data of the entity
      */
-    void moveOffset(const Vector2f& offset);
+    void setData(const std::string& index, const std::string& data);
 
     /**
      * @brief Set the animation of the entity.
@@ -183,10 +200,10 @@ public:
 
 private:
     float rotation = 0; 
-    std::string name;
     Sprite* sprite = nullptr;
     Vector2f position;
     Vector2f rotationCenter = {0.5f, 0.5f};
     Vector2f scale = {1.0f, 1.0f};
     Vector2f hitboxScale = {1.0f, 1.0f};
+    std::unordered_map<std::string, std::string> data;
 };

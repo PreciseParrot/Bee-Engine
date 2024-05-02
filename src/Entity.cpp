@@ -32,6 +32,7 @@ Hitbox Entity::getHitBox() const
     hitbox.hitBoxPoints.push_back(Vector2f(position.x + (hitboxScale.x / 2 * cosf(rotation * M_PI / 180) - (hitboxScale.y / 2 * sinf(rotation * M_PI / 180))), position.y + (hitboxScale.x / 2 * sinf(rotation * M_PI / 180) + (hitboxScale.y / 2 * cosf(rotation * M_PI / 180)))));
     hitbox.hitBoxPoints.push_back(Vector2f(position.x - (hitboxScale.x / 2 * cosf(rotation * M_PI / 180) + (hitboxScale.y / 2 * sinf(rotation * M_PI / 180))), position.y - (hitboxScale.x / 2 * sinf(rotation * M_PI / 180) - (hitboxScale.y / 2 * cosf(rotation * M_PI / 180)))));
     hitbox.hitBoxPoints.push_back(Vector2f(position.x + (hitboxScale.x / 2 * cosf(rotation * M_PI / 180) + (hitboxScale.y / 2 * sinf(rotation * M_PI / 180))), position.y + (hitboxScale.x / 2 * sinf(rotation * M_PI / 180) - (hitboxScale.y / 2 * cosf(rotation * M_PI / 180)))));
+    
     return hitbox;
 }
 
@@ -42,12 +43,20 @@ std::vector<Intersection> Entity::getIntersections() const
 
 std::string Entity::getName() const
 {
-    return std::string(name);
+    return getData("name");
+}
+
+std::string Entity::getData(const std::string& index) const
+{
+    if (data.find(index) == data.end())
+        return "";
+
+    return data.at(index);
 }
 
 Vector2f Entity::getPosition() const
 {
-    return Vector2f(position);
+    return position;
 }
 
 float Entity::getRotation() const
@@ -57,11 +66,17 @@ float Entity::getRotation() const
 
 bool Entity::isCursorOnMe() const
 {
-    Intersection intersection;
     Hitbox hitbox;
+    Intersection intersection;
+
     hitbox.hitBoxPoints.push_back(Mouse::getMouseWorldPosition());
 
     return Collision::checkCollision(getHitBox(), hitbox, &intersection);
+}
+
+void Entity::moveOffset(const Vector2f& offset)
+{
+    position += offset;
 }
 
 void Entity::setSprite(const std::string& spriteName)
@@ -71,14 +86,14 @@ void Entity::setSprite(const std::string& spriteName)
     setHitboxScale(1);
 }
 
-void Entity::moveOffset(const Vector2f& offset)
+void Entity::setData(const std::string& index, const std::string& data)
 {
-    position += offset;
+    this->data.insert({index, data});
 }
 
 void Entity::setName(const std::string& name)
 {
-    this->name = name;
+    setData("name", name);
 }
 
 void Entity::setPosition(float x, float y)
