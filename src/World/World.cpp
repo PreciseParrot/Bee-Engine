@@ -68,10 +68,10 @@ void World::updateInternal()
         }
     }
 
-    for (Entity* entity : entities)
+    for (size_t i = 0; i < entities.size(); i++)
     {
-        entity->updateInternal();
-        entity->update();
+        entities[i]->update();
+        entities[i]->updateInternal();
     }
 
     for (const TileLayer &layer : foregroundLayers)
@@ -98,9 +98,10 @@ void World::updateInternal()
         }   
     }
 
-    for (HUDObject* hudObject : hudObjects)
+    for (size_t i = 0; i < hudObjects.size(); i++)
     {
-        hudObject->updateInternal();
+        hudObjects[i]->update();
+        hudObjects[i]->updateInternal();
     }
 }
 
