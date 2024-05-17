@@ -42,11 +42,18 @@ public:
     void setSprite(const std::string& spriteName);
 
     /**
-     * @brief Get the texture size of the HUD object.
+     * @brief Get the size of the HUD object.
      * 
      * @return the size of the HUD object in pixels.
      */
     Vector2i getSize() const;
+
+    /**
+     * @brief Get the texture size of the HUD object.
+     * 
+     * @return the size of the HUD object texture in pixels.
+     */
+    Vector2i getTextureSize() const;
 
     /**
      * @brief Check if the cursor is on the HUD object.

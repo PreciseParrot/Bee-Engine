@@ -29,6 +29,11 @@ void HUDObject::setSprite(const std::string& spriteName)
 
 Vector2i HUDObject::getSize() const
 {
+    return scale;
+}
+
+Vector2i HUDObject::getTextureSize() const
+{
     return sprite->getTextureSize();
 }
 
