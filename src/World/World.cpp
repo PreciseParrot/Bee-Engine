@@ -70,8 +70,8 @@ void World::updateInternal()
 
     for (size_t i = 0; i < entities.size(); i++)
     {
-        entities[i]->update();
         entities[i]->updateInternal();
+        entities[i]->update();
     }
 
     for (const TileLayer &layer : foregroundLayers)

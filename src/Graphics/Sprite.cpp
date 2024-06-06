@@ -109,9 +109,10 @@ void Sprite::setText(const std::string& text, uint8_t red, uint8_t green, uint8_
     SDL_DestroyTexture(texture);
 
     SDL_Color color = {red, green, blue, alpha};
-    SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), color, 0);
+    SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, 0);
     texture = Renderer::createTexture(surface);
     SDL_FreeSurface(surface);
+    SDL_SetTextureScaleMode(texture, SDL_ScaleModeBest);
 }
 
 Vector2i Sprite::getTextureSize()
