@@ -85,10 +85,10 @@ static void mainLoop()
                 Keyboard::handleInput(&event);
                 break;
             case SDL_CONTROLLERBUTTONDOWN:
-                Controller::handleInput(&event);
+                Controller::handleButtonInput(&event);
                 break;
             case SDL_CONTROLLERBUTTONUP:
-                Controller::handleInput(&event);
+                Controller::handleButtonInput(&event);
                 break;
             case SDL_CONTROLLERDEVICEADDED:
                 Controller::connectController(&event);

@@ -1,5 +1,6 @@
 #include "Controller.hpp"
 
+#include <array>
 #include <bitset>
 #include <unordered_map>
 
@@ -8,10 +9,10 @@
 #include "Log.hpp"
 
 static std::unordered_map<SDL_GameControllerButton, ControllerButton> controllerMap;
-static std::bitset<32> buttonsPressed;
-static std::bitset<32> buttonsPressedOld;
-static SDL_GameController* controller = nullptr;
-static Vector2f controllerDeadzone(0.1f, 0.1f);
+static std::array<std::bitset<32>, 8> buttonsPressed;
+static std::array<std::bitset<32>, 8> buttonsPressedOld;
+static std::array<SDL_GameController*, 8> controller;
+static Vector2f controllerDeadzone(0.2f, 0.2f);
 
 void Controller::init()
 {
@@ -37,33 +38,25 @@ void Controller::init()
     controllerMap.insert({SDL_CONTROLLER_BUTTON_LEFTSHOULDER, ControllerButton::leftShoulder});
     controllerMap.insert({SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, ControllerButton::rigtShoulder});
 
-    for (int i = 0; i < SDL_NumJoysticks(); i++)
-    {
-        if (SDL_IsGameController(i))
-        {
-            controller = SDL_GameControllerOpen(i);
-        }
-    }
-
     Log::write("Input", LogLevel::Info, "Initialized input");
 }
 
-bool Controller::isButtonDown(ControllerButton button)
+bool Controller::isButtonDown(int playerIndex, ControllerButton button)
 {
-    return buttonsPressed[static_cast<int>(button)];
+    return buttonsPressed[SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(SDL_GameControllerFromPlayerIndex(playerIndex)))][static_cast<int>(button)];
 }
 
-bool Controller::isButtonPressed(ControllerButton button)
+bool Controller::isButtonPressed(int playerIndex, ControllerButton button)
 {
-    return buttonsPressed[static_cast<int>(button)] && !buttonsPressedOld[static_cast<int>(button)];
+    return buttonsPressed[SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(SDL_GameControllerFromPlayerIndex(playerIndex)))][static_cast<int>(button)] && !buttonsPressed[SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(SDL_GameControllerFromPlayerIndex(playerIndex)))][static_cast<int>(button)];
 }
 
-Vector2f Controller::getLeftStick()
+Vector2f Controller::getLeftStick(int playerIndex)
 {
     Vector2f stick;
 
-    stick.x = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTX) / 32768.0f;
-    stick.y = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTY) / 32768.0f;
+    stick.x = SDL_GameControllerGetAxis(SDL_GameControllerFromPlayerIndex(playerIndex), SDL_CONTROLLER_AXIS_LEFTX) / 32768.0f;
+    stick.y = SDL_GameControllerGetAxis(SDL_GameControllerFromPlayerIndex(playerIndex), SDL_CONTROLLER_AXIS_LEFTY) / 32768.0f;
 
     if (stick.x < controllerDeadzone.x && stick.x > -controllerDeadzone.x) stick.x = 0;
     if (stick.y < controllerDeadzone.y && stick.y > -controllerDeadzone.y) stick.y = 0;
@@ -71,12 +64,12 @@ Vector2f Controller::getLeftStick()
     return stick;
 }
 
-Vector2f Controller::getRightStick()
+Vector2f Controller::getRightStick(int playerIndex)
 {
     Vector2f stick;
 
-    stick.x = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTX) / 32768.0f;
-    stick.y = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTY) / 32768.0f;
+    stick.x = SDL_GameControllerGetAxis(SDL_GameControllerFromPlayerIndex(playerIndex), SDL_CONTROLLER_AXIS_RIGHTX) / 32768.0f;
+    stick.y = SDL_GameControllerGetAxis(SDL_GameControllerFromPlayerIndex(playerIndex), SDL_CONTROLLER_AXIS_RIGHTY) / 32768.0f;
 
     if (stick.x < controllerDeadzone.x && stick.x > -controllerDeadzone.x) stick.x = 0;
     if (stick.y < controllerDeadzone.y && stick.y > -controllerDeadzone.y) stick.y = 0;
@@ -84,60 +77,70 @@ Vector2f Controller::getRightStick()
     return stick;
 }
 
+float Controller::getLeftTrigger(int playerIndex)
+{
+    float trigger = SDL_GameControllerGetAxis(SDL_GameControllerFromPlayerIndex(playerIndex), SDL_CONTROLLER_AXIS_TRIGGERLEFT) / 32768.0f;
+    return trigger > controllerDeadzone.x ? trigger : 0;
+}
+
+float Controller::getRightTrigger(int playerIndex)
+{
+    float trigger = SDL_GameControllerGetAxis(SDL_GameControllerFromPlayerIndex(playerIndex), SDL_CONTROLLER_AXIS_TRIGGERRIGHT) / 32768.0f;
+    return trigger > controllerDeadzone.y ? trigger : 0;
+}
+
 void Controller::update()
 {
-    buttonsPressedOld = buttonsPressed;
-
-    if (controller)
+    for (size_t i = 0; i < buttonsPressed.size(); i++)
     {
-        if (SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT) > 100)
+        buttonsPressedOld[i] = buttonsPressed[i];
+        
+        if (SDL_GameControllerGetAxis(controller[i], SDL_CONTROLLER_AXIS_TRIGGERLEFT) > 100 && controller[i])
         {
-            buttonsPressed[static_cast<int>(ControllerButton::leftTrigger)] = true;
+            buttonsPressed[i][static_cast<int>(ControllerButton::leftTrigger)] = true;
         }
         else
         {
-            buttonsPressed[static_cast<int>(ControllerButton::leftTrigger)] = false;
+            buttonsPressed[i][static_cast<int>(ControllerButton::leftTrigger)] = false;
         }
 
-        if (SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT) > 100)
+        if (SDL_GameControllerGetAxis(controller[i], SDL_CONTROLLER_AXIS_TRIGGERRIGHT) > 100 && controller[i])
         {
-            buttonsPressed[static_cast<int>(ControllerButton::rightTrigger)] = true;
+            buttonsPressed[i][static_cast<int>(ControllerButton::rightTrigger)] = true;
         }
         else
         {
-            buttonsPressed[static_cast<int>(ControllerButton::rightTrigger)] = false;
+            buttonsPressed[i][static_cast<int>(ControllerButton::rightTrigger)] = false;
         }
     }
 }
 
-void Controller::handleInput(SDL_Event* event)
+void Controller::handleButtonInput(SDL_Event* event)
 {
     bool buttonPressed = false;
 
     if (event->type == SDL_CONTROLLERBUTTONDOWN) buttonPressed = true;
 
-    ControllerButton buttonIndex = controllerMap[(SDL_GameControllerButton)event->jbutton.button];
-    buttonsPressed[static_cast<int>(buttonIndex)] = buttonPressed;
+    ControllerButton buttonIndex = controllerMap[(SDL_GameControllerButton)event->cbutton.button];
+    buttonsPressed[event->cbutton.which][static_cast<int>(buttonIndex)] = buttonPressed;
 }
 
 void Controller::connectController(SDL_Event* event)
 {
-    if (!controller)
-    {
-        SDL_GameControllerOpen(event->cdevice.which);
-    }
+    Log::write("Input", LogLevel::Info, "Controller connected");
+
+    controller[event->cdevice.which] = SDL_GameControllerOpen(event->cdevice.which);
 }
 
 void Controller::disconnectController(SDL_Event* event)
 {
-    if (controller && event->cdevice.which == SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller)))
-    {
-        SDL_GameControllerClose(controller);
-        controller = nullptr;
-    }
+    Log::write("Input", LogLevel::Info, "Controller disconnected");
+
+    SDL_GameControllerClose(controller[event->cdevice.which]);
+    controller[event->cdevice.which] = nullptr;
 }
 
 void Controller::cleanUp()
 {
-    SDL_GameControllerClose(controller);
+
 }

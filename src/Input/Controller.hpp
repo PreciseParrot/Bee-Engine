@@ -20,7 +20,7 @@ namespace Controller
     /*Internal functions start here*/
 
     void init();
-    void handleInput(SDL_Event* event);
+    void handleButtonInput(SDL_Event* event);
     void connectController(SDL_Event* event);
     void disconnectController(SDL_Event* event);
     void update();
@@ -31,30 +31,50 @@ namespace Controller
     /**
      * @brief Checks if a button is pressed.
      * 
+     * @param playerIndex the player index of the controller
      * @param button the button to check
      * @return true if the button is pressed.
      */
-    bool isButtonDown(ControllerButton button);
+    bool isButtonDown(int playerIndex, ControllerButton button);
 
     /**
      * @brief Checks if a button is pressed but wasn't pressed in the previous frame.
      * 
+     * @param playerIndex the player index of the controller
      * @param button the button to check
      * @return true if the is pressed but wasn't pressed in the previous frame.
      */
-    bool isButtonPressed(ControllerButton button);
+    bool isButtonPressed(int playerIndex, ControllerButton button);
 
     /**
      * @brief Get the state of the left analog stick.
      * 
+     * @param playerIndex the player index of the controller
      * @return the position of the left analog stick in values ranging from -1 to 1.
      */
-    Vector2f getLeftStick();
+    Vector2f getLeftStick(int playerIndex);
 
     /**
      * @brief Get the state of the right analog stick.
      * 
+     * @param playerIndex the player index of the controller
      * @return the position of the right analog stick in values ranging from -1 to 1.
      */
-    Vector2f getRightStick();
+    Vector2f getRightStick(int playerIndex);
+
+    /**
+     * @brief Get the state of the left analog trigger.
+     * 
+     * @param playerIndex the player index of the controller
+     * @return the position of the left analog trigger ranging from 0 to 1.
+     */
+    float getLeftTrigger(int playerIndex);
+
+    /**
+     * @brief Get the state of the right analog trigger.
+     * 
+     * @param playerIndex the player index of the controller
+     * @return the position of the right analog trigger ranging from 0 to 1.
+     */
+    float getRightTrigger(int playerIndex);
 }
