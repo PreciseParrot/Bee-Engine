@@ -22,7 +22,7 @@ void Mouse::init()
     mouseMap.insert({SDL_BUTTON_RIGHT, MouseButton::right});
 }
 
-void Mouse::handleInput(SDL_Event* event)
+void Mouse::handleInput(const SDL_Event* event)
 {
     bool buttonPressed = false;
 
@@ -32,9 +32,9 @@ void Mouse::handleInput(SDL_Event* event)
     buttonsPressed[static_cast<int>(buttonIndex)] = buttonPressed;
 }
 
-void Mouse::handleMovement(SDL_Event* event)
+void Mouse::handleMovement(const SDL_Event* event)
 {
-    Vector2i screenDifference = Renderer::getWindowSize() - Renderer::getScreenSize();
+    const Vector2i screenDifference = Renderer::getWindowSize() - Renderer::getScreenSize();
     mousePositon.x = event->motion.x - screenDifference.x / 2;
     mousePositon.y = event->motion.y - screenDifference.y / 2;
 }
@@ -62,31 +62,31 @@ Vector2i Mouse::getMouseScreenPosition()
 Vector2f Mouse::getMouseWorldPosition()
 {
     Vector2f position;
-    Vector2f cameraPosition = Renderer::getCameraPosition();
-    Vector2f viewportSize = Renderer::getViewPortSize();
-    Vector2i screenSize = Renderer::getScreenSize();
+    const Vector2f cameraPosition = Renderer::getCameraPosition();
+    const Vector2f viewportSize = Renderer::getViewPortSize();
+    const Vector2i screenSize = Renderer::getScreenSize();
 
-    position.x = viewportSize.x * (float)mousePositon.x / screenSize.x - viewportSize.x / 2.0f + cameraPosition.x;
-    position.y = viewportSize.y * (float)mousePositon.y / screenSize.y - viewportSize.y / 2.0f + cameraPosition.y;
+    position.x = viewportSize.x * static_cast<float>(mousePositon.x) / screenSize.x - viewportSize.x / 2.0f + cameraPosition.x;
+    position.y = viewportSize.y * static_cast<float>(mousePositon.y) / screenSize.y - viewportSize.y / 2.0f + cameraPosition.y;
 
     return position;
 }
 
-void Mouse::createCustomCursor(const std::string& path, int hotX, int hotY)
+void Mouse::createCustomCursor(const std::string& path, const int hotX, const int hotY)
 {
     SDL_Surface* surface = IMG_Load(path.c_str());
-    if (surface == NULL)
+    if (surface == nullptr)
     {
-        Log::write("Input", LogLevel::Warning, "Can't load image: %s", SDL_GetError());
+        Log::write("Input", LogLevel::error, "Can't load image: %s", SDL_GetError());
         return;
     }
 
     SDL_FreeCursor(cursor);
 
     cursor = SDL_CreateColorCursor(surface, hotX, hotY);
-    if (cursor == NULL)
+    if (cursor == nullptr)
     {
-        Log::write("Input", LogLevel::Warning, "Can't create cursor: %s", SDL_GetError());
+        Log::write("Input", LogLevel::warning, "Can't create cursor: %s", SDL_GetError());
     }
     else
     {

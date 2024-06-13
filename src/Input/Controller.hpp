@@ -20,9 +20,9 @@ namespace Controller
     /*Internal functions start here*/
 
     void init();
-    void handleButtonInput(SDL_Event* event);
-    void connectController(SDL_Event* event);
-    void disconnectController(SDL_Event* event);
+    void handleButtonInput(const SDL_Event* event);
+    void connectController(const SDL_Event* event);
+    void disconnectController(const SDL_Event* event);
     void update();
     void cleanUp();
 

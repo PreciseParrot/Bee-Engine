@@ -20,16 +20,16 @@ static Uint64 loopTicksLast = 0;
 static World* nextWorld = nullptr;
 static World* currentWorld = nullptr;
 
-void Bee::init(int windowWidth, int windowHeight)
+void Bee::init(const int windowWidth, const int windowHeight)
 {
-    atexit(Bee::cleanUp);
+    atexit(cleanUp);
 
     if (SDL_Init(0) < 0)
     {
-        Log::write("Engine", LogLevel::Error, "Error initializing SDL2: %s", SDL_GetError());
+        Log::write("Engine", LogLevel::error, "Error initializing SDL2: %s", SDL_GetError());
         exit(EXIT_FAILURE);
     }
-    Log::write("Engine", LogLevel::Info, "Initialized SDL2");
+    Log::write("Engine", LogLevel::info, "Initialized SDL2");
 
     Renderer::init(windowWidth, windowHeight);
     Audio::init();
@@ -64,12 +64,6 @@ static void mainLoop()
         currentWorld->onUnload();
         currentWorld = nextWorld;
         nextWorld = nullptr;
-
-        if (!currentWorld->isInitialized())
-        {
-            currentWorld->initInternal();
-            currentWorld->init();
-        }
         currentWorld->onLoad();
     }
 
@@ -78,16 +72,10 @@ static void mainLoop()
     {
         switch (event.type)
         {
-            case SDL_KEYDOWN:
+            case SDL_KEYDOWN: case SDL_KEYUP:
                 Keyboard::handleInput(&event);
                 break;
-            case SDL_KEYUP:
-                Keyboard::handleInput(&event);
-                break;
-            case SDL_CONTROLLERBUTTONDOWN:
-                Controller::handleButtonInput(&event);
-                break;
-            case SDL_CONTROLLERBUTTONUP:
+            case SDL_CONTROLLERBUTTONDOWN: case SDL_CONTROLLERBUTTONUP:
                 Controller::handleButtonInput(&event);
                 break;
             case SDL_CONTROLLERDEVICEADDED:
@@ -96,13 +84,7 @@ static void mainLoop()
             case SDL_CONTROLLERDEVICEREMOVED:
                 Controller::disconnectController(&event);
                 break;
-            case SDL_MOUSEBUTTONDOWN:
-                Mouse::handleInput(&event);
-                break;
-            case SDL_MOUSEBUTTONUP:
-                Mouse::handleInput(&event);
-                break;
-            case SDL_MOUSEWHEEL:
+            case SDL_MOUSEBUTTONDOWN: case SDL_MOUSEBUTTONUP:
                 Mouse::handleInput(&event);
                 break;
             case SDL_MOUSEMOTION:
@@ -114,6 +96,8 @@ static void mainLoop()
             case SDL_QUIT:
                 gameRunning = false;
                 break;
+            default:
+                break;
         }
     }
 
@@ -124,31 +108,25 @@ static void mainLoop()
     Keyboard::update();
     Mouse::update();
 
-    deltaTime = (float)(loopTicks - loopTicksLast) / SDL_GetPerformanceFrequency();
+    deltaTime = static_cast<float>(loopTicks - loopTicksLast) / SDL_GetPerformanceFrequency();
 }
 
 void Bee::run()
 {
     if (!initialized)
     {
-        Bee::init(1280, 720);
+        init(1280, 720);
     }
 
     if (!nextWorld)
     {
-        Log::write("Engine", LogLevel::Error, "No world loaded");
+        Log::write("Engine", LogLevel::error, "No world loaded");
         return;
     }
 
     currentWorld = nextWorld;
     nextWorld = nullptr;
     gameRunning = true;
-
-    if (!currentWorld->isInitialized())
-    {
-        currentWorld->initInternal();
-        currentWorld->init();
-    }
     currentWorld->onLoad();
 
     while (gameRunning)

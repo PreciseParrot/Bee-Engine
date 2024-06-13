@@ -9,52 +9,59 @@
 #include "Log.hpp"
 
 static std::unordered_map<std::string, Mix_Music*> musicMap;
-static std::unordered_map<std::string, Mix_Chunk*> soundMap;   
+static std::unordered_map<std::string, Mix_Chunk*> soundMap;
 
 void Audio::init()
 {
     if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0)
     {
-        Log::write("Audio", LogLevel::Error, "Error initializing audio system: %s", SDL_GetError());
+        Log::write("Audio", LogLevel::error, "Error initializing audio system: %s", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
-    if (Mix_Init(MIX_INIT_OPUS) == 0)
+    if (Mix_Init(MIX_INIT_OGG) == 0)
     {
-        Log::write("Audio", LogLevel::Error, "Error initializing SDL2_mixer: %s", SDL_GetError());
+        Log::write("Audio", LogLevel::error, "Error initializing SDL2_mixer: %s", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
     if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096) == -1)
     {
-        Log::write("Audio", LogLevel::Error, "Error openening audio device: %s", SDL_GetError());
+        Log::write("Audio", LogLevel::error, "Error openening audio device: %s", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
-    Log::write("Audio", LogLevel::Info, "Initialized audio engine");
+    Log::write("Audio", LogLevel::info, "Initialized audio engine");
 }
 
-void Audio::loadMusic(const std::string& musicName)
+bool Audio::loadMusic(const std::string& musicName)
 {
     if (musicMap.find(musicName) != musicMap.end())
-        return;
+        return true;
 
-    std::string fileName = "./assets/Music/" + musicName + ".ogg";
-    Mix_Music* music = Mix_LoadMUS(fileName.c_str());
-    if (music == nullptr)
+    const std::string fileName = "./assets/Music/" + musicName + ".ogg";
+
+    if (Mix_Music* music = Mix_LoadMUS(fileName.c_str()); music == nullptr)
     {
-        Log::write("Audio", LogLevel::Warning, "Can't load music: %s", SDL_GetError());
+        Log::write("Audio", LogLevel::error, "Can't load music: %s / %s", musicName.c_str(), SDL_GetError());
+        return false;
     }
     else
     {
         musicMap.insert({musicName, music});
-        Log::write("Audio", LogLevel::Info, "Loaded %s music", musicName.c_str());
     }
+
+    Log::write("Audio", LogLevel::info, "Loaded %s music", musicName.c_str());
+    return true;
 }
 
-void Audio::playMusic(const std::string& musicName, int loops)
+void Audio::playMusic(const std::string& musicName, const int loops)
 {
-    loadMusic(musicName);
+    if (musicMap.find(musicName) == musicMap.end() && !loadMusic(musicName))
+    {
+        return;
+    }
+
     Mix_PlayMusic(musicMap.at(musicName), loops);
 }
 
@@ -63,37 +70,42 @@ void Audio::stopMusic()
     Mix_HaltMusic();
 }
 
-void Audio::loadSound(const std::string& soundName)
+bool Audio::loadSound(const std::string& soundName)
 {
     if (soundMap.find(soundName) != soundMap.end())
-        return;
+        return true;
 
-    std::string fileName = "./assets/SFX/" + soundName + ".ogg";
-    Mix_Chunk* sound = Mix_LoadWAV(fileName.c_str());
-    if (sound == nullptr)
+    const std::string fileName = "./assets/SFX/" + soundName + ".ogg";
+    if (Mix_Chunk* sound = Mix_LoadWAV(fileName.c_str()); sound == nullptr)
     {
-        Log::write("Audio", LogLevel::Error, "Can't load sound: %s", SDL_GetError());
+        Log::write("Audio", LogLevel::error, "Can't load sound: %s / %s", soundName.c_str(), SDL_GetError());
+        return false;
     }
     else
     {
         soundMap.insert({soundName, sound});
-        Log::write("Audio", LogLevel::Info, "Loaded %s sound", soundName.c_str());
     }
+
+    Log::write("Audio", LogLevel::info, "Loaded %s sound", soundName.c_str());
+    return true;
 }
 
 int Audio::playSound(const std::string& soundName)
 {
-    loadSound(soundName);
+    if (soundMap.find(soundName) == soundMap.end() && !loadSound(soundName))
+    {
+        return -1;
+    }
 
-    int channel = Mix_PlayChannel(-1, soundMap.at(soundName), 0);
+    const int channel = Mix_PlayChannel(-1, soundMap.at(soundName), 0);
     if (channel == -1)
     {
-        Log::write("Audio", LogLevel::Warning, "Can't play sound: %s", SDL_GetError());
+        Log::write("Audio", LogLevel::warning, "Can't play sound: %s", SDL_GetError());
     }
     return channel;
 }
 
-void Audio::stopSound(int channel)
+void Audio::stopSound(const int channel)
 {
     Mix_HaltChannel(channel);
 }
@@ -102,7 +114,7 @@ void Audio::unloadAllMusic()
 {
     for (const auto& [musicName, music] : musicMap)
     {
-        Log::write("Audio", LogLevel::Info, "Unloaded %s music", musicName.c_str());
+        Log::write("Audio", LogLevel::info, "Unloaded %s music", musicName.c_str());
         Mix_FreeMusic(music);
     }
     musicMap.clear();
@@ -112,7 +124,7 @@ void Audio::unloadAllSounds()
 {
     for (const auto& [soundName, sound] : soundMap)
     {
-        Log::write("Audio", LogLevel::Info, "Unloaded %s sound", soundName.c_str());
+        Log::write("Audio", LogLevel::info, "Unloaded %s sound", soundName.c_str());
         Mix_FreeChunk(sound);
     }
     soundMap.clear();
@@ -120,7 +132,7 @@ void Audio::unloadAllSounds()
 
 void Audio::cleanUp()
 {
-    Audio::unloadAllMusic();
-    Audio::unloadAllSounds();
+    unloadAllMusic();
+    unloadAllSounds();
     Mix_CloseAudio();
 }

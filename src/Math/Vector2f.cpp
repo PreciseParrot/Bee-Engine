@@ -5,7 +5,7 @@
 Vector2f::Vector2f()
     : x(0), y(0) {}
 
-Vector2f::Vector2f(float x, float y)
+Vector2f::Vector2f(const float x, const float y)
     : x(x), y(y) {}
 
 float Vector2f::dot(const Vector2f& right) const
@@ -20,9 +20,9 @@ float Vector2f::getLength() const
 
 void Vector2f::normalize()
 {
-    float length = getLength();
+    const float length = getLength();
     if (length <= 0) return;
-    float scale = 1.0f / length;
+    const float scale = 1.0f / length;
     x *= scale;
     y *= scale;
 }
@@ -39,7 +39,7 @@ void Vector2f::operator -=(const Vector2f& other)
     y -= other.y;
 }
 
-void Vector2f::operator *=(float multiplier)
+void Vector2f::operator *=(const float multiplier)
 {
     x *= multiplier;
     y *= multiplier;
@@ -64,20 +64,20 @@ bool Vector2f::operator ==(const Vector2f& other) const
 
 Vector2f Vector2f::operator +(const Vector2f& other) const
 {
-    return Vector2f(x + other.x, y + other.y);
+    return {x + other.x, y + other.y};
 }
 
 Vector2f Vector2f::operator -(const Vector2f& other) const
 {
-    return Vector2f(x - other.x, y - other.y);
+    return {x - other.x, y - other.y};
 }
 
-Vector2f Vector2f::operator *(float multiplier) const
+Vector2f Vector2f::operator *(const float multiplier) const
 {
-    return Vector2f(x * multiplier, y * multiplier);
+    return {x * multiplier, y * multiplier};
 }
 
-Vector2f Vector2f::operator /(float divider) const
+Vector2f Vector2f::operator /(const float divider) const
 {
-    return Vector2f(x / divider, y / divider);
+    return {x / divider, y / divider};
 }

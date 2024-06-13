@@ -16,7 +16,7 @@ class HUDObject
 public:
     /*Internal functions start here*/
 
-    void updateInternal();
+    void updateInternal() const;
 
     /*Internal functions end here*/
 
@@ -32,7 +32,7 @@ public:
      * 
      * @param animationName the name of the animation
      */
-    void setAnimation(const std::string& animationName);
+    void setAnimation(const std::string& animationName) const;
 
     /**
      * @brief Set the sprite of the HUD object.
@@ -105,7 +105,7 @@ public:
      * @param fontName the name of the font
      * @param size the size of the font in pixels
      */
-    void setFont(const std::string& fontName, int size);
+    void setFont(const std::string& fontName, int size) const;
     
     /**
      * @brief Set the text and color of the HUD object.

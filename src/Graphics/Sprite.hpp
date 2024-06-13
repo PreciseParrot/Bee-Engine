@@ -19,7 +19,7 @@ public:
     void setAnimation(const std::string& animationName);
     void setFont(const std::string& fontName, int size);
     void setText(const std::string& text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
-    Vector2i getTextureSize();
+    Vector2i getTextureSize() const;
     void updateInternalEntity(const Vector2f& position, const Vector2f& scale, const Vector2f& rotationCenter, float rotation);
     void updateInternalHUD(const Vector2i& position, const Vector2i& scale, const Vector2f& rotationCenter, float rotation);
     ~Sprite();
@@ -33,7 +33,7 @@ private:
     std::unordered_map<std::string, FrameTag> frameTags;
     SDL_Texture* texture = nullptr;
     TTF_Font* font = nullptr;
-    AnimationDirection currentAnimationDirection = ANIMATION_NONE;
-    FrameTag currentAnimation;
+    AnimationDirection currentAnimationDirection = AnimationDirection::none;
+    FrameTag currentAnimation = {};
     void updateInternal();
 };

@@ -18,7 +18,7 @@ namespace Keyboard
 {
     
     void init();
-    void handleInput(SDL_Event* event);
+    void handleInput(const SDL_Event* event);
     void update();
 
     /*Internal functions end here*/

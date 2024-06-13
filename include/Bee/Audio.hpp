@@ -19,7 +19,7 @@ namespace Audio
      * 
      * @param musicName the name of the song
      */
-    void loadMusic(const std::string& musicName);
+    bool loadMusic(const std::string& musicName);
 
     /**
      * @brief Play a song.
@@ -40,7 +40,7 @@ namespace Audio
      * 
      * @param soundName the name of the sound
      */
-    void loadSound(const std::string& soundName);
+    bool loadSound(const std::string& soundName);
 
     /**
      * @brief Play a sound.

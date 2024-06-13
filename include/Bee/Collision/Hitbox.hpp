@@ -6,5 +6,6 @@
 
 struct Hitbox
 {
-    std::vector<Vector2f> hitBoxPoints;
+    Vector2f center;
+    std::vector<Vector2f> hitboxVertices;
 };

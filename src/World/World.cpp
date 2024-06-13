@@ -15,17 +15,7 @@
 #include "Collision/Intersection.hpp"
 #include "Graphics/Renderer.hpp"
 
-World::World() {}
-
-bool World::isInitialized()
-{
-    return initialized;
-}
-
-void World::initInternal()
-{
-    initialized = true;
-}
+World::World() = default;
 
 void World::updateInternal()
 {
@@ -35,7 +25,7 @@ void World::updateInternal()
         {
             for (int j = 0; j < worldWidth; j++)
             {
-                int tileId = layer.tileIds[j + i * worldWidth];
+                const int tileId = layer.tileIds[j + i * worldWidth];
                 if (tileId == 0) continue;
 
                 Vector2i pos;
@@ -50,9 +40,9 @@ void World::updateInternal()
 
                 Renderer::drawTile(pos, &srcRect, tiles[tileId].texture);
             }
-        }   
+        }
     }
-    
+
     for (Tile &tile : tiles)
     {
         if (tile.animated && tile.animationFrames[tile.animationIndex].duration + tile.frameStartTime <= Bee::getTime())
@@ -63,8 +53,8 @@ void World::updateInternal()
             {
                 tile.animationIndex = 0;
             }
-            tile.currentX = (tile.animationFrames[tile.animationIndex].tileId % tile.columns) * tile.width;
-            tile.currentY = (tile.animationFrames[tile.animationIndex].tileId / tile.columns) * tile.height;
+            tile.currentX = tile.animationFrames[tile.animationIndex].tileId % tile.columns * tile.width;
+            tile.currentY = tile.animationFrames[tile.animationIndex].tileId / tile.columns * tile.height;
         }
     }
 
@@ -80,7 +70,7 @@ void World::updateInternal()
         {
             for (int j = 0; j < worldWidth; j++)
             {
-                int tileId = layer.tileIds[j + i * worldWidth];
+                const int tileId = layer.tileIds[j + i * worldWidth];
                 if (tileId == 0) continue;
 
                 Vector2i pos;
@@ -95,7 +85,7 @@ void World::updateInternal()
 
                 Renderer::drawTile(pos, &srcRect, tiles[tileId].texture);
             }
-        }   
+        }
     }
 
     for (size_t i = 0; i < hudObjects.size(); i++)
@@ -113,7 +103,7 @@ void World::addEntity(Entity* entity)
     }
     else
     {
-        Log::write("World", LogLevel::Warning, "Entity already in world");
+        Log::write("World", LogLevel::warning, "Entity already in world");
     }
 }
 
@@ -159,7 +149,7 @@ Entity* World::removeEntity(Entity* entity)
 
 void World::deleteAllEntities()
 {
-    for (Entity* entity : entities)
+    for (const Entity* entity : entities)
     {
         delete entity;
     }
@@ -175,7 +165,7 @@ void World::addHUDObject(HUDObject* hudObject)
     }
     else
     {
-        Log::write("World", LogLevel::Warning, "HUD Object already in world");
+        Log::write("World", LogLevel::warning, "HUD Object already in world");
     }
 }
 
@@ -197,7 +187,7 @@ HUDObject* World::removeHUDObject(HUDObject* hudObject)
 
 void World::deleteAllHUDObjects()
 {
-    for (HUDObject* hudObject : hudObjects)
+    for (const HUDObject* hudObject : hudObjects)
     {
         delete hudObject;
     }
@@ -207,17 +197,17 @@ void World::deleteAllHUDObjects()
 
 std::string World::getTileData(const Vector2f& position, const std::string& index) const
 {
-    if (position.x < 0) return "";
-    if (position.y < 0) return "";
-    if (position.x > worldWidth) return "";
-    if (position.y > worldHeight) return "";
+    if (static_cast<int>(position.x) < 0) return "";
+    if (static_cast<int>(position.y) < 0) return "";
+    if (static_cast<int>(position.x) > worldWidth) return "";
+    if (static_cast<int>(position.y) > worldHeight) return "";
 
     int tileId = 0;
 
     for (const TileLayer& layer : layers)
     {
-        int tileIdT = layer.tileIds[(int)position.x + (int)position.y * worldWidth];
-        if (tileIdT != 0) tileId = tileIdT;
+        if (const int tileIdT = layer.tileIds[static_cast<int>(position.x) + static_cast<int>(position.y) * worldWidth]; tileIdT != 0)
+            tileId = tileIdT;
     }
 
     if (tiles[tileId].data.find(index) == tiles[tileId].data.end())
@@ -236,8 +226,8 @@ std::vector<Intersection> World::getIntersections(const Entity* entity) const
 
         Intersection intersection;
         intersection.entity = entityLoop;
-        intersection.worldObject = NULL;
-        if (Collision::checkCollision(entity->getHitBox(), entityLoop->getHitBox(), &intersection))
+        intersection.worldObject = nullptr;
+        if (Collision::checkCollision(entity->getHitBox(), entityLoop->getHitBox(), intersection))
         {
             intersections.push_back(intersection);
         }
@@ -246,9 +236,9 @@ std::vector<Intersection> World::getIntersections(const Entity* entity) const
     for (WorldObject* worldObject : worldObjects)
     {
         Intersection intersection;
-        intersection.entity = NULL;
+        intersection.entity = nullptr;
         intersection.worldObject = worldObject;
-        if (Collision::checkCollision(entity->getHitBox(), worldObject->getHitbox(), &intersection))
+        if (Collision::checkCollision(entity->getHitBox(), worldObject->getHitbox(), intersection))
         {
             intersections.push_back(intersection);
         }
@@ -257,7 +247,7 @@ std::vector<Intersection> World::getIntersections(const Entity* entity) const
     return intersections;
 }
 
-void World::loadTileset(const std::string source, int firstId)
+void World::loadTileset(const std::string &source, int firstId)
 {
     const std::string tileSetPath = "./assets/Worlds/" + source;
 
@@ -265,7 +255,7 @@ void World::loadTileset(const std::string source, int firstId)
     tilesetXML.LoadFile(tileSetPath.c_str());
     if (tilesetXML.Error())
     {
-        Log::write("World", LogLevel::Error, "Could not load tileset: %s", tilesetXML.ErrorName());
+        Log::write("World", LogLevel::error, "Can't not load tileset: %s / %s", source.c_str(), tilesetXML.ErrorName());
         return;
     }
 
@@ -291,44 +281,43 @@ void World::loadTileset(const std::string source, int firstId)
         tile.tilesetWidth = imageXMLElement->IntAttribute("width");
         tile.tilesetHeight = imageXMLElement->IntAttribute("height");
         tile.texture = texture;
-        tile.x = (id % tile.columns) * tile.width;
-        tile.y = (id / tile.columns) * tile.height;
+        tile.x = id % tile.columns * tile.width;
+        tile.y = id / tile.columns * tile.height;
         tile.currentX = tile.x;
         tile.currentY = tile.y;
-        
+
         tiles.insert(tiles.begin() + id + firstId, tile);
     }
 
-    for (const tinyxml2::XMLElement* tileXMLElement = tilesetXMLElement->FirstChildElement("tile"); tileXMLElement != NULL; tileXMLElement = tileXMLElement->NextSiblingElement("tile"))
+    for (const tinyxml2::XMLElement* tileXMLElement = tilesetXMLElement->FirstChildElement("tile"); tileXMLElement != nullptr; tileXMLElement = tileXMLElement->NextSiblingElement("tile"))
     {
         int id = tileXMLElement->IntAttribute("id");
-        const char* tileType = tileXMLElement->Attribute("type");
-        if (tileType) tiles[id + firstId].data.insert({"type", tileType});
 
-        const tinyxml2::XMLElement* propertiesXMLElement = tileXMLElement->FirstChildElement("properties");
-        if (propertiesXMLElement)
+        if (const char* tileType = tileXMLElement->Attribute("type"))
+            tiles[id + firstId].data.insert({"type", tileType});
+
+        if (const tinyxml2::XMLElement* propertiesXMLElement = tileXMLElement->FirstChildElement("properties"))
         {
-            for (const tinyxml2::XMLElement* propertyXMLElement = propertiesXMLElement->FirstChildElement("property"); propertyXMLElement != NULL; propertyXMLElement = propertyXMLElement->NextSiblingElement("property"))
+            for (const tinyxml2::XMLElement* propertyXMLElement = propertiesXMLElement->FirstChildElement("property"); propertyXMLElement != nullptr; propertyXMLElement = propertyXMLElement->NextSiblingElement("property"))
             {
                 tiles[id + firstId].data.insert({propertyXMLElement->Attribute("name"), propertyXMLElement->Attribute("value")});
             }
         }
 
-        const tinyxml2::XMLElement* animationXML = tileXMLElement->FirstChildElement("animation");
-        if (animationXML)
+        if (const tinyxml2::XMLElement* animationXML = tileXMLElement->FirstChildElement("animation"))
         {
-            for (const tinyxml2::XMLElement* animElement = animationXML->FirstChildElement("frame"); animElement != NULL; animElement = animElement->NextSiblingElement("frame"))
+            for (const tinyxml2::XMLElement* animElement = animationXML->FirstChildElement("frame"); animElement != nullptr; animElement = animElement->NextSiblingElement("frame"))
             {
                 tiles[id + firstId].animated = true;
 
-                AnimationTileFrame frame;
+                AnimationTileFrame frame{};
                 frame.duration = animElement->IntAttribute("duration");
                 frame.tileId = animElement->IntAttribute("tileid");
                 tiles[id + firstId].animationFrames.push_back(frame);
             }
         }
     }
-    Log::write("World", LogLevel::Info, "Loaded %s tileset", tilesetTexturePath.replace_extension().string().c_str());
+    Log::write("World", LogLevel::info, "Loaded %s tileset", tilesetTexturePath.replace_extension().string().c_str());
 }
 
 void World::loadTilemap(const std::string& tilemapName)
@@ -344,7 +333,7 @@ void World::loadTilemap(const std::string& tilemapName)
     tilemapXML.LoadFile(tileMapPath.c_str());
     if (tilemapXML.Error())
     {
-        Log::write("World", LogLevel::Error, "Could not load tilemap: %s", tilemapXML.ErrorName());
+        Log::write("World", LogLevel::error, "Can't load tilemap: %s / %s", tilemapName.c_str(), tilemapXML.ErrorName());
         return;
     }
 
@@ -354,7 +343,7 @@ void World::loadTilemap(const std::string& tilemapName)
     float tileWidth = mapXMLElement->IntAttribute("tilewidth");
     float tileHeight = mapXMLElement->IntAttribute("tileheight");
 
-    for (const tinyxml2::XMLElement* element = mapXMLElement->FirstChildElement("layer"); element != NULL; element = element->NextSiblingElement("layer"))
+    for (const tinyxml2::XMLElement* element = mapXMLElement->FirstChildElement("layer"); element != nullptr; element = element->NextSiblingElement("layer"))
     {
         TileLayer layer;
         layer.name = element->Attribute("name");
@@ -369,8 +358,7 @@ void World::loadTilemap(const std::string& tilemapName)
             layer.tileIds.push_back(stoi(substr));
         }
 
-        const char* layerClass = element->Attribute("class");
-        if (layerClass && !strcmp("foreground", layerClass))
+        if (const char* layerClass = element->Attribute("class"); layerClass && !strcmp("foreground", layerClass))
         {
             foregroundLayers.push_back(layer);
         }
@@ -390,16 +378,16 @@ void World::loadTilemap(const std::string& tilemapName)
     nullTile.currentY = 0;
     tiles.push_back(nullTile);
 
-    for (const tinyxml2::XMLElement* element = mapXMLElement->FirstChildElement("tileset"); element != NULL; element = element->NextSiblingElement("tileset"))
+    for (const tinyxml2::XMLElement* element = mapXMLElement->FirstChildElement("tileset"); element != nullptr; element = element->NextSiblingElement("tileset"))
     {
         int firstId = element->IntAttribute("firstgid");
         std::string source = element->Attribute("source");
         loadTileset(source, firstId);
     }
 
-    for (tinyxml2::XMLElement* objectGroup = mapXMLElement->FirstChildElement("objectgroup"); objectGroup != NULL; objectGroup = objectGroup->NextSiblingElement())
+    for (tinyxml2::XMLElement* objectGroup = mapXMLElement->FirstChildElement("objectgroup"); objectGroup != nullptr; objectGroup = objectGroup->NextSiblingElement())
     {
-        for (tinyxml2::XMLElement* object = objectGroup->FirstChildElement("object"); object != NULL; object = object->NextSiblingElement())
+        for (tinyxml2::XMLElement* object = objectGroup->FirstChildElement("object"); object != nullptr; object = object->NextSiblingElement())
         {
             WorldObject* worldObject = new WorldObject;
             const char* name = object->Attribute("name");
@@ -412,11 +400,9 @@ void World::loadTilemap(const std::string& tilemapName)
             if (name) worldObject->setData("name", name);
             if (type) worldObject->setData("type", type);
 
-            tinyxml2::XMLElement* properties = object->FirstChildElement("properties");
-
-            if (properties)
+            if (tinyxml2::XMLElement* properties = object->FirstChildElement("properties"))
             {
-                for (tinyxml2::XMLElement* property = properties->FirstChildElement("property"); property != NULL; property = property->NextSiblingElement("property"))
+                for (tinyxml2::XMLElement* property = properties->FirstChildElement("property"); property != nullptr; property = property->NextSiblingElement("property"))
                 {
                     worldObject->setData(property->Attribute("name"), property->Attribute("value"));
                 }
@@ -443,9 +429,10 @@ void World::loadTilemap(const std::string& tilemapName)
                     polygonPoint.y = stof(substr) / tileHeight;
                     polygonPoints.push_back(polygonPoint);
                 }
+
                 for (const Vector2f& polygonPoint : polygonPoints)
                 {
-                    hitbox.hitBoxPoints.push_back(polygonPoint + Vector2f(x, y));
+                    hitbox.hitboxVertices.push_back(polygonPoint + Vector2f(x, y));
                 }
             }
             else if (ellipse)
@@ -458,29 +445,21 @@ void World::loadTilemap(const std::string& tilemapName)
             }
             else
             {
-                hitbox.hitBoxPoints.push_back(Vector2f(x, y));
-                hitbox.hitBoxPoints.push_back(Vector2f(x, y + height));
-                hitbox.hitBoxPoints.push_back(Vector2f(x + width, y));
-                hitbox.hitBoxPoints.push_back(Vector2f(x + width, y + height));
+                hitbox.hitboxVertices.emplace_back(x, y);
+                hitbox.hitboxVertices.emplace_back(x, y + height);
+                hitbox.hitboxVertices.emplace_back(x + width, y);
+                hitbox.hitboxVertices.emplace_back(x + width, y + height);
             }
             worldObject->setHitbox(hitbox);
             worldObjects.push_back(worldObject);
         }
     }
-    Log::write("World", LogLevel::Info, "Loaded %s tilemap", tilemapName.c_str());
+    Log::write("World", LogLevel::info, "Loaded %s tilemap", tilemapName.c_str());
 }
-
-void World::init() {}
-
-void World::update() {}
-
-void World::onLoad() {}
-
-void World::onUnload() {}
 
 World::~World()
 {
-    for (WorldObject* worldObject : worldObjects)
+    for (const WorldObject* worldObject : worldObjects)
     {
         delete worldObject;
     }

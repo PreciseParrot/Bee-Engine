@@ -77,7 +77,7 @@ void Keyboard::init()
     keyMap.insert({SDL_SCANCODE_MENU, Key::menu});
 }
 
-void Keyboard::handleInput(SDL_Event* event)
+void Keyboard::handleInput(const SDL_Event* event)
 {
     bool keyPressed = false;
 

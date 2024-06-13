@@ -92,7 +92,7 @@ public:
      * 
      * @param animationName the name of the animation.
      */
-    void setAnimation(const std::string& animationName);
+    void setAnimation(const std::string& animationName) const;
 
     /**
      * @brief Set the name of the entity.
@@ -151,7 +151,7 @@ public:
      * @param fontName the name of the font
      * @param size the size of the font in pixels
      */
-    void setFont(const std::string& fontName, int size);
+    void setFont(const std::string& fontName, int size) const;
 
     /**
      * @brief Set the text and color of the entity.
@@ -184,7 +184,7 @@ public:
      * 
      * @param scale the size of the hitbox
      */
-    void setHitboxScale(const Vector2f& size);
+    void setHitboxScale(const Vector2f& scale);
 
     /**
      * @brief The update function can be implemented in inhereting classes. This function is called once every frame.

@@ -8,9 +8,9 @@
 
 enum class LogLevel
 {
-    Info,
-    Warning,
-    Error
+    info,
+    warning,
+    error
 };
 
 /**

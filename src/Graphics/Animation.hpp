@@ -1,25 +1,25 @@
 #pragma once
 
-enum AnimationDirection
+enum class AnimationDirection
 {
-    ANIMATION_NONE,
-    ANIMATION_FORWARD,
-    ANIMATION_REVERSE,
-    ANIMATION_PINGPONG
+    none,
+    forward,
+    reverse,
+    pingPong
 };
 
 struct FrameTag
 {
-    int start;
-    int end;
-    AnimationDirection direction;
+    int start = 0;
+    int end = 0;
+    AnimationDirection direction = AnimationDirection::none;
 };
 
 struct AnimationSpriteFrame
 {
-    int x;
-    int y;
-    int w;
-    int h;
-    int duration;
+    int x = 0;
+    int y = 0;
+    int w = 0;
+    int h = 0;
+    int duration = 0;
 };

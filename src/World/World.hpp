@@ -17,7 +17,6 @@ class World
 public:
     /*Internal functions start here*/
 
-    bool isInitialized();
     void initInternal();
     void updateInternal();
 
@@ -126,28 +125,22 @@ public:
     std::vector<Intersection> getIntersections(const Entity* entity) const;
 
     /**
-     * @brief The init function can be implemented in inhereting classes. This function is called when the world is initialized.
-     * 
-     */
-    virtual void init();
-
-    /**
      * @brief The update function can be implemented in inhereting classes. This function is called once every frame.
      * 
      */
-    virtual void update();
+    virtual void update() = 0;
 
     /**
      * @brief The onLoad function can be implemented in inhereting classes. This function is called everytime the world is loaded.
      * 
      */
-    virtual void onLoad();
+    virtual void onLoad() = 0;
 
     /**
      * @brief The onUnload function can be implemented in inhereting classes. This function is called everytime the world is unloaded.
      * 
      */
-    virtual void onUnload();
+    virtual void onUnload() = 0;
 
     /**
      * @brief The destructor can be implemented in inhereting classes.
@@ -157,13 +150,12 @@ public:
 
 private:
     int worldHeight = 0;
-    int worldWidth = 0; 
-    bool initialized = false;
+    int worldWidth = 0;
     std::vector<Entity*> entities;
     std::vector<WorldObject*> worldObjects;
     std::vector<HUDObject*> hudObjects;
     std::vector<TileLayer> foregroundLayers;
     std::vector<TileLayer> layers;
     std::vector<Tile> tiles;
-    void loadTileset(const std::string source, int firstId);
+    void loadTileset(const std::string& source, int firstId);
 };

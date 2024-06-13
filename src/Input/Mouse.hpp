@@ -23,8 +23,8 @@ namespace Mouse
     /*Internal functions start here*/
 
     void init();
-    void handleInput(SDL_Event* event);
-    void handleMovement(SDL_Event* event);
+    void handleInput(const SDL_Event* event);
+    void handleMovement(const SDL_Event* event);
     void update();
     void cleanUp();
 

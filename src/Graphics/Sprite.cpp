@@ -13,7 +13,7 @@
 #include "Math/Vector2f.hpp"
 #include "Math/Vector2i.hpp"
 
-Sprite::Sprite() {}
+Sprite::Sprite() = default;
 
 void Sprite::setSprite(const std::string& spriteName)
 {
@@ -22,13 +22,13 @@ void Sprite::setSprite(const std::string& spriteName)
 
     texture = Renderer::loadTexture(spriteName, pngFilePath);
 
-    currentAnimation.start = 0;    
+    currentAnimation.start = 0;
     currentAnimation.end = 0;
-    currentAnimation.direction = ANIMATION_NONE;
+    currentAnimation.direction = AnimationDirection::none;
     frameTags.insert({"no_animation", currentAnimation});
 
     std::ifstream jsonFile(jsonFilePath);
-    
+
     if (jsonFile.fail()) return;
 
     nlohmann::json spriteData = nlohmann::json::parse(jsonFile);
@@ -51,19 +51,17 @@ void Sprite::setSprite(const std::string& spriteName)
         frameTag.start = frameTagJson["from"].get<int>();
         frameTag.end = frameTagJson["to"].get<int>();
 
-        std::string direction = frameTagJson["direction"].get<std::string>();
-
-        if (direction == "forward")
+        if (std::string direction = frameTagJson["direction"].get<std::string>(); direction == "forward")
         {
-            frameTag.direction = ANIMATION_FORWARD;
+            frameTag.direction = AnimationDirection::forward;
         }
         else if (direction == "reverse")
         {
-            frameTag.direction = ANIMATION_REVERSE;
+            frameTag.direction = AnimationDirection::reverse;
         }
         else if (direction == "pingpong")
         {
-            frameTag.direction = ANIMATION_PINGPONG;
+            frameTag.direction = AnimationDirection::pingPong;
         }
 
         frameTags.insert({frameTagJson["name"].get<std::string>(), frameTag});
@@ -80,69 +78,68 @@ void Sprite::setAnimation(const std::string& animationName)
     }
     else
     {
-        Log::write("Sprite", LogLevel::Warning, "Animation: %s not found", animationName.c_str());
+        Log::write("Sprite", LogLevel::warning, "Animation: %s not found", animationName.c_str());
     }
 
-    if (currentAnimation.direction == ANIMATION_REVERSE)
+    if (currentAnimation.direction == AnimationDirection::reverse)
     {
-        currentAnimationDirection = ANIMATION_REVERSE;
+        currentAnimationDirection = AnimationDirection::reverse;
         currentSprite = currentAnimation.end;
     }
     else
     {
-        currentAnimationDirection = ANIMATION_FORWARD;
+        currentAnimationDirection = AnimationDirection::forward;
         currentSprite = currentAnimation.start;
     }
     currentAnimationName = animationName;
 }
 
-void Sprite::setFont(const std::string& fontName, int size)
+void Sprite::setFont(const std::string& fontName, const int size)
 {
     font = Renderer::loadFont(fontName, size);
 }
 
-void Sprite::setText(const std::string& text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+void Sprite::setText(const std::string& text, const uint8_t red, const uint8_t green, const uint8_t blue, const uint8_t alpha)
 {
     if (this->text == text) return;
 
     this->text = text;
     SDL_DestroyTexture(texture);
 
-    SDL_Color color = {red, green, blue, alpha};
+    const SDL_Color color = {red, green, blue, alpha};
     SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, 0);
     texture = Renderer::createTexture(surface);
     SDL_FreeSurface(surface);
     SDL_SetTextureScaleMode(texture, SDL_ScaleModeBest);
 }
 
-Vector2i Sprite::getTextureSize()
+Vector2i Sprite::getTextureSize() const
 {
     Vector2i textureSize;
 
-    if (sprites.size() == 0)
+    if (sprites.empty())
     {
-        SDL_QueryTexture(texture, NULL, NULL, &textureSize.x, &textureSize.y);
+        SDL_QueryTexture(texture, nullptr, nullptr, &textureSize.x, &textureSize.y);
     }
     else
     {
         textureSize.x = sprites[0].w;
         textureSize.y = sprites[0].h;
     }
-    
+
     return textureSize;
 }
 
 void Sprite::updateInternal()
 {
-    if (sprites.size() == 0 || currentAnimation.direction == ANIMATION_NONE)
+    if (sprites.empty() || currentAnimation.direction == AnimationDirection::none)
         return;
-  
-    uint32_t currentTime = Bee::getTime();
-    if (frameStartTime + sprites[currentSprite].duration <= currentTime)
+
+    if (const uint32_t currentTime = Bee::getTime(); frameStartTime + sprites[currentSprite].duration <= currentTime)
     {
         frameStartTime = currentTime;
 
-        if (currentAnimationDirection == ANIMATION_FORWARD)
+        if (currentAnimationDirection == AnimationDirection::forward)
         {
             currentSprite++;
         }
@@ -151,47 +148,44 @@ void Sprite::updateInternal()
             currentSprite--;
         }
 
-        if (currentAnimation.direction == ANIMATION_FORWARD)
+        if (currentAnimation.direction == AnimationDirection::forward)
         {
             if (currentSprite > currentAnimation.end)
             {
                 currentSprite = currentAnimation.start;
             }
         }
-        else if (currentAnimation.direction == ANIMATION_REVERSE)
+        else if (currentAnimation.direction == AnimationDirection::reverse)
         {
             if (currentSprite < currentAnimation.start)
             {
                 currentSprite = currentAnimation.end;
             }
         }
-        else if (currentAnimation.direction == ANIMATION_PINGPONG)
+        else if (currentAnimation.direction == AnimationDirection::pingPong)
         {
-            if (currentSprite >= currentAnimation.end && currentAnimationDirection == ANIMATION_FORWARD)
+            if (currentSprite >= currentAnimation.end && currentAnimationDirection == AnimationDirection::forward)
             {
-                currentAnimationDirection = ANIMATION_REVERSE;
+                currentAnimationDirection = AnimationDirection::reverse;
             }
-            else if (currentSprite <= currentAnimation.start && currentAnimationDirection == ANIMATION_REVERSE)
+            else if (currentSprite <= currentAnimation.start && currentAnimationDirection == AnimationDirection::reverse)
             {
-                currentAnimationDirection = ANIMATION_FORWARD;
+                currentAnimationDirection = AnimationDirection::forward;
             }
         }
     }
 }
 
-void Sprite::updateInternalHUD(const Vector2i& position, const Vector2i& scale, const Vector2f& rotationCenter, float rotation)
+void Sprite::updateInternalHUD(const Vector2i& position, const Vector2i& scale, const Vector2f& rotationCenter, const float rotation)
 {
     updateInternal();
-    Renderer::drawHUD(position, scale, (SDL_Rect*)&sprites[currentSprite], texture, rotationCenter, rotation);
+    Renderer::drawHUD(position, scale, reinterpret_cast<SDL_Rect *>(&sprites[currentSprite]), texture, rotationCenter, rotation);
 }
 
-void Sprite::updateInternalEntity(const Vector2f& position, const Vector2f& scale, const Vector2f& rotationCenter, float rotation)
+void Sprite::updateInternalEntity(const Vector2f& position, const Vector2f& scale, const Vector2f& rotationCenter, const float rotation)
 {
     updateInternal();
-    Renderer::drawSprite(position, scale, (SDL_Rect*)&sprites[currentSprite], texture, rotationCenter, rotation);
+    Renderer::drawSprite(position, scale, reinterpret_cast<SDL_Rect *>(&sprites[currentSprite]), texture, rotationCenter, rotation);
 }
 
-Sprite::~Sprite()
-{
-
-}
+Sprite::~Sprite() = default;
