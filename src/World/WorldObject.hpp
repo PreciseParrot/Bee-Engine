@@ -4,38 +4,25 @@
 
 #pragma once
 
-#include <string>
-#include <unordered_map>
-
+#include "Properties.hpp"
 #include "Collision/Hitbox.hpp"
 
 class WorldObject
 {
 public:
-    /*Internal functions start here*/
+    //Internal functions start here
 
     Hitbox getHitbox() const;
     void setHitbox(const Hitbox& hitbox);
 
-    /*Internal functions end here*/
+    //Internal functions end here
 
     /**
-     * @brief Get the data of the world object. Use `"name"` to get the name and `"type"` to get the class of the world object.
-     * 
-     * @param index the name the data variable
-     * @return the data of the world object.
+     * @brief The custom properties of the world object.
+     *
      */
-    std::string getData(const std::string& index) const;
-    
-    /**
-     * @brief Set the data of the world object.
-     * 
-     * @param index the name of the data variable
-     * @param data the data of the world object
-     */
-    void setData(const std::string& index, const std::string& data);
+    Properties properties;
 
 private:
     Hitbox hitbox;
-    std::unordered_map<std::string, std::string> data;
 };

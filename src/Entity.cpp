@@ -44,15 +44,7 @@ std::vector<Intersection> Entity::getIntersections() const
 
 std::string Entity::getName() const
 {
-    return getData("name");
-}
-
-std::string Entity::getData(const std::string& index) const
-{
-    if (data.find(index) == data.end())
-        return "";
-
-    return data.at(index);
+    return properties.getString("name");
 }
 
 Vector2f Entity::getPosition() const
@@ -87,14 +79,9 @@ void Entity::setSprite(const std::string& spriteName)
     setHitboxScale(1);
 }
 
-void Entity::setData(const std::string& index, const std::string& data)
-{
-    this->data.insert({index, data});
-}
-
 void Entity::setName(const std::string& name)
 {
-    setData("name", name);
+    properties.setString("name", name);
 }
 
 void Entity::setPosition(const float x, const float y)

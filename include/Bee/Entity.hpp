@@ -6,7 +6,6 @@
 
 #include <cstdint>
 #include <string>
-#include <unordered_map>
 
 #include "Bee/Collision/Intersection.hpp"
 #include "Bee/Math/Vector2f.hpp"
@@ -17,6 +16,12 @@ class Entity
 {
 public:
     /**
+     * @brief The custom properties of the entity.
+     *
+     */
+    Properties properties;
+
+    /**
      * @brief Default constructor.
      * 
      */
@@ -24,7 +29,7 @@ public:
 
     /**
      * @brief Get all intersections with entities and world objects with the entity.
-     * 
+     *
      * @return all intersections of the entitiy.
      */
     std::vector<Intersection> getIntersections() const;
@@ -199,11 +204,10 @@ public:
     virtual ~Entity();
 
 private:
-    float rotation = 0; 
+    float rotation = 0;
     Sprite* sprite = nullptr;
     Vector2f position;
     Vector2f rotationCenter = {0.5f, 0.5f};
     Vector2f scale = {1.0f, 1.0f};
     Vector2f hitboxScale = {1.0f, 1.0f};
-    std::unordered_map<std::string, std::string> data;
 };

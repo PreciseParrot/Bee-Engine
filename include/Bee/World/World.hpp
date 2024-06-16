@@ -145,7 +145,7 @@ public:
 
 private:
     int worldHeight = 0;
-    int worldWidth = 0; 
+    int worldWidth = 0;
     std::vector<Entity*> entities;
     std::vector<WorldObject*> worldObjects;
     std::vector<HUDObject*> hudObjects;

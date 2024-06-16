@@ -2,14 +2,17 @@ cmake_minimum_required(VERSION 3.27)
 
 project(bee VERSION 1)
 
+set(CMAKE_C_STANDARD 23)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/${CMAKE_PROJECT_NAME}/${CMAKE_SYSTEM_NAME}/${CMAKE_BUILD_TYPE})
 
 add_library(${PROJECT_NAME} SHARED
     src/Audio.cpp
     src/Bee.cpp
-    src/Collision/Collision.cpp
     src/Entity.cpp
     src/Log.cpp
+    src/Properties.cpp
+    src/Collision/Collision.cpp
     src/Graphics/HUDObject.cpp
     src/Graphics/Renderer.cpp
     src/Graphics/Sprite.cpp

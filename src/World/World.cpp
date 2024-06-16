@@ -397,14 +397,46 @@ void World::loadTilemap(const std::string& tilemapName)
             float width = object->FloatAttribute("width") / tileWidth;
             float height = object->FloatAttribute("height") / tileHeight;
 
-            if (name) worldObject->setData("name", name);
-            if (type) worldObject->setData("type", type);
+            if (name) worldObject->properties.setString("name", name);
+            if (type) worldObject->properties.setString("type", type);
 
             if (tinyxml2::XMLElement* properties = object->FirstChildElement("properties"))
             {
                 for (tinyxml2::XMLElement* property = properties->FirstChildElement("property"); property != nullptr; property = property->NextSiblingElement("property"))
                 {
-                    worldObject->setData(property->Attribute("name"), property->Attribute("value"));
+                    const char* propertyName = property->Attribute("name");
+                    const char* propertyType = property->Attribute("type");
+                    const char* propertyValue = property->Attribute("value");
+
+                    if (!propertyType)
+                    {
+                        worldObject->properties.setString(propertyName, propertyValue);
+                        break;
+                    }
+
+                    if (!strcmp(propertyType, "bool"))
+                    {
+                        if (!strcmp(propertyValue, "true"))
+                        {
+                            worldObject->properties.setBool(propertyName, true);
+                        }
+                        else
+                        {
+                            worldObject->properties.setBool(propertyName, false);
+                        }
+                    }
+                    else if (!strcmp(propertyType, "float"))
+                    {
+                        worldObject->properties.setFloat(propertyName, std::stof(propertyValue));
+                    }
+                    else if (!strcmp(propertyType, "int"))
+                    {
+                        worldObject->properties.setInt(propertyName, std::stoi(propertyValue));
+                    }
+                    else
+                    {
+                        worldObject->properties.setString(propertyName, propertyValue);
+                    }
                 }
             }
 

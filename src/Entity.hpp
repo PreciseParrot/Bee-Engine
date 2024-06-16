@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <string>
 
+#include "Properties.hpp"
 #include "Collision/Hitbox.hpp"
 #include "Collision/Intersection.hpp"
 #include "Graphics/Sprite.hpp"
@@ -15,12 +16,18 @@
 class Entity
 {
 public:
-    /*Internal functions start here*/
+    //Internal functions start here
 
     void updateInternal() const;
     Hitbox getHitBox() const;
 
-    /*Internal functions end here*/
+    //Internal functions end here
+
+    /**
+     * @brief The custom properties of the entity.
+     *
+     */
+    Properties properties;
 
     /**
      * @brief Default constructor.
@@ -41,14 +48,6 @@ public:
      * @return the name of the entity.
      */
     std::string getName() const;
-
-    /**
-     * @brief Get the data of the entity. Use `"name"` to get the name and `"type"` to get the class of entity.
-     * 
-     * @param index the name the data variable
-     * @return the data of the world object.
-     */
-    std::string getData(const std::string& index) const;
 
     /**
      * @brief Get the position of the entity.
@@ -84,14 +83,6 @@ public:
      * @param spriteName the name of the sprite.
      */
     void setSprite(const std::string& spriteName);
-
-    /**
-     * @brief Set the data of the entity.
-     * 
-     * @param index the name of the data variable
-     * @param data the data of the entity
-     */
-    void setData(const std::string& index, const std::string& data);
 
     /**
      * @brief Set the animation of the entity.
@@ -205,11 +196,10 @@ public:
     virtual ~Entity();
 
 private:
-    float rotation = 0; 
+    float rotation = 0;
     Sprite* sprite = nullptr;
     Vector2f position;
     Vector2f rotationCenter = {0.5f, 0.5f};
     Vector2f scale = {1.0f, 1.0f};
     Vector2f hitboxScale = {1.0f, 1.0f};
-    std::unordered_map<std::string, std::string> data;
 };
