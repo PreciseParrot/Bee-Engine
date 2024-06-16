@@ -19,17 +19,17 @@ std::string Properties::getString(const std::string& index) const
     return propertiesString.at(index);
 }
 
-void Properties::setBool(const std::string& index, bool value)
+void Properties::setBool(const std::string& index, const bool value)
 {
     propertiesBool[index] = value;
 }
 
-void Properties::setFloat(const std::string& index, float value)
+void Properties::setFloat(const std::string& index, const float value)
 {
     propertiesFloat[index] = value;
 }
 
-void Properties::setInt(const std::string& index, int value)
+void Properties::setInt(const std::string& index, const int value)
 {
     propertiesInt[index] = value;
 }

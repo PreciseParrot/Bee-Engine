@@ -156,7 +156,7 @@ SDL_Texture* Renderer::createTexture(SDL_Surface* surface)
 
 SDL_Texture* Renderer::loadTexture(const std::string& textureName, const std::string& path)
 {
-    if (textureMap.find(textureName) != textureMap.end())
+    if (textureMap.contains(textureName))
         return textureMap[textureName];
 
     SDL_Texture* texture = IMG_LoadTexture(renderer, path.c_str());
@@ -174,7 +174,7 @@ SDL_Texture* Renderer::loadTexture(const std::string& textureName, const std::st
 
 TTF_Font* Renderer::loadFont(const std::string& fontName, int size)
 {
-    if (fontMap.find({fontName, size}) != fontMap.end())
+    if (fontMap.contains({fontName, size}))
     {
         return fontMap[{fontName, size}];
     }
@@ -283,9 +283,9 @@ void Renderer::setCameraPosition(const float x, const float y)
     cameraPosition.y = y;
 }
 
-void Renderer::setCameraPosition(const Vector2f& newCameraPosition)
+void Renderer::setCameraPosition(const Vector2f& position)
 {
-    cameraPosition = newCameraPosition;
+    cameraPosition = position;
 }
 
 void Renderer::setViewportSize(const float width, const float height)
@@ -294,9 +294,9 @@ void Renderer::setViewportSize(const float width, const float height)
     viewportSize.y = height;
 }
 
-void Renderer::setViewportSize(const Vector2f& viewport)
+void Renderer::setViewportSize(const Vector2f& size)
 {
-    viewportSize = viewport;
+    viewportSize = size;
 }
 
 void Renderer::cleanUp()

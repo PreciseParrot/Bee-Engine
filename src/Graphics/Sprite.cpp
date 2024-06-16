@@ -72,7 +72,7 @@ void Sprite::setAnimation(const std::string& animationName)
 {
     if (currentAnimationName == animationName) return;
 
-    if (frameTags.find(animationName) != frameTags.end())
+    if (frameTags.contains(animationName))
     {
         currentAnimation = frameTags.at(animationName);
     }

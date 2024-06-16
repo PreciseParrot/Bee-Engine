@@ -36,7 +36,7 @@ void Audio::init()
 
 bool Audio::loadMusic(const std::string& musicName)
 {
-    if (musicMap.find(musicName) != musicMap.end())
+    if (musicMap.contains(musicName))
         return true;
 
     const std::string fileName = "./assets/Music/" + musicName + ".ogg";
@@ -57,7 +57,7 @@ bool Audio::loadMusic(const std::string& musicName)
 
 void Audio::playMusic(const std::string& musicName, const int loops)
 {
-    if (musicMap.find(musicName) == musicMap.end() && !loadMusic(musicName))
+    if (!musicMap.contains(musicName) && !loadMusic(musicName))
     {
         return;
     }
@@ -72,7 +72,7 @@ void Audio::stopMusic()
 
 bool Audio::loadSound(const std::string& soundName)
 {
-    if (soundMap.find(soundName) != soundMap.end())
+    if (soundMap.contains(soundName))
         return true;
 
     const std::string fileName = "./assets/SFX/" + soundName + ".ogg";
@@ -92,7 +92,7 @@ bool Audio::loadSound(const std::string& soundName)
 
 int Audio::playSound(const std::string& soundName)
 {
-    if (soundMap.find(soundName) == soundMap.end() && !loadSound(soundName))
+    if (!soundMap.contains(soundName) && !loadSound(soundName))
     {
         return -1;
     }

@@ -97,13 +97,13 @@ void World::updateInternal()
 
 void World::addEntity(Entity* entity)
 {
-    if (std::find(entities.begin(), entities.end(), entity) == entities.end())
+    if (std::count(entities.begin(), entities.end(), entity))
     {
-        entities.push_back(entity);
+        Log::write("World", LogLevel::warning, "Entity already in world");
     }
     else
     {
-        Log::write("World", LogLevel::warning, "Entity already in world");
+        entities.push_back(entity);
     }
 }
 
@@ -118,19 +118,6 @@ Entity* World::getEntityByName(const std::string& name)
     return nullptr;
 }
 
-std::vector<Entity*> World::getEntitiesByName(const std::string& name)
-{
-    std::vector<Entity*> matchingEntities;
-
-    for (Entity* entity : entities)
-    {
-        if (entity->getName() == name)
-            matchingEntities.push_back(entity);
-    }
-
-    return matchingEntities;
-}
-
 std::vector<Entity*> World::getAllEntities()
 {
     return entities;
@@ -138,9 +125,9 @@ std::vector<Entity*> World::getAllEntities()
 
 Entity* World::removeEntity(Entity* entity)
 {
-    if (std::find(entities.begin(), entities.end(), entity) != entities.end())
+    if (!std::count(entities.begin(), entities.end(), entity))
     {
-        entities.erase(std::remove(entities.begin(), entities.end(), entity), entities.end());
+        std::erase(entities, entity);
         return entity;
     }
 
@@ -159,13 +146,13 @@ void World::deleteAllEntities()
 
 void World::addHUDObject(HUDObject* hudObject)
 {
-    if (std::find(hudObjects.begin(), hudObjects.end(), hudObject) == hudObjects.end())
+    if (std::count(hudObjects.begin(), hudObjects.end(), hudObject))
     {
-        hudObjects.push_back(hudObject);
+        Log::write("World", LogLevel::warning, "HUD Object already in world");
     }
     else
     {
-        Log::write("World", LogLevel::warning, "HUD Object already in world");
+        hudObjects.push_back(hudObject);
     }
 }
 
@@ -176,9 +163,9 @@ std::vector<HUDObject*> World::getAllHUDObjects()
 
 HUDObject* World::removeHUDObject(HUDObject* hudObject)
 {
-    if (std::find(hudObjects.begin(), hudObjects.end(), hudObject) != hudObjects.end())
+    if (std::count(hudObjects.begin(), hudObjects.end(), hudObject))
     {
-        hudObjects.erase(std::remove(hudObjects.begin(), hudObjects.end(), hudObject), hudObjects.end());
+        std::erase(hudObjects, hudObject);
         return hudObject;
     }
 
@@ -193,6 +180,11 @@ void World::deleteAllHUDObjects()
     }
 
     hudObjects.clear();
+}
+
+std::vector<WorldObject*> World::getAllWorldObjects() const
+{
+    return worldObjects;
 }
 
 std::string World::getTileData(const Vector2f& position, const std::string& index) const
@@ -210,7 +202,7 @@ std::string World::getTileData(const Vector2f& position, const std::string& inde
             tileId = tileIdT;
     }
 
-    if (tiles[tileId].data.find(index) == tiles[tileId].data.end())
+    if (!tiles[tileId].data.contains(index))
         return "";
 
     return tiles[tileId].data.at(index);
@@ -477,6 +469,7 @@ void World::loadTilemap(const std::string& tilemapName)
             }
             else if (point)
             {
+                hitbox.center = {x, y};
                 hitbox.vertices.emplace_back(x, y);
             }
             else

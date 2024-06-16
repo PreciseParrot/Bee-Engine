@@ -109,9 +109,9 @@ namespace Renderer
     /**
      * @brief Set the position of the camera
      * 
-     * @param cameraPosition the position of the camera in world coordinates
+     * @param position the position of the camera in world coordinates
      */
-    void setCameraPosition(const Vector2f& cameraPosition);
+    void setCameraPosition(const Vector2f& position);
 
     /**
      * @brief Set the size of the viewport
@@ -124,7 +124,7 @@ namespace Renderer
     /**
      * @brief Set the size of the viewport
      * 
-     * @param viewportSize the size of the viewport
+     * @param size the size of the viewport
      */
-    void setViewportSize(const Vector2f& viewportSize);
+    void setViewportSize(const Vector2f& size);
 };

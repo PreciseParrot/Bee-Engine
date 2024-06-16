@@ -15,12 +15,12 @@
 class World
 {
 public:
-    /*Internal functions start here*/
+    //Internal functions start here
 
     void initInternal();
     void updateInternal();
 
-    /*Internal functions end here*/
+    //Internal functions end here
 
     /**
      * @brief Default constructor.
@@ -42,14 +42,6 @@ public:
      * @return the first entity in the world that has the specified name.
      */
     Entity* getEntityByName(const std::string& name);
-
-    /**
-     * @brief Get entities in the world by name.
-     * 
-     * @param name the name of the entities
-     * @return all entites in the world that have the specifed name.
-     */
-    std::vector<Entity*> getEntitiesByName(const std::string& name);
 
     /**
      * @brief Get all the entities in the world.
@@ -99,6 +91,13 @@ public:
      * 
      */
     void deleteAllHUDObjects();
+
+    /**
+     * @brief Get all the world objects in the world.
+     *
+     * @return all the world objects in the world.
+     */
+    std::vector<WorldObject*> getAllWorldObjects() const;
 
     /**
      * @brief Load a tilemap.
