@@ -19,5 +19,6 @@ struct Vector2f
     Vector2f operator+(const Vector2f& other) const;
     Vector2f operator-(const Vector2f& other) const;
     Vector2f operator*(float multiplier) const;
+    Vector2f operator*(const Vector2f& other) const;
     Vector2f operator/(float divider) const;
 };

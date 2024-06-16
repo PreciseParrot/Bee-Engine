@@ -7,5 +7,9 @@
 struct Hitbox
 {
     Vector2f center;
-    std::vector<Vector2f> hitboxVertices;
+
+    std::vector<Vector2f> vertices;
+
+    bool isEllipse = false;
+    Vector2f ellipse;
 };

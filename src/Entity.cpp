@@ -29,10 +29,10 @@ Hitbox Entity::getHitBox() const
     Hitbox hitbox;
 
     hitbox.center = position;
-    hitbox.hitboxVertices.emplace_back(position.x - hitboxScale.x / 2 * cosf(rotation * M_PI / 180) - hitboxScale.y / 2 * sinf(rotation * M_PI / 180), position.y - hitboxScale.x / 2 * sinf(rotation * M_PI / 180) + hitboxScale.y / 2 * cosf(rotation * M_PI / 180));
-    hitbox.hitboxVertices.emplace_back(position.x - hitboxScale.x / 2 * cosf(rotation * M_PI / 180) + hitboxScale.y / 2 * sinf(rotation * M_PI / 180), position.y - hitboxScale.x / 2 * sinf(rotation * M_PI / 180) - hitboxScale.y / 2 * cosf(rotation * M_PI / 180));
-    hitbox.hitboxVertices.emplace_back(position.x + hitboxScale.x / 2 * cosf(rotation * M_PI / 180) - hitboxScale.y / 2 * sinf(rotation * M_PI / 180), position.y + hitboxScale.x / 2 * sinf(rotation * M_PI / 180) + hitboxScale.y / 2 * cosf(rotation * M_PI / 180));
-    hitbox.hitboxVertices.emplace_back(position.x + hitboxScale.x / 2 * cosf(rotation * M_PI / 180) + hitboxScale.y / 2 * sinf(rotation * M_PI / 180), position.y + hitboxScale.x / 2 * sinf(rotation * M_PI / 180) - hitboxScale.y / 2 * cosf(rotation * M_PI / 180));
+    hitbox.vertices.emplace_back(position.x - hitboxScale.x / 2 * cosf(rotation * M_PI / 180) - hitboxScale.y / 2 * sinf(rotation * M_PI / 180), position.y - hitboxScale.x / 2 * sinf(rotation * M_PI / 180) + hitboxScale.y / 2 * cosf(rotation * M_PI / 180));
+    hitbox.vertices.emplace_back(position.x - hitboxScale.x / 2 * cosf(rotation * M_PI / 180) + hitboxScale.y / 2 * sinf(rotation * M_PI / 180), position.y - hitboxScale.x / 2 * sinf(rotation * M_PI / 180) - hitboxScale.y / 2 * cosf(rotation * M_PI / 180));
+    hitbox.vertices.emplace_back(position.x + hitboxScale.x / 2 * cosf(rotation * M_PI / 180) - hitboxScale.y / 2 * sinf(rotation * M_PI / 180), position.y + hitboxScale.x / 2 * sinf(rotation * M_PI / 180) + hitboxScale.y / 2 * cosf(rotation * M_PI / 180));
+    hitbox.vertices.emplace_back(position.x + hitboxScale.x / 2 * cosf(rotation * M_PI / 180) + hitboxScale.y / 2 * sinf(rotation * M_PI / 180), position.y + hitboxScale.x / 2 * sinf(rotation * M_PI / 180) - hitboxScale.y / 2 * cosf(rotation * M_PI / 180));
 
     return hitbox;
 }
@@ -62,7 +62,7 @@ bool Entity::isCursorOnMe() const
     Hitbox hitbox;
     Intersection intersection;
 
-    hitbox.hitboxVertices.push_back(Mouse::getMouseWorldPosition());
+    hitbox.vertices.push_back(Mouse::getMouseWorldPosition());
 
     return Collision::checkCollision(getHitBox(), hitbox, intersection);
 }

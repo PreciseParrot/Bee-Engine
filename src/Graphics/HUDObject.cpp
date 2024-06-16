@@ -45,12 +45,12 @@ bool HUDObject::isCursorOnMe() const
     const Vector2i center = position + scale / 2;
     const Vector2i cursorPosition = Mouse::getMouseScreenPosition();
 
-    hitbox.hitboxVertices.emplace_back(center.x - scale.x / 2.0f * cosf(rotation * M_PI / 180.0f) - scale.y / 2.0f * sinf(rotation * M_PI / 180.0f), center.y - scale.x / 2.0f * sinf(rotation * M_PI / 180.0f) + scale.y / 2.0f * cosf(rotation * M_PI / 180.0f));
-    hitbox.hitboxVertices.emplace_back(center.x + scale.x / 2.0f * cosf(rotation * M_PI / 180.0f) - scale.y / 2.0f * sinf(rotation * M_PI / 180.0f), center.y + scale.x / 2.0f * sinf(rotation * M_PI / 180.0f) + scale.y / 2.0f * cosf(rotation * M_PI / 180.0f));
-    hitbox.hitboxVertices.emplace_back(center.x - scale.x / 2.0f * cosf(rotation * M_PI / 180.0f) + scale.y / 2.0f * sinf(rotation * M_PI / 180.0f), center.y - scale.x / 2.0f * sinf(rotation * M_PI / 180.0f) - scale.y / 2.0f * cosf(rotation * M_PI / 180.0f));
-    hitbox.hitboxVertices.emplace_back(center.x + scale.x / 2.0f * cosf(rotation * M_PI / 180.0f) + scale.y / 2.0f * sinf(rotation * M_PI / 180.0f), center.y + scale.x / 2.0f * sinf(rotation * M_PI / 180.0f) - scale.y / 2.0f * cosf(rotation * M_PI / 180.0f));
+    hitbox.vertices.emplace_back(center.x - scale.x / 2.0f * cosf(rotation * M_PI / 180.0f) - scale.y / 2.0f * sinf(rotation * M_PI / 180.0f), center.y - scale.x / 2.0f * sinf(rotation * M_PI / 180.0f) + scale.y / 2.0f * cosf(rotation * M_PI / 180.0f));
+    hitbox.vertices.emplace_back(center.x + scale.x / 2.0f * cosf(rotation * M_PI / 180.0f) - scale.y / 2.0f * sinf(rotation * M_PI / 180.0f), center.y + scale.x / 2.0f * sinf(rotation * M_PI / 180.0f) + scale.y / 2.0f * cosf(rotation * M_PI / 180.0f));
+    hitbox.vertices.emplace_back(center.x - scale.x / 2.0f * cosf(rotation * M_PI / 180.0f) + scale.y / 2.0f * sinf(rotation * M_PI / 180.0f), center.y - scale.x / 2.0f * sinf(rotation * M_PI / 180.0f) - scale.y / 2.0f * cosf(rotation * M_PI / 180.0f));
+    hitbox.vertices.emplace_back(center.x + scale.x / 2.0f * cosf(rotation * M_PI / 180.0f) + scale.y / 2.0f * sinf(rotation * M_PI / 180.0f), center.y + scale.x / 2.0f * sinf(rotation * M_PI / 180.0f) - scale.y / 2.0f * cosf(rotation * M_PI / 180.0f));
 
-    cursor.hitboxVertices.emplace_back(cursorPosition.x, cursorPosition.y);
+    cursor.vertices.emplace_back(cursorPosition.x, cursorPosition.y);
 
     return Collision::checkCollision(hitbox, cursor, intersection);
 }

@@ -464,23 +464,27 @@ void World::loadTilemap(const std::string& tilemapName)
 
                 for (const Vector2f& polygonPoint : polygonPoints)
                 {
-                    hitbox.hitboxVertices.push_back(polygonPoint + Vector2f(x, y));
+                    hitbox.vertices.push_back(polygonPoint + Vector2f(x, y));
                 }
             }
             else if (ellipse)
             {
-
+                hitbox.isEllipse = true;
+                hitbox.center.x = x + width / 2;
+                hitbox.center.y = y + height / 2;
+                hitbox.ellipse.x = width / 2;
+                hitbox.ellipse.y = height / 2;
             }
             else if (point)
             {
-
+                hitbox.vertices.emplace_back(x, y);
             }
             else
             {
-                hitbox.hitboxVertices.emplace_back(x, y);
-                hitbox.hitboxVertices.emplace_back(x, y + height);
-                hitbox.hitboxVertices.emplace_back(x + width, y);
-                hitbox.hitboxVertices.emplace_back(x + width, y + height);
+                hitbox.vertices.emplace_back(x, y);
+                hitbox.vertices.emplace_back(x, y + height);
+                hitbox.vertices.emplace_back(x + width, y);
+                hitbox.vertices.emplace_back(x + width, y + height);
             }
             worldObject->setHitbox(hitbox);
             worldObjects.push_back(worldObject);

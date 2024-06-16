@@ -62,22 +62,27 @@ bool Vector2f::operator ==(const Vector2f& other) const
     return x == other.x && y == other.y;
 }
 
-Vector2f Vector2f::operator +(const Vector2f& other) const
+Vector2f Vector2f::operator+(const Vector2f& other) const
 {
     return {x + other.x, y + other.y};
 }
 
-Vector2f Vector2f::operator -(const Vector2f& other) const
+Vector2f Vector2f::operator-(const Vector2f& other) const
 {
     return {x - other.x, y - other.y};
 }
 
-Vector2f Vector2f::operator *(const float multiplier) const
+Vector2f Vector2f::operator*(const float multiplier) const
 {
     return {x * multiplier, y * multiplier};
 }
 
-Vector2f Vector2f::operator /(const float divider) const
+Vector2f Vector2f::operator*(const Vector2f& other) const
+{
+    return {x * other.x, y * other.y};
+}
+
+Vector2f Vector2f::operator/(const float divider) const
 {
     return {x / divider, y / divider};
 }

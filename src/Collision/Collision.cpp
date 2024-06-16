@@ -32,12 +32,23 @@ Vector2f tripleProduct(const Vector2f& in1, const Vector2f& in2, const Vector2f&
     return {out2X, out2Y};
 }
 
-Vector2f supportPoint(const Hitbox& hitbox, const Vector2f& directionVector)
+Vector2f supportPointEllipse(const Hitbox& hitbox, Vector2f& directionVector)
 {
+    directionVector.normalize();
+    return hitbox.center + hitbox.ellipse * directionVector;
+}
+
+Vector2f supportPoint(const Hitbox& hitbox, Vector2f& directionVector)
+{
+    if (hitbox.isEllipse)
+    {
+        return supportPointEllipse(hitbox, directionVector);
+    }
+
     float largestDotProduct = -FLT_MAX;
     Vector2f supportPoint;
 
-    for (const Vector2f& point : hitbox.hitboxVertices)
+    for (const Vector2f& point : hitbox.vertices)
     {
         if (const float dotProduct = point.dot(directionVector); dotProduct > largestDotProduct)
         {
@@ -49,9 +60,10 @@ Vector2f supportPoint(const Hitbox& hitbox, const Vector2f& directionVector)
     return supportPoint;
 }
 
-Vector2f minkowskiPoint(const Hitbox& hitbox1, const Hitbox& hitbox2, const Vector2f& directionVector)
+Vector2f minkowskiPoint(const Hitbox& hitbox1, const Hitbox& hitbox2, Vector2f& directionVector)
 {
-    return supportPoint(hitbox1, directionVector) - supportPoint(hitbox2, directionVector * -1);
+    Vector2f oppositeDirection = directionVector * -1;
+    return supportPoint(hitbox1, directionVector) - supportPoint(hitbox2, oppositeDirection);
 }
 
 void expandingPolytopeAlgorithm(Intersection& intersection, std::vector<Vector2f>& polytope, const Hitbox& hitbox1, const Hitbox& hitbox2)
