@@ -1,4 +1,5 @@
-#include "Mouse.hpp"
+#include "Bee/Input/Mouse.hpp"
+#include "Mouse-Internal.hpp"
 
 #include <bitset>
 #include <unordered_map>
@@ -6,8 +7,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "Log.hpp"
-#include "Graphics/Renderer.hpp"
+#include "Bee/Log.hpp"
+#include "Bee/Graphics/Renderer.hpp"
 
 static SDL_Cursor* cursor = nullptr;
 static std::unordered_map<uint8_t, MouseButton> mouseMap;

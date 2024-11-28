@@ -1,4 +1,5 @@
-#include "Renderer.hpp"
+#include "Bee/Graphics/Renderer.hpp"
+#include "Renderer-Internal.hpp"
 
 #include <cmath>
 #include <filesystem>
@@ -10,9 +11,9 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "Log.hpp"
-#include "Math/Vector2f.hpp"
-#include "Math/Vector2i.hpp"
+#include "Bee/Log.hpp"
+#include "Bee/Math/Vector2f.hpp"
+#include "Bee/Math/Vector2i.hpp"
 
 static SDL_Window* window = nullptr;
 static SDL_Renderer* renderer = nullptr;

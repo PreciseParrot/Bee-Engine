@@ -61,8 +61,8 @@ enum class Key : int
     tab,
     leftAlt,
     rightAlt,
-    leftCrtl,
-    rightCrtl,
+    leftCtrl,
+    rightCtrl,
     leftShift,
     rightShift,
     menu

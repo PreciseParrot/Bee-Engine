@@ -30,12 +30,12 @@ public:
     /**
      * @brief Get all intersections with entities and world objects with the entity.
      *
-     * @return all intersections of the entitiy.
+     * @return all intersections of the entity.
      */
     std::vector<Intersection> getIntersections() const;
 
     /**
-     * @brief Get the name of the entitiy.
+     * @brief Get the name of the entity.
      * 
      * @return the name of the entity.
      */
@@ -52,7 +52,7 @@ public:
     /**
      * @brief Get the position of the entity.
      * 
-     * @return the position of this entitiy in world coordinates.
+     * @return the position of this entity in world coordinates.
      */
     Vector2f getPosition() const;
 
@@ -62,6 +62,8 @@ public:
      * @return the rotation of the entity in degrees.
      */
     float getRotation() const;
+
+    Hitbox getHitBox() const;
 
     /**
      * @brief Move the entity by a given offset.
@@ -162,10 +164,10 @@ public:
      * @brief Set the text and color of the entity.
      * 
      * @param text the text of the entity
-     * @param red the red value from 0 - 255
-     * @param green the green value from 0 - 255
-     * @param blue the blue value from 0 - 255
-     * @param alpha the alpha value from 0 - 255
+     * @param red the red value from 0 to 255
+     * @param green the green value from 0 to 255
+     * @param blue the blue value from 0 to 255
+     * @param alpha the alpha value from 0 to 255
      */
     void setText(const std::string& text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
 
@@ -192,13 +194,13 @@ public:
     void setHitboxScale(const Vector2f& scale);
 
     /**
-     * @brief The update function can be implemented in inhereting classes. This function is called once every frame.
+     * @brief The update function can be implemented in inheriting classes. This function is called once every frame.
      * 
      */
     virtual void update();
 
     /**
-     * @brief The destructor can be implemented in inhereting classes.
+     * @brief The destructor can be implemented in inheriting classes.
      * 
      */
     virtual ~Entity();

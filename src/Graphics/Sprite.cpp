@@ -7,11 +7,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "Bee.hpp"
-#include "Log.hpp"
-#include "Renderer.hpp"
-#include "Math/Vector2f.hpp"
-#include "Math/Vector2i.hpp"
+#include "Bee/Bee.hpp"
+#include "Bee/Log.hpp"
+#include "Renderer-Internal.hpp"
+#include "Bee/Math/Vector2f.hpp"
+#include "Bee/Math/Vector2i.hpp"
 
 Sprite::Sprite() = default;
 

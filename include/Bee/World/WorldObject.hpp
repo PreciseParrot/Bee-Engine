@@ -16,6 +16,10 @@ public:
      */
     Properties properties;
 
+    Hitbox getHitbox() const;
+    
+    void setHitbox(const Hitbox& hitbox);
+
 private:
     Hitbox hitbox;
 };

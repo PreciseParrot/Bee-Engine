@@ -1,4 +1,4 @@
-#include "WorldObject.hpp"
+#include "Bee/World/WorldObject.hpp"
 
 Hitbox WorldObject::getHitbox() const
 {

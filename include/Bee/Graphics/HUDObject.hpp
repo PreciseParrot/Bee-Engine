@@ -16,7 +16,7 @@ class HUDObject
 {
 public:
     /**
-     * @brief Default cunstructor.
+     * @brief Default constructor.
      * 
      */
     HUDObject();
@@ -105,21 +105,21 @@ public:
      * @brief Set the text and color of the HUD object.
      * 
      * @param text the text of the HUD object
-     * @param red the red value from 0 - 255
-     * @param green the green value from 0 - 255
-     * @param blue the blue value from 0 - 255
-     * @param alpha the alpha value from 0 - 255
+     * @param red the red value from 0 to 255
+     * @param green the green value from 0 to 255
+     * @param blue the blue value from 0 to 255
+     * @param alpha the alpha value from 0 to 255
      */
     void setText(const std::string& text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
 
     /**
-     * @brief The update function has to be implemented in every inhereting class. This function is called once every frame.
+     * @brief The update function has to be implemented in every inheriting class. This function is called once every frame.
      * 
      */
     virtual void update();
 
     /**
-     * @brief The destructor can be implemented in inhereting classes.
+     * @brief The destructor can be implemented in inheriting classes.
      * 
      */
     virtual ~HUDObject();

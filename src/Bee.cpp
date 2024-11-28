@@ -1,14 +1,14 @@
-#include "Bee.hpp"
+#include "Bee/Bee.hpp"
 
 #include <SDL2/SDL.h>
 
-#include "Audio.hpp"
-#include "Log.hpp"
-#include "Graphics/Renderer.hpp"
-#include "Input/Controller.hpp"
-#include "Input/Keyboard.hpp"
-#include "Input/Mouse.hpp"
-#include "World/World.hpp"
+#include "Bee/Log.hpp"
+#include "Bee/World/World.hpp"
+#include "Audio-Internal.hpp"
+#include "Graphics/Renderer-Internal.hpp"
+#include "Input/Controller-Internal.hpp"
+#include "Input/Keyboard-Internal.hpp"
+#include "Input/Mouse-Internal.hpp"
 
 static void (*initFunc)() = nullptr;
 static bool initialized = false;
@@ -103,7 +103,7 @@ static void mainLoop()
 
     Renderer::update();
     currentWorld->update();
-    currentWorld->updateInternal();
+    currentWorld->World::update();
     Controller::update();
     Keyboard::update();
     Mouse::update();

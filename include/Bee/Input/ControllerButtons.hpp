@@ -16,7 +16,7 @@ enum class ControllerButton : int
     leftStick,
     rightStick,
     leftShoulder,
-    rigtShoulder,
+    rightShoulder,
     leftTrigger,
     rightTrigger
 };

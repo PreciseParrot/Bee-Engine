@@ -8,8 +8,8 @@
 #include <SDL2/SDL_ttf.h>
 
 #include "Graphics/Animation.hpp"
-#include "Math/Vector2f.hpp"
-#include "Math/Vector2i.hpp"
+#include "Bee/Math/Vector2f.hpp"
+#include "Bee/Math/Vector2i.hpp"
 
 class Sprite
 {

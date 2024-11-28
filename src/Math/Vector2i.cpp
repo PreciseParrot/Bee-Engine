@@ -1,4 +1,4 @@
-#include "Vector2i.hpp"
+#include "Bee/Math/Vector2i.hpp"
 
 Vector2i::Vector2i()
     : x(0), y(0) {}

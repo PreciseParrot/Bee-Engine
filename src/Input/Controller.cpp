@@ -1,4 +1,5 @@
-#include "Controller.hpp"
+#include "Bee/Input/Controller.hpp"
+#include "Controller-Internal.hpp"
 
 #include <array>
 #include <bitset>
@@ -6,7 +7,8 @@
 
 #include <SDL2/SDL.h>
 
-#include "Log.hpp"
+#include "Bee/Log.hpp"
+#include "Bee/Math/Vector2f.hpp"
 
 static std::unordered_map<SDL_GameControllerButton, ControllerButton> controllerMap;
 static std::array<std::bitset<32>, 8> buttonsPressed;
@@ -36,7 +38,7 @@ void Controller::init()
     controllerMap.insert({SDL_CONTROLLER_BUTTON_LEFTSTICK, ControllerButton::leftStick});
     controllerMap.insert({SDL_CONTROLLER_BUTTON_RIGHTSTICK, ControllerButton::rightStick});
     controllerMap.insert({SDL_CONTROLLER_BUTTON_LEFTSHOULDER, ControllerButton::leftShoulder});
-    controllerMap.insert({SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, ControllerButton::rigtShoulder});
+    controllerMap.insert({SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, ControllerButton::rightShoulder});
 
     Log::write("Input", LogLevel::info, "Initialized input");
 }

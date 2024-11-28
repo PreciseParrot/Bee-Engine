@@ -4,7 +4,9 @@
 #include <cmath>
 #include <vector>
 
-#include "Math/Vector2f.hpp"
+#include "Bee/Collision/Hitbox.hpp"
+#include "Bee/Collision/Intersection.hpp"
+#include "Bee/Math/Vector2f.hpp"
 
 static const Vector2f origin(0, 0);
 

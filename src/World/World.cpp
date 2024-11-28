@@ -1,4 +1,4 @@
-#include "World.hpp"
+#include "Bee/World/World.hpp"
 
 #include <algorithm>
 #include <filesystem>
@@ -8,16 +8,17 @@
 
 #include <tinyxml2.h>
 
-#include "Bee.hpp"
-#include "Entity.hpp"
-#include "Log.hpp"
+#include "Bee/Bee.hpp"
+#include "Bee/Entity.hpp"
+#include "Bee/Log.hpp"
+#include "Bee/Collision/Intersection.hpp"
+#include "Tiles.hpp"
 #include "Collision/Collision.hpp"
-#include "Collision/Intersection.hpp"
-#include "Graphics/Renderer.hpp"
+#include "Graphics/Renderer-Internal.hpp"
 
 World::World() = default;
 
-void World::updateInternal()
+void World::update()
 {
     for (const TileLayer &layer : layers)
     {
@@ -60,7 +61,7 @@ void World::updateInternal()
 
     for (size_t i = 0; i < entities.size(); i++)
     {
-        entities[i]->updateInternal();
+        entities[i]->Entity::update();
         entities[i]->update();
     }
 
@@ -91,7 +92,7 @@ void World::updateInternal()
     for (size_t i = 0; i < hudObjects.size(); i++)
     {
         hudObjects[i]->update();
-        hudObjects[i]->updateInternal();
+        hudObjects[i]->HUDObject::update();
     }
 }
 

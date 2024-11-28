@@ -119,25 +119,25 @@ public:
     std::vector<Intersection> getIntersections(const Entity* entity) const;
 
     /**
-     * @brief The update function can be implemented in inhereting classes. This function is called once every frame.
+     * @brief The update function can be implemented in inheriting classes. This function is called once every frame.
      * 
      */
     virtual void update() = 0;
 
     /**
-     * @brief The onLoad function can be implemented in inhereting classes. This function is called everytime the world is loaded.
+     * @brief The onLoad function can be implemented in inheriting classes. This function is called everytime the world is loaded.
      * 
      */
     virtual void onLoad() = 0;
 
     /**
-     * @brief The onUnload function can be implemented in inhereting classes. This function is called everytime the world is unloaded.
+     * @brief The onUnload function can be implemented in inheriting classes. This function is called everytime the world is unloaded.
      * 
      */
     virtual void onUnload() = 0;
 
     /**
-     * @brief The destructor can be implemented in inhereting classes.
+     * @brief The destructor can be implemented in inheriting classes.
      * 
      */
     virtual ~World();
@@ -151,4 +151,6 @@ private:
     std::vector<TileLayer> foregroundLayers;
     std::vector<TileLayer> layers;
     std::vector<Tile> tiles;
+
+    void loadTileset(const std::string &source, int firstId);
 };

@@ -1,4 +1,5 @@
-#include "Audio.hpp"
+#include "Bee/Audio.hpp"
+#include "Audio-Internal.hpp"
 
 #include <unordered_map>
 #include <string>
@@ -6,7 +7,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 
-#include "Log.hpp"
+#include "Bee/Log.hpp"
 
 static std::unordered_map<std::string, Mix_Music*> musicMap;
 static std::unordered_map<std::string, Mix_Chunk*> soundMap;

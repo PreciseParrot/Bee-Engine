@@ -1,4 +1,5 @@
-#include "Keyboard.hpp"
+#include "Bee/Input/Keyboard.hpp"
+#include "Keyboard-Internal.hpp"
 
 #include <bitset>
 #include <unordered_map>
@@ -70,8 +71,8 @@ void Keyboard::init()
     keyMap.insert({SDL_SCANCODE_TAB, Key::tab});
     keyMap.insert({SDL_SCANCODE_LALT, Key::leftAlt});
     keyMap.insert({SDL_SCANCODE_RALT, Key::rightAlt});
-    keyMap.insert({SDL_SCANCODE_LCTRL, Key::leftCrtl});
-    keyMap.insert({SDL_SCANCODE_RCTRL, Key::rightCrtl});
+    keyMap.insert({SDL_SCANCODE_LCTRL, Key::leftCtrl});
+    keyMap.insert({SDL_SCANCODE_RCTRL, Key::rightCtrl});
     keyMap.insert({SDL_SCANCODE_LSHIFT, Key::leftShift});
     keyMap.insert({SDL_SCANCODE_RSHIFT, Key::rightShift});
     keyMap.insert({SDL_SCANCODE_MENU, Key::menu});

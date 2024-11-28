@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Collision/Hitbox.hpp"
-#include "Collision/Intersection.hpp"
+#include "Bee/Collision/Hitbox.hpp"
+#include "Bee/Collision/Intersection.hpp"
 
 namespace Collision
 {

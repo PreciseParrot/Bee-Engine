@@ -1,13 +1,11 @@
-#include "Entity.hpp"
+#include "Bee/Entity.hpp"
 
 #include <cmath>
 #include <vector>
 
-#include "Audio.hpp"
-#include "Bee.hpp"
+#include "Bee/Bee.hpp"
 #include "Collision/Collision.hpp"
-#include "Input/Mouse.hpp"
-#include "Math/Vector2f.hpp"
+#include "Graphics/Sprite.hpp"
 
 Entity::Entity()
 {
@@ -15,11 +13,6 @@ Entity::Entity()
 }
 
 void Entity::update()
-{
-
-}
-
-void Entity::updateInternal() const
 {
     sprite->updateInternalEntity(position, scale, rotationCenter, rotation);
 }

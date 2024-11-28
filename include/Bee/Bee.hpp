@@ -59,7 +59,7 @@ namespace Bee
     /**
      * @brief Get the time passed since the start of the game
      * 
-     * @return the the time in millisconds since the engine was initialized.
+     * @return the time in milliseconds since the engine was initialized.
      */
     uint32_t getTime();
 };

@@ -1,4 +1,5 @@
-#include "Properties.hpp"
+#include "Bee/Properties.hpp"
+
 bool Properties::getBool(const std::string& index) const
 {
     return propertiesBool.at(index);

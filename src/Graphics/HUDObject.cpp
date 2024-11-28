@@ -1,17 +1,17 @@
-#include "Graphics/HUDObject.hpp"
+#include "Bee/Graphics/HUDObject.hpp"
 
-#include "Collision/Collision.hpp"
+#include "Bee/Collision/Hitbox.hpp"
+#include "Bee/Collision/Intersection.hpp"
+#include "Bee/Input/Mouse.hpp"
 #include "Graphics/Sprite.hpp"
-#include "Input/Mouse.hpp"
+#include "Collision/Collision.hpp"
 
 HUDObject::HUDObject()
 {
     sprite = new Sprite;
 }
 
-void HUDObject::update() {}
-
-void HUDObject::updateInternal() const
+void HUDObject::update()
 {
     sprite->updateInternalHUD(position, scale, rotationCenter, rotation);
 }
