@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -126,7 +127,7 @@ std::vector<Entity*> World::getAllEntities()
 
 Entity* World::removeEntity(Entity* entity)
 {
-    if (!std::count(entities.begin(), entities.end(), entity))
+    if (std::count(entities.begin(), entities.end(), entity))
     {
         std::erase(entities, entity);
         return entity;
