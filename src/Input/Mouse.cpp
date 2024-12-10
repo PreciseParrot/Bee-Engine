@@ -5,8 +5,8 @@
 #include <unordered_map>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 
+#include "Graphics/Renderer-Internal.hpp"
 #include "Bee/Log.hpp"
 #include "Bee/Graphics/Renderer.hpp"
 
@@ -75,7 +75,7 @@ Vector2f Mouse::getMouseWorldPosition()
 
 void Mouse::createCustomCursor(const std::string& path, const int hotX, const int hotY)
 {
-    SDL_Surface* surface = IMG_Load(path.c_str());
+    SDL_Surface* surface = Renderer::loadSurface(path);
     if (surface == nullptr)
     {
         Log::write("Input", LogLevel::error, "Can't load image: %s", SDL_GetError());

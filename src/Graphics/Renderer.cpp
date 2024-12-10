@@ -1,15 +1,15 @@
 #include "Bee/Graphics/Renderer.hpp"
 #include "Renderer-Internal.hpp"
 
-#include <cmath>
+#include <cstdio>
 #include <filesystem>
 #include <map>
 #include <unordered_map>
 #include <string>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <png.h>
 
 #include "Bee/Log.hpp"
 #include "Bee/Math/Vector2f.hpp"
@@ -30,12 +30,6 @@ void Renderer::init(const int windowWidth, const int windowHeight)
     if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
     {
         Log::write("Renderer", LogLevel::error, "Error initializing video system: %s", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
-
-    if (IMG_Init(IMG_INIT_PNG) == 0)
-    {
-        Log::write("Renderer", LogLevel::error, "Error initializing SDL2_image: %s", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
@@ -160,7 +154,9 @@ SDL_Texture* Renderer::loadTexture(const std::string& textureName, const std::st
     if (textureMap.contains(textureName))
         return textureMap[textureName];
 
-    SDL_Texture* texture = IMG_LoadTexture(renderer, path.c_str());
+    SDL_Surface* surface = loadSurface(path);
+
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
     if (texture == nullptr)
     {
         Log::write("Renderer", LogLevel::error, "Can't load texture: %s / %s", textureName.c_str(), SDL_GetError());
@@ -170,7 +166,67 @@ SDL_Texture* Renderer::loadTexture(const std::string& textureName, const std::st
         textureMap.insert({textureName, texture});
         Log::write("Renderer", LogLevel::info, "Loaded %s texture", textureName.c_str());
     }
+
+    SDL_FreeSurface(surface);
     return texture;
+}
+
+SDL_Surface* Renderer::loadSurface(const std::string& path)
+{
+    FILE* file = nullptr;
+    png_structp png = nullptr;
+    png_infop info = nullptr;
+
+    file  = fopen(path.c_str(), "rb");
+    if (!file)
+    {
+        Log::write("Renderer", LogLevel::warning, "Can't load texture: %s / file not found", path.c_str());
+        fclose(file);    
+    }
+
+    png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+    if (!png)
+    {
+        Log::write("Renderer", LogLevel::warning, "Can't load texture: %s / error parsing data", path.c_str());
+        fclose(file);
+        png_destroy_read_struct(&png, nullptr, nullptr);
+    }
+
+    info = png_create_info_struct(png);
+    if (!info)
+    {
+        fclose(file);
+        Log::write("Renderer", LogLevel::warning, "Can't load texture: %s / error parsing data", path.c_str());
+        png_destroy_read_struct(&png, nullptr, nullptr);
+    }
+
+    if (setjmp(png_jmpbuf(png)))
+    {
+        fclose(file);
+        png_destroy_read_struct(&png, nullptr, nullptr);
+    }
+
+    png_init_io(png, file);
+    png_read_info(png, info);
+
+    int width = png_get_image_width(png, info);
+    int height = png_get_image_height(png, info);
+    unsigned char* data = new unsigned char[png_get_rowbytes(png, info) * height];
+    png_bytep* row_pointers = new png_bytep[height];
+
+    for (int y = 0; y < height; y++)
+    {
+        row_pointers[y] = data + y * png_get_rowbytes(png, info);
+    }
+
+    png_read_image(png, row_pointers);
+    png_destroy_read_struct(&png, &info, nullptr);
+    fclose(file);
+    delete[] row_pointers;
+
+    SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(data, width, height, 32, width * 4, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+    
+    return surface;
 }
 
 TTF_Font* Renderer::loadFont(const std::string& fontName, int size)
@@ -263,7 +319,7 @@ void Renderer::setFullscreen(const bool fullscreen)
 
 void Renderer::setWindowIcon(const std::string& path)
 {
-    SDL_Surface* surface = IMG_Load(path.c_str());
+    SDL_Surface* surface = loadSurface(path);
     if (surface == nullptr)
     {
         Log::write("Renderer", LogLevel::error, "Can't load image: %s", SDL_GetError());
@@ -307,6 +363,5 @@ void Renderer::cleanUp()
     SDL_DestroyTexture(targetTexture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-    IMG_Quit();
     TTF_Quit();
 }

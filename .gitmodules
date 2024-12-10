@@ -6,10 +6,6 @@
 	path = external/SDL2
 	url = https://github.com/libsdl-org/SDL.git
 	branch = SDL2
-[submodule "external/SDL_image"]
-	path = external/SDL_image
-	url = https://github.com/libsdl-org/SDL_image.git
-	branch = SDL2
 [submodule "external/SDL_ttf"]
 	path = external/SDL_ttf
 	url = https://github.com/libsdl-org/SDL_ttf.git
