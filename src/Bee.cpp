@@ -10,6 +10,10 @@
 #include "Input/Keyboard-Internal.hpp"
 #include "Input/Mouse-Internal.hpp"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 static void (*initFunc)() = nullptr;
 static bool initialized = false;
 static bool gameRunning = false;
@@ -116,24 +120,26 @@ void Bee::run()
     if (!initialized)
     {
         init(1280, 720);
+        
+        if (!currentWorld && !nextWorld)
+        {
+            Log::write("Engine", LogLevel::error, "No world loaded");
+            return;
+        }
+        
+        currentWorld = nextWorld;
+        nextWorld = nullptr;
+        gameRunning = true;
+        currentWorld->onLoad();
     }
 
-    if (!nextWorld)
-    {
-        Log::write("Engine", LogLevel::error, "No world loaded");
-        return;
-    }
-
-    currentWorld = nextWorld;
-    nextWorld = nullptr;
     gameRunning = true;
-    currentWorld->onLoad();
 
-    while (gameRunning)
-    {
-        mainLoop();
-    }
-    currentWorld->onUnload();
+#ifdef __EMSCRIPTEN__
+    emscripten_set_main_loop(mainLoop, 0, 1);
+#else
+    while (gameRunning) mainLoop();
+#endif
 }
 
 void Bee::stop()

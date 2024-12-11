@@ -16,3 +16,6 @@
 [submodule "external/json"]
 	path = external/json
 	url = https://github.com/nlohmann/json.git
+[submodule "external/libpng"]
+	path = external/libpng
+	url = https://github.com/pnggroup/libpng
