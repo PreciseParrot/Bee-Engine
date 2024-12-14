@@ -64,4 +64,12 @@ namespace Controller
      * @return the position of the right analog trigger ranging from 0 to 1.
      */
     float getRightTrigger(int playerIndex);
+
+    /**
+     * @brief Check if a controller is connected.
+     * 
+     * @param playerIndex the player index of the controller
+     * @return true if the controller is connected
+     */
+    bool isControllerConnected(int playerIndex);
 }

@@ -14,7 +14,7 @@ static std::unordered_map<SDL_GameControllerButton, ControllerButton> controller
 static std::array<std::bitset<32>, 8> buttonsPressed;
 static std::array<std::bitset<32>, 8> buttonsPressedOld;
 static std::array<SDL_GameController*, 8> controller;
-static Vector2f controllerDeadzone(0.2f, 0.2f);
+static Vector2f controllerDeadzone(0.25f, 0.25f);
 
 void Controller::init()
 {
@@ -45,17 +45,23 @@ void Controller::init()
 
 bool Controller::isButtonDown(const int playerIndex, ControllerButton button)
 {
+    if (!isControllerConnected(playerIndex)) return false;
+    
     return buttonsPressed[SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(SDL_GameControllerFromPlayerIndex(playerIndex)))][static_cast<int>(button)];
 }
 
 bool Controller::isButtonPressed(const int playerIndex, ControllerButton button)
 {
+    if (!isControllerConnected(playerIndex)) return false;
+    
     return buttonsPressed[SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(SDL_GameControllerFromPlayerIndex(playerIndex)))][static_cast<int>(button)] && !buttonsPressed[SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(SDL_GameControllerFromPlayerIndex(playerIndex)))][static_cast<int>(button)];
 }
 
 Vector2f Controller::getLeftStick(const int playerIndex)
 {
     Vector2f stick;
+
+    if (!isControllerConnected(playerIndex)) return stick;
 
     stick.x = SDL_GameControllerGetAxis(SDL_GameControllerFromPlayerIndex(playerIndex), SDL_CONTROLLER_AXIS_LEFTX) / 32768.0f;
     stick.y = SDL_GameControllerGetAxis(SDL_GameControllerFromPlayerIndex(playerIndex), SDL_CONTROLLER_AXIS_LEFTY) / 32768.0f;
@@ -70,6 +76,8 @@ Vector2f Controller::getRightStick(const int playerIndex)
 {
     Vector2f stick;
 
+    if (!isControllerConnected(playerIndex)) return stick;
+
     stick.x = SDL_GameControllerGetAxis(SDL_GameControllerFromPlayerIndex(playerIndex), SDL_CONTROLLER_AXIS_RIGHTX) / 32768.0f;
     stick.y = SDL_GameControllerGetAxis(SDL_GameControllerFromPlayerIndex(playerIndex), SDL_CONTROLLER_AXIS_RIGHTY) / 32768.0f;
 
@@ -81,14 +89,23 @@ Vector2f Controller::getRightStick(const int playerIndex)
 
 float Controller::getLeftTrigger(const int playerIndex)
 {
+    if (!isControllerConnected(playerIndex)) return 0;
+    
     const float trigger = SDL_GameControllerGetAxis(SDL_GameControllerFromPlayerIndex(playerIndex), SDL_CONTROLLER_AXIS_TRIGGERLEFT) / 32768.0f;
     return trigger > controllerDeadzone.x ? trigger : 0;
 }
 
 float Controller::getRightTrigger(const int playerIndex)
 {
+    if (!isControllerConnected(playerIndex)) return 0;
+    
     const float trigger = SDL_GameControllerGetAxis(SDL_GameControllerFromPlayerIndex(playerIndex), SDL_CONTROLLER_AXIS_TRIGGERRIGHT) / 32768.0f;
     return trigger > controllerDeadzone.y ? trigger : 0;
+}
+
+bool Controller::isControllerConnected(int playerIndex)
+{
+    return controller.at(playerIndex);
 }
 
 void Controller::update()
