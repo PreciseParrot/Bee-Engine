@@ -4,11 +4,12 @@
 
 #pragma once
 
-#include <cstdint>
 #include <string>
 
+#include "Bee/Graphics/Color.hpp"
 #include "Bee/Math/Vector2f.hpp"
 #include "Bee/Math/Vector2i.hpp"
+#include "Bee/Math/Vector3f.hpp"
 
 class Sprite;
 
@@ -21,19 +22,7 @@ public:
      */
     HUDObject();
 
-    /**
-     * @brief Set the animation of the HUD object.
-     * 
-     * @param animationName the name of the animation
-     */
-    void setAnimation(const std::string& animationName) const;
-
-    /**
-     * @brief Set the sprite of the HUD object.
-     * 
-     * @param spriteName the name of the sprite
-     */
-    void setSprite(const std::string& spriteName);
+    Vector3f getPosition() const;
 
     /**
      * @brief Get the texture size of the HUD object.
@@ -56,67 +45,66 @@ public:
      */
     bool isCursorOnMe() const;
 
-    /**
-     * @brief Set the position of the HUD object.
-     * 
-     * @param x the x position of the HUD object in screen coordinates
-     * @param y the y position of the HUD object in screen coordinates
-     */
-    void setPosition(int x, int y);
+    void setPosition(const Vector2f& position);
 
     /**
      * @brief Set the position of the HUD object.
      * 
      * @param position the position of the HUD object in screen coordinates
      */
-    void setPosition(const Vector2i& position);
+    void setPosition(const Vector3f& position);
+
+    void setPositionZ(float z);
+
+    /**
+     * @brief Set the animation of the HUD object.
+     * 
+     * @param animationName the name of the animation
+     */
+    void setAnimation(const std::string& animationName) const;
 
     /**
      * @brief Set the size of the HUD object.
      * 
      * @param scale the scale of the HUD object
      */
-    void setSize(float scale);
-
-    /**
-     * @brief Set the size of the HUD object.
-     * 
-     * @param width the width of the HUD object in pixels
-     * @param height the height of the HUD object in pixels
-     */
-    void setSize(int width, int height);
+    void setScale(float scale);
 
     /**
      * @brief Set the size of the HUD object.
      * 
      * @param scale the size of the HUD object in pixels
      */
-    void setSize(const Vector2i& scale);
+    void setScale(const Vector2i& scale);
+
+    void setShader(const std::string& shader) const;
 
     /**
-     * @brief Set the font of the HUD object.
+     * @brief Set the sprite of the HUD object.
      * 
-     * @param fontName the name of the font
-     * @param size the size of the font in pixels
+     * @param spriteName the name of the sprite
      */
-    void setFont(const std::string& fontName, int size) const;
+    void setSprite(const std::string& spriteName);
+
+    //void onDraw(void(*func)()) const;
     
     /**
-     * @brief Set the text and color of the HUD object.
+     * @brief Set the text and color of the HUDObject.
      * 
-     * @param text the text of the HUD object
-     * @param red the red value from 0 to 255
-     * @param green the green value from 0 to 255
-     * @param blue the blue value from 0 to 255
-     * @param alpha the alpha value from 0 to 255
+     * @param text the text of the entity
+     * @param font the font of the text
+     * @param fontSize
+     * @param color
      */
-    void setText(const std::string& text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+    void setText(const std::string& text, const std::string& font, int fontSize, const Color& color);
 
     /**
      * @brief The update function has to be implemented in every inheriting class. This function is called once every frame.
      * 
      */
     virtual void update();
+
+    virtual void onDraw();
 
     /**
      * @brief The destructor can be implemented in inheriting classes.
@@ -129,6 +117,6 @@ private:
     std::string name;
     Sprite* sprite = nullptr;
     Vector2f rotationCenter = {0.5f, 0.5f};
-    Vector2i position;
+    Vector3f position;
     Vector2i scale;
 };

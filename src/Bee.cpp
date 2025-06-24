@@ -1,9 +1,8 @@
 #include "Bee/Bee.hpp"
 
+#include <imgui_impl_sdl2.h>
 #include <SDL2/SDL.h>
 
-#include "Bee/Log.hpp"
-#include "Bee/World/World.hpp"
 #include "Audio-Internal.hpp"
 #include "Graphics/Renderer-Internal.hpp"
 #include "Input/Controller-Internal.hpp"
@@ -19,8 +18,8 @@ static bool initialized = false;
 static bool gameRunning = false;
 static float deltaTime = 0;
 static uint32_t currentTime = 0;
-static Uint64 loopTicks = 0;
-static Uint64 loopTicksLast = 0;
+static uint64_t loopTicks = 0;
+static uint64_t loopTicksLast = 0;
 static World* nextWorld = nullptr;
 static World* currentWorld = nullptr;
 
@@ -41,12 +40,6 @@ void Bee::init(const int windowWidth, const int windowHeight)
     Keyboard::init();
     Mouse::init();
 
-    SDL_Event event;
-    event.window.event = SDL_WINDOWEVENT_RESIZED;
-    event.window.data1 = windowWidth;
-    event.window.data2 = windowHeight;
-    Renderer::handleEvent(&event);
-
     if (initFunc) (*initFunc)();
 
     initialized = true;
@@ -59,6 +52,22 @@ void Bee::onInit(void (*func)())
 
 static void mainLoop()
 {
+    if (!initialized)
+    {
+        Bee::init(1920, 1080);
+        
+        if (!currentWorld && !nextWorld)
+        {
+            Log::write("Engine", LogLevel::error, "No world loaded");
+            return;
+        }
+
+        currentWorld = nextWorld;
+        nextWorld = nullptr;
+        gameRunning = true;
+        currentWorld->onLoad();
+    }
+    
     loopTicksLast = loopTicks;
     loopTicks = SDL_GetPerformanceCounter();
     currentTime = SDL_GetTicks();
@@ -70,10 +79,12 @@ static void mainLoop()
         nextWorld = nullptr;
         currentWorld->onLoad();
     }
-
+    
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
+        ImGui_ImplSDL2_ProcessEvent(&event);
+
         switch (event.type)
         {
             case SDL_KEYDOWN: case SDL_KEYUP:
@@ -105,9 +116,9 @@ static void mainLoop()
         }
     }
 
-    Renderer::update();
-    currentWorld->update();
     currentWorld->World::update();
+    currentWorld->update();
+    Renderer::update();
     Controller::update();
     Keyboard::update();
     Mouse::update();
@@ -117,26 +128,10 @@ static void mainLoop()
 
 void Bee::run()
 {
-    if (!initialized)
-    {
-        init(1280, 720);
-        
-        if (!currentWorld && !nextWorld)
-        {
-            Log::write("Engine", LogLevel::error, "No world loaded");
-            return;
-        }
-        
-        currentWorld = nextWorld;
-        nextWorld = nullptr;
-        gameRunning = true;
-        currentWorld->onLoad();
-    }
-
     gameRunning = true;
 
 #ifdef __EMSCRIPTEN__
-    emscripten_set_main_loop(mainLoop, 0, 1);
+    emscripten_set_main_loop(mainLoop, 0, true);
 #else
     while (gameRunning) mainLoop();
 #endif

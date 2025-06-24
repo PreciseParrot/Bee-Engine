@@ -71,7 +71,7 @@ Vector2f minkowskiPoint(const Hitbox& hitbox1, const Hitbox& hitbox2, Vector2f& 
 void expandingPolytopeAlgorithm(Intersection& intersection, std::vector<Vector2f>& polytope, const Hitbox& hitbox1, const Hitbox& hitbox2)
 {
     float minDistance = FLT_MAX;
-    size_t minIndex = 0;
+    int minIndex = 0;
     Vector2f minNormal;
 
     intersection.mtv = {0, 0};

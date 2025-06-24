@@ -5,25 +5,24 @@
 #include <filesystem>
 #include <map>
 #include <unordered_map>
+#include <unordered_set>
 #include <string>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <png.h>
 
+#include "Window-Internal.hpp"
+#include "Graphics/Renderer/IRenderer.hpp"
+#include "Graphics/Renderer/OpenGL/OpenGL.hpp"
 #include "Bee/Log.hpp"
 #include "Bee/Math/Vector2f.hpp"
 #include "Bee/Math/Vector2i.hpp"
 
-static SDL_Window* window = nullptr;
-static SDL_Renderer* renderer = nullptr;
-static SDL_Texture* targetTexture = nullptr;
 static std::map<std::pair<std::string, int>, TTF_Font*> fontMap;
-static std::unordered_map<std::string, SDL_Texture*> textureMap;
-static Vector2f cameraPosition;
-static Vector2f viewportSize(16.0f, 9.0f);
-static Vector2i screenSize;
-static Vector2i windowSize;
+static std::unordered_map<std::string, int> textureCache;
+static std::unordered_set<int> uniqueTextures;
+static IRenderer* renderer = nullptr;
 
 void Renderer::init(const int windowWidth, const int windowHeight)
 {
@@ -38,137 +37,79 @@ void Renderer::init(const int windowWidth, const int windowHeight)
         Log::write("Renderer", LogLevel::error, "Error initializing SDL2_ttf: %s", SDL_GetError());
         exit(EXIT_FAILURE);
     }
+    
+    Window::init(windowWidth, windowHeight);
+    
+    renderer = new OpenGL;
 
-    window = SDL_CreateWindow("Bee Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, 0);
-    if (window == nullptr)
-    {
-        Log::write("Renderer", LogLevel::error, "Error creating Window: %s", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
-
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (renderer == nullptr)
-    {
-        Log::write("Renderer", LogLevel::error, "Error creating renderer: %s", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
-
-    SDL_SetWindowResizable(window, SDL_TRUE);
+    SDL_Event event;
+    event.window.event = SDL_WINDOWEVENT_RESIZED;
+    event.window.data1 = windowWidth;
+    event.window.data2 = windowHeight;
+    handleEvent(&event);
 
     Log::write("Renderer", LogLevel::info, "Initialized renderer");
 }
 
 void Renderer::update()
 {
-    SDL_Rect dstRect;
-    dstRect.x = (windowSize.x - screenSize.x) / 2;
-    dstRect.y = (windowSize.y - screenSize.y) / 2;
-    dstRect.w = screenSize.x;
-    dstRect.h = screenSize.y;
-
-    SDL_SetRenderTarget(renderer, nullptr);
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, targetTexture, nullptr, &dstRect);
-    SDL_RenderPresent(renderer);
-    SDL_SetRenderTarget(renderer, targetTexture);
-    SDL_RenderClear(renderer);
+    renderer->update();
 }
 
 void Renderer::handleEvent(const SDL_Event* event)
 {
     if (event->window.event == SDL_WINDOWEVENT_RESIZED)
     {
-        windowSize.x = event->window.data1;
-        windowSize.y = event->window.data2;
-
-        const float widthFactor = windowSize.x / viewportSize.x;
-        const float heightFactor = windowSize.y / viewportSize.y;
-
-        if (widthFactor > heightFactor)
-        {
-            screenSize.x = windowSize.x * heightFactor / widthFactor;
-            screenSize.y = windowSize.y;
-        }
-        else
-        {
-            screenSize.x = windowSize.x;
-            screenSize.y = windowSize.y * widthFactor / heightFactor;
-        }
-
-        SDL_SetRenderTarget(renderer, nullptr);
-        SDL_DestroyTexture(targetTexture);
-        targetTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, screenSize.x, screenSize.y);
-        SDL_RenderClear(renderer);
-        SDL_SetRenderTarget(renderer, targetTexture);
+        renderer->resize({event->window.data1, event->window.data2});
     }
 }
 
-void Renderer::drawTile(const Vector2i& position, const SDL_Rect* srcRect, SDL_Texture* texture)
+void Renderer::queueTile(const Vector3f& position, int textureID, const Rect& rect)
 {
-    SDL_FRect dstRect;
-    dstRect.x = (position.x - cameraPosition.x + viewportSize.x / 2) * screenSize.x / viewportSize.x;
-    dstRect.y = (position.y - cameraPosition.y + viewportSize.y / 2) * screenSize.y / viewportSize.y;
-    dstRect.h = screenSize.y / viewportSize.y + 0.04f;
-    dstRect.w = screenSize.x / viewportSize.x + 0.04f;
-
-    SDL_RenderCopyF(renderer, texture, srcRect, &dstRect);
+    if (!textureID) return;
+    renderer->queueTile(position, textureID, rect);
 }
 
-void Renderer::drawHUD(const Vector2i& position, const Vector2i& scale, const SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, const float rotation)
+void Renderer::queueHUD(const Vector3f& position, const Vector2f& scale, int shaderID, int textureID, const Rect& rect, HUDObject* hudObject)
 {
-    SDL_Rect dstRect;
-    dstRect.x = position.x;
-    dstRect.y = position.y;
-    dstRect.w = scale.x;
-    dstRect.h = scale.y;
-
-    SDL_Point centerPoint;
-    centerPoint.x = dstRect.w * rotationCenter.x;
-    centerPoint.y = dstRect.h * rotationCenter.y;
-
-    SDL_RenderCopyEx(renderer, texture, srcRect, &dstRect, rotation, &centerPoint, SDL_FLIP_NONE);
+    if (!textureID) return;
+    renderer->queueHUD(position, scale, shaderID, textureID, rect, hudObject);
 }
 
-void Renderer::drawSprite(const Vector2f& position, const Vector2f& scale, const SDL_Rect* srcRect, SDL_Texture* texture, const Vector2f& rotationCenter, const float rotation)
+void Renderer::queueEntity(const Vector3f& position, const Vector2f& scale, int shaderID, int textureID, const Rect& rect, Entity* entity)
 {
-    SDL_FRect dstRect;
-    dstRect.x = (position.x - scale.x / 2 - cameraPosition.x + viewportSize.x / 2) * screenSize.x / viewportSize.x;
-    dstRect.y = (position.y - scale.y / 2 - cameraPosition.y + viewportSize.y / 2) * screenSize.y / viewportSize.y;
-    dstRect.w = screenSize.x / viewportSize.x * scale.x;
-    dstRect.h = screenSize.y / viewportSize.y * scale.y;
-
-    SDL_FPoint centerPoint;
-    centerPoint.x = dstRect.w * rotationCenter.x;
-    centerPoint.y = dstRect.h * rotationCenter.y;
-
-    SDL_RenderCopyExF(renderer, texture, srcRect, &dstRect, rotation, &centerPoint, SDL_FLIP_NONE);
+    if (!textureID) return;
+    renderer->queueEntity(position, scale, shaderID, textureID, rect, entity);
 }
 
-SDL_Texture* Renderer::createTexture(SDL_Surface* surface)
+int Renderer::loadShader(const std::string& shader)
 {
-    return SDL_CreateTextureFromSurface(renderer, surface);
+    return renderer->loadShader(shader);
 }
 
-SDL_Texture* Renderer::loadTexture(const std::string& textureName, const std::string& path)
+int Renderer::loadTexture(const std::string& textureName, const std::string& path)
 {
-    if (textureMap.contains(textureName))
-        return textureMap[textureName];
+    if (textureCache.contains(textureName))
+        return textureCache.at(textureName);
 
     SDL_Surface* surface = loadSurface(path);
 
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-    if (texture == nullptr)
+    if (!surface)
     {
-        Log::write("Renderer", LogLevel::error, "Can't load texture: %s / %s", textureName.c_str(), SDL_GetError());
-    }
-    else
-    {
-        textureMap.insert({textureName, texture});
-        Log::write("Renderer", LogLevel::info, "Loaded %s texture", textureName.c_str());
+        return 0;
     }
 
+    const int textureID = renderer->createTexture(surface);
+    delete[] static_cast<unsigned char*>(surface->pixels);
     SDL_FreeSurface(surface);
-    return texture;
+    return textureID;
+}
+
+int Renderer::createUniqueTexture(const SDL_Surface* surface)
+{
+    const int textureID = renderer->createTexture(surface);
+    uniqueTextures.insert(textureID);
+    return textureID;
 }
 
 SDL_Surface* Renderer::loadSurface(const std::string& path)
@@ -176,56 +117,59 @@ SDL_Surface* Renderer::loadSurface(const std::string& path)
     FILE* file = nullptr;
     png_structp png = nullptr;
     png_infop info = nullptr;
+    SDL_Surface* surface = nullptr;
+    png_bytep* row_pointers = nullptr;
+    unsigned char* data = nullptr;
+    unsigned int width = 0;
+    unsigned int height = 0;
 
     file  = fopen(path.c_str(), "rb");
     if (!file)
     {
         Log::write("Renderer", LogLevel::warning, "Can't load texture: %s / file not found", path.c_str());
-        fclose(file);    
+        goto Error;
     }
 
     png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
     if (!png)
     {
         Log::write("Renderer", LogLevel::warning, "Can't load texture: %s / error parsing data", path.c_str());
-        fclose(file);
-        png_destroy_read_struct(&png, nullptr, nullptr);
+        goto Error;
     }
 
     info = png_create_info_struct(png);
     if (!info)
     {
-        fclose(file);
         Log::write("Renderer", LogLevel::warning, "Can't load texture: %s / error parsing data", path.c_str());
-        png_destroy_read_struct(&png, nullptr, nullptr);
+        goto Error;
     }
 
     if (setjmp(png_jmpbuf(png)))
     {
-        fclose(file);
-        png_destroy_read_struct(&png, nullptr, nullptr);
+        goto Error;
     }
 
     png_init_io(png, file);
     png_read_info(png, info);
 
-    int width = png_get_image_width(png, info);
-    int height = png_get_image_height(png, info);
-    unsigned char* data = new unsigned char[png_get_rowbytes(png, info) * height];
-    png_bytep* row_pointers = new png_bytep[height];
+    width = png_get_image_width(png, info);
+    height = png_get_image_height(png, info);
+    data = new unsigned char[png_get_rowbytes(png, info) * height];
+    row_pointers = new png_bytep[height];
 
-    for (int y = 0; y < height; y++)
+    for (unsigned int y = 0; y < height; y++)
     {
         row_pointers[y] = data + y * png_get_rowbytes(png, info);
     }
 
     png_read_image(png, row_pointers);
-    png_destroy_read_struct(&png, &info, nullptr);
-    fclose(file);
-    delete[] row_pointers;
 
-    SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(data, width, height, 32, width * 4, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
-    
+    surface = SDL_CreateRGBSurfaceFrom(data, width, height, 32, width * 4, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+
+Error:
+    fclose(file);
+    png_destroy_read_struct(&png, nullptr, nullptr);
+    delete[] row_pointers;
     return surface;
 }
 
@@ -257,111 +201,82 @@ TTF_Font* Renderer::loadFont(const std::string& fontName, int size)
     return font;
 }
 
-void Renderer::unloadAllFonts()
+void Renderer::deleteUniqueTexture(const int textureID)
 {
-    for (const auto& [key, font] : fontMap)
+    if (uniqueTextures.contains(textureID))
     {
-        Log::write("Renderer", LogLevel::info, "Unloaded %s font with size %i", key.first.c_str(), key.second);
-        TTF_CloseFont(font);
+        uniqueTextures.erase(textureID);
+        renderer->freeTexture(textureID);
     }
-    fontMap.clear();
-}
-
-void Renderer::unloadAllTextures()
-{
-    for (const auto& [textureName, texture] : textureMap)
-    {
-        Log::write("Renderer", LogLevel::info, "Unloaded %s texture", textureName.c_str());
-        SDL_DestroyTexture(texture);
-    }
-    textureMap.clear();
 }
 
 Vector2f Renderer::getCameraPosition()
 {
-    return cameraPosition;
-}
-
-Vector2f Renderer::getViewPortSize()
-{
-    return viewportSize;
+    return renderer->getCameraPosition();
 }
 
 Vector2i Renderer::getScreenSize()
 {
-    return screenSize;
+    return renderer->getScreenSize();
 }
 
-Vector2i Renderer::getWindowSize()
+Vector2f Renderer::getTextureSize(const int textureID)
 {
-    return windowSize;
+    return renderer->getTextureSize(textureID);
 }
 
-void Renderer::setFullscreen(const bool fullscreen)
+Vector2f Renderer::getViewPortSize()
 {
-    if (fullscreen)
-    {
-        SDL_Rect displaySize;
-        SDL_Event event;
-        SDL_GetDisplayBounds(SDL_GetWindowDisplayIndex(window), &displaySize);
-        event.window.event = SDL_WINDOWEVENT_RESIZED;
-        event.window.data1 = displaySize.w;
-        event.window.data2 = displaySize.h;
-        handleEvent(&event);
-
-        SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-    }
-    else
-    {
-        SDL_SetWindowFullscreen(window, 0);
-    }
-}
-
-void Renderer::setWindowIcon(const std::string& path)
-{
-    SDL_Surface* surface = loadSurface(path);
-    if (surface == nullptr)
-    {
-        Log::write("Renderer", LogLevel::error, "Can't load image: %s", SDL_GetError());
-        return;
-    }
-    SDL_SetWindowIcon(window, surface);
-    SDL_FreeSurface(surface);
-}
-
-void Renderer::setWindowTitle(const std::string& title)
-{
-    SDL_SetWindowTitle(window, title.c_str());
-}
-
-void Renderer::setCameraPosition(const float x, const float y)
-{
-    cameraPosition.x = x;
-    cameraPosition.y = y;
+    return renderer->getViewportSize();
 }
 
 void Renderer::setCameraPosition(const Vector2f& position)
 {
-    cameraPosition = position;
+    renderer->setCameraPosition(position);
 }
 
-void Renderer::setViewportSize(const float width, const float height)
+void Renderer::setShader(const std::string& shader)
 {
-    viewportSize.x = width;
-    viewportSize.y = height;
+    renderer->setPostProcessingShader(shader);
 }
 
 void Renderer::setViewportSize(const Vector2f& size)
 {
-    viewportSize = size;
+    renderer->setViewportSize(size);
+}
+
+void Renderer::setOnFrameCB(void(*func)())
+{
+    renderer->setOnFrameCB(func);
+}
+
+void Renderer::setUniform1f(const std::string& name, const float data)
+{
+    renderer->setUniform1f(name, data);
+}
+
+void Renderer::setUniform2f(const std::string& name, const Vector2f& data)
+{
+    renderer->setUniform2f(name, data);
+}
+
+void Renderer::setUniform3f(const std::string& name, const Vector3f& data)
+{
+    renderer->setUniform3f(name, data);
+}
+
+void Renderer::setUniform4f(const std::string& name, const Vector4f& data)
+{
+    renderer->setUniform4f(name, data);
+}
+
+void Renderer::setUniformMat4f(const std::string& name, const Matrix4f& matrix)
+{
+    renderer->setUniformMat4f(name, matrix);
 }
 
 void Renderer::cleanUp()
 {
-    unloadAllFonts();
-    unloadAllTextures();
-    SDL_DestroyTexture(targetTexture);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    delete renderer;
     TTF_Quit();
 }

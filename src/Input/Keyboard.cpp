@@ -6,6 +6,8 @@
 
 #include <SDL2/SDL.h>
 
+#include "Bee/Log.hpp"
+
 static std::unordered_map<SDL_Scancode, Key> keyMap;
 static std::bitset<64> keysPressed;
 static std::bitset<64> keysPressedOld;

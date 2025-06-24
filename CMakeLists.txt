@@ -22,17 +22,40 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/Entity.cpp
         src/Log.cpp
         src/Properties.cpp
+
         src/Collision/Collision.cpp
+
+        src/Graphics/Color.cpp
         src/Graphics/HUDObject.cpp
         src/Graphics/Renderer.cpp
-        src/Graphics/Sprite.cpp
+        src/Graphics/Sprite.cpp 
+        src/Graphics/Window.cpp
+
+        src/Graphics/Renderer/OpenGL/ErrorHandling.cpp
+        src/Graphics/Renderer/OpenGL/IndexBuffer.cpp
+        src/Graphics/Renderer/OpenGL/OpenGL.cpp
+        src/Graphics/Renderer/OpenGL/Shader.cpp
+        src/Graphics/Renderer/OpenGL/Texture.cpp
+        src/Graphics/Renderer/OpenGL/VertexArray.cpp
+        src/Graphics/Renderer/OpenGL/VertexBuffer.cpp
+        src/Graphics/Renderer/OpenGL/VertexBufferLayout.cpp
+
         src/Input/Controller.cpp
         src/Input/Keyboard.cpp
         src/Input/Mouse.cpp
+
         src/World/World.cpp
         src/World/WorldObject.cpp
+
+        src/Math/Math.cpp
+        src/Math/Matrix4f.cpp
         src/Math/Vector2f.cpp
         src/Math/Vector2i.cpp
+        src/Math/Vector3f.cpp
+        src/Math/Vector3i.cpp
+        src/Math/Vector4f.cpp
+        src/Math/Vector4i.cpp
+        src/Math/Quaternion.cpp
 )
 
 if (BEE_STATIC_DEPENDENCIES)
@@ -62,7 +85,7 @@ endif()
 
 if (EMSCRIPTEN)
     target_link_options(${PROJECT_NAME} PUBLIC 
-            -sUSE_SDL=2 
+            -sUSE_SDL=2
             -sUSE_SDL_TTF=2 
             -sUSE_SDL_MIXER=2 
             -sUSE_LIBPNG 
@@ -70,6 +93,24 @@ if (EMSCRIPTEN)
             -sUSE_HARFBUZZ=1 
             -sUSE_OGG=1 
             -sUSE_FREETYPE=1
+            -sMIN_WEBGL_VERSION=2
+            -sMAX_WEBGL_VERSION=2
+            -O3
+            -flto
+            -sASSERTIONS=0
+            -sOFFSCREENCANVAS_SUPPORT=1
+    )
+    target_compile_options(${PROJECT_NAME} PUBLIC
+            -sUSE_SDL=2
+            -sUSE_SDL_TTF=2
+            -sUSE_SDL_MIXER=2
+            -sUSE_LIBPNG
+            -sUSE_VORBIS
+            -sUSE_HARFBUZZ=1
+            -sUSE_OGG=1
+            -sUSE_FREETYPE=1
+            -O3
+            -flto
     )
 else ()
     if (BEE_STATIC_DEPENDENCIES AND BEE_VENDORED)
@@ -85,6 +126,11 @@ else ()
     endif ()
 endif ()
 
+add_subdirectory(external/glad)
+add_subdirectory(external/imgui)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE GLAD)
+target_link_libraries(${PROJECT_NAME} PRIVATE imgui)
 target_link_libraries(${PROJECT_NAME} PRIVATE tinyxml2::tinyxml2)
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 

@@ -50,7 +50,7 @@ void Log::write(const std::string& source, LogLevel level, const std::string& fo
             break;
     }
 
-    #ifdef _WIN32
+#ifdef _WIN32
     switch (level)
     {
         case LogLevel::Info:
@@ -67,7 +67,7 @@ void Log::write(const std::string& source, LogLevel level, const std::string& fo
             SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
             break;
     }
-    #elif __linux__
+#elif __linux__
     switch (level)
     {
         case LogLevel::info:
@@ -80,7 +80,7 @@ void Log::write(const std::string& source, LogLevel level, const std::string& fo
             std::cout << "\033[31m" << output.str() << "\033[0m" << std::endl;
             break;
     }
-    #else
+#else
     std::cout << output.str() << std::endl;
-    #endif
+#endif
 }

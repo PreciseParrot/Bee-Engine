@@ -11,8 +11,8 @@
 #include "Bee/Graphics/HUDObject.hpp"
 #include "Bee/World/WorldObject.hpp"
 
-class Tile;
-class TileLayer;
+struct Tile;
+struct TileLayer;
 
 class World
 {
@@ -36,7 +36,7 @@ public:
      * @param name the name of the entity
      * @return the first entity in the world that has the specified name.
      */
-    Entity* getEntityByName(const std::string& name);
+    Entity* getEntityByName(const std::string& name) const;
 
     /**
      * @brief Get all the entities in the world.
@@ -105,10 +105,9 @@ public:
      * @brief Get the data of a tile. Use `"type"` to get the class of the tile.
      * 
      * @param position the position of the tile in world coordinates
-     * @param index the name the data variable
      * @return the data of the tile.
      */
-    std::string getTileData(const Vector2f& position, const std::string& index) const;
+    const Properties& getTileProperties(const Vector2f& position) const;
 
     /**
      * @brief Get all intersections with entities and world objects of an entity.
@@ -122,19 +121,19 @@ public:
      * @brief The update function can be implemented in inheriting classes. This function is called once every frame.
      * 
      */
-    virtual void update() = 0;
+    virtual void update();
 
     /**
      * @brief The onLoad function can be implemented in inheriting classes. This function is called everytime the world is loaded.
      * 
      */
-    virtual void onLoad() = 0;
+    virtual void onLoad() {}
 
     /**
      * @brief The onUnload function can be implemented in inheriting classes. This function is called everytime the world is unloaded.
      * 
      */
-    virtual void onUnload() = 0;
+    virtual void onUnload() {}
 
     /**
      * @brief The destructor can be implemented in inheriting classes.
@@ -145,6 +144,7 @@ public:
 private:
     int worldHeight = 0;
     int worldWidth = 0;
+    int nullLayer = 0;
     std::vector<Entity*> entities;
     std::vector<WorldObject*> worldObjects;
     std::vector<HUDObject*> hudObjects;

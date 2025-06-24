@@ -9,6 +9,7 @@
 #include "Graphics/Renderer-Internal.hpp"
 #include "Bee/Log.hpp"
 #include "Bee/Graphics/Renderer.hpp"
+#include "Bee/Graphics/Window.hpp"
 
 static SDL_Cursor* cursor = nullptr;
 static std::unordered_map<uint8_t, MouseButton> mouseMap;
@@ -35,7 +36,7 @@ void Mouse::handleInput(const SDL_Event* event)
 
 void Mouse::handleMovement(const SDL_Event* event)
 {
-    const Vector2i screenDifference = Renderer::getWindowSize() - Renderer::getScreenSize();
+    const Vector2i screenDifference = Window::getWindowSize() - Renderer::getScreenSize();
     mousePositon.x = event->motion.x - screenDifference.x / 2;
     mousePositon.y = event->motion.y - screenDifference.y / 2;
 }
@@ -75,15 +76,9 @@ Vector2f Mouse::getMouseWorldPosition()
 
 void Mouse::createCustomCursor(const std::string& path, const int hotX, const int hotY)
 {
-    SDL_Surface* surface = Renderer::loadSurface(path);
-    if (surface == nullptr)
-    {
-        Log::write("Input", LogLevel::error, "Can't load image: %s", SDL_GetError());
-        return;
-    }
-
     SDL_FreeCursor(cursor);
 
+    SDL_Surface* surface = Renderer::loadSurface(path);
     cursor = SDL_CreateColorCursor(surface, hotX, hotY);
     if (cursor == nullptr)
     {
@@ -94,6 +89,7 @@ void Mouse::createCustomCursor(const std::string& path, const int hotX, const in
         SDL_SetCursor(cursor);
     }
 
+    delete[] static_cast<unsigned char*>(surface->pixels);
     SDL_FreeSurface(surface);
 }
 

@@ -4,8 +4,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include <SDL2/SDL.h>
-
 struct AnimationTileFrame
 {
     int duration;
@@ -21,14 +19,13 @@ struct TileLayer
 struct Tile
 {
     bool animated;
-    int currentX, currentY;
-    int x, y;
-    int width, height;
     int columns;
-    int tilesetWidth, tilesetHeight;
+    int textureID;
     uint32_t animationIndex;
     uint32_t frameStartTime;
-    SDL_Texture* texture;
-    std::unordered_map<std::string, std::string> data;
+    Vector2i position;
+    Vector2i size;
+    Vector2i tilesetSize;
+    Properties properties;
     std::vector<AnimationTileFrame> animationFrames;
 };

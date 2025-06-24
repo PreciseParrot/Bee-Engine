@@ -4,11 +4,12 @@
 
 #pragma once
 
-#include <cstdint>
 #include <string>
 
 #include "Bee/Collision/Intersection.hpp"
+#include "Graphics/Color.hpp"
 #include "Bee/Math/Vector2f.hpp"
+#include "Bee/Math/Vector3f.hpp"
 
 class Sprite;
 
@@ -42,19 +43,11 @@ public:
     std::string getName() const;
 
     /**
-     * @brief Get the data of the entity. Use `"name"` to get the name and `"type"` to get the class of entity.
-     * 
-     * @param index the name the data variable
-     * @return the data of the world object.
-     */
-    std::string getData(const std::string& index) const;
-
-    /**
      * @brief Get the position of the entity.
      * 
      * @return the position of this entity in world coordinates.
      */
-    Vector2f getPosition() const;
+    Vector3f getPosition() const;
 
     /**
      * @brief Get the rotation of the entity.
@@ -79,20 +72,14 @@ public:
      */
     bool isCursorOnMe() const;
 
+    void setShader(const std::string& shader) const;
+
     /**
      * @brief Load a sprite.
      * 
      * @param spriteName the name of the sprite.
      */
     void setSprite(const std::string& spriteName);
-
-    /**
-     * @brief Set the data of the entity.
-     * 
-     * @param index the name of the data variable
-     * @param data the data of the entity
-     */
-    void setData(const std::string& index, const std::string& data);
 
     /**
      * @brief Set the animation of the entity.
@@ -108,20 +95,16 @@ public:
      */
     void setName(const std::string& name);
 
-    /**
-     * @brief Set the position of the entity.
-     * 
-     * @param x the x position of the entity in world coordinates
-     * @param y the y position of the entity in world coordinates
-     */
-    void setPosition(float x, float y);
+    void setPosition(const Vector2f& position);
 
     /**
      * @brief Set the position of the entity.
      * 
      * @param position the position of the entity in world coordinates
      */
-    void setPosition(const Vector2f& position);
+    void setPosition(const Vector3f& position);
+
+    void setPositionZ(float z);
 
     /**
      * @brief Set the rotation of the entity.
@@ -140,36 +123,19 @@ public:
     /**
      * @brief Set the size of the entity.
      * 
-     * @param width the width of the entity
-     * @param height the height of the entity
-     */
-    void setScale(float width, float height);
-
-    /**
-     * @brief Set the size of the entity.
-     * 
      * @param size the size of the entity. 
      */
     void setScale(const Vector2f& size);
 
     /**
-     * @brief Set the font of the entity.
-     * 
-     * @param fontName the name of the font
-     * @param size the size of the font in pixels
-     */
-    void setFont(const std::string& fontName, int size) const;
-
-    /**
      * @brief Set the text and color of the entity.
      * 
      * @param text the text of the entity
-     * @param red the red value from 0 to 255
-     * @param green the green value from 0 to 255
-     * @param blue the blue value from 0 to 255
-     * @param alpha the alpha value from 0 to 255
+     * @param font the font of the text
+     * @param fontSize
+     * @param color
      */
-    void setText(const std::string& text, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+    void setText(const std::string& text, const std::string& font, int fontSize, const Color& color);
 
     /**
      * @brief Set the hitbox size of the entity.
@@ -181,23 +147,17 @@ public:
     /**
      * @brief Set the hitbox size of the entity.
      * 
-     * @param width the width of the hitbox
-     * @param height the height of the hitbox
-     */
-    void setHitboxScale(float width, float height);
-
-    /**
-     * @brief Set the hitbox size of the entity.
-     * 
      * @param scale the size of the hitbox
      */
     void setHitboxScale(const Vector2f& scale);
 
     /**
-     * @brief The update function can be implemented in inheriting classes. This function is called once every frame.
+     * @brief The update function can be implemented in inheriting classes and is called once every frame.
      * 
      */
     virtual void update();
+
+    virtual void onDraw();
 
     /**
      * @brief The destructor can be implemented in inheriting classes.
@@ -208,7 +168,7 @@ public:
 private:
     float rotation = 0;
     Sprite* sprite = nullptr;
-    Vector2f position;
+    Vector3f position;
     Vector2f rotationCenter = {0.5f, 0.5f};
     Vector2f scale = {1.0f, 1.0f};
     Vector2f hitboxScale = {1.0f, 1.0f};

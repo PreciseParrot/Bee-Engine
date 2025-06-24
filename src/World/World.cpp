@@ -13,6 +13,7 @@
 #include "Bee/Entity.hpp"
 #include "Bee/Log.hpp"
 #include "Bee/Collision/Intersection.hpp"
+#include "Bee/Math/Vector3f.hpp"
 #include "Tiles.hpp"
 #include "Collision/Collision.hpp"
 #include "Graphics/Renderer-Internal.hpp"
@@ -21,30 +22,6 @@ World::World() = default;
 
 void World::update()
 {
-    for (const TileLayer &layer : layers)
-    {
-        for (int i = 0; i < worldHeight; i++)
-        {
-            for (int j = 0; j < worldWidth; j++)
-            {
-                const int tileId = layer.tileIds[j + i * worldWidth];
-                if (tileId == 0) continue;
-
-                Vector2i pos;
-                pos.x = j;
-                pos.y = i;
-
-                SDL_Rect srcRect;
-                srcRect.h = tiles[tileId].height;
-                srcRect.w = tiles[tileId].width;
-                srcRect.x = tiles[tileId].currentX;
-                srcRect.y = tiles[tileId].currentY;
-
-                Renderer::drawTile(pos, &srcRect, tiles[tileId].texture);
-            }
-        }
-    }
-
     for (Tile &tile : tiles)
     {
         if (tile.animated && tile.animationFrames[tile.animationIndex].duration + tile.frameStartTime <= Bee::getTime())
@@ -55,53 +32,62 @@ void World::update()
             {
                 tile.animationIndex = 0;
             }
-            tile.currentX = tile.animationFrames[tile.animationIndex].tileId % tile.columns * tile.width;
-            tile.currentY = tile.animationFrames[tile.animationIndex].tileId / tile.columns * tile.height;
+            tile.position.x = tile.animationFrames[tile.animationIndex].tileId % tile.columns * tile.size.x;
+            tile.position.y = tile.animationFrames[tile.animationIndex].tileId / tile.columns * tile.size.y;
         }
     }
 
-    for (size_t i = 0; i < entities.size(); i++)
-    {
-        entities[i]->Entity::update();
-        entities[i]->update();
-    }
+    Vector2i renderPosition = Renderer::getCameraPosition() - Renderer::getViewPortSize() / 2.0f - Vector2i(1, 1);;
+    renderPosition.x = (renderPosition.x > 0) ? renderPosition.x : 0;
+    renderPosition.y = (renderPosition.y > 0) ? renderPosition.y : 0;
 
-    for (const TileLayer &layer : foregroundLayers)
+    Vector2i renderSize = renderPosition + Renderer::getViewPortSize() + Vector2i(3, 3);
+    renderSize.x = renderSize.x < worldWidth ? renderSize.x : worldWidth;
+    renderSize.y = renderSize.y < worldHeight ? renderSize.y : worldHeight;
+
+    for (size_t i = 0; i < layers.size(); i++)
     {
-        for (int i = 0; i < worldHeight; i++)
+        for (int x = renderPosition.x; x < renderSize.x; x++)
         {
-            for (int j = 0; j < worldWidth; j++)
+            for (int y = renderPosition.y; y < renderSize.y; y++)
             {
-                const int tileId = layer.tileIds[j + i * worldWidth];
+                const int tileId = layers.at(i).tileIds[x + y * worldWidth];
                 if (tileId == 0) continue;
 
-                Vector2i pos;
-                pos.x = j;
-                pos.y = i;
+                Vector3f pos;
+                pos.x = x;
+                pos.y = y;
+                pos.z = static_cast<float>(i) - nullLayer + 1;
 
-                SDL_Rect srcRect;
-                srcRect.h = tiles[tileId].height;
-                srcRect.w = tiles[tileId].width;
-                srcRect.x = tiles[tileId].currentX;
-                srcRect.y = tiles[tileId].currentY;
+                Rect rect;
+                rect.x = tiles[tileId].position.x;
+                rect.y = tiles[tileId].position.y;
+                rect.w = tiles[tileId].size.x;
+                rect.h = tiles[tileId].size.y;
 
-                Renderer::drawTile(pos, &srcRect, tiles[tileId].texture);
+                Renderer::queueTile(pos, tiles[tileId].textureID, rect);
             }
         }
     }
 
-    for (size_t i = 0; i < hudObjects.size(); i++)
+    for (Entity* entity : entities)
     {
-        hudObjects[i]->update();
-        hudObjects[i]->HUDObject::update();
+        entity->update();
+        entity->Entity::update();
+    }
+
+    for (HUDObject* hudObject : hudObjects)
+    {
+        hudObject->update();
+        hudObject->HUDObject::update();
     }
 }
 
 void World::addEntity(Entity* entity)
 {
-    if (std::count(entities.begin(), entities.end(), entity))
+    if (std::ranges::count(entities, entity))
     {
-        Log::write("World", LogLevel::warning, "Entity already in world");
+        Log::write("World", LogLevel::warning, "Entity is already present in the world");
     }
     else
     {
@@ -109,7 +95,7 @@ void World::addEntity(Entity* entity)
     }
 }
 
-Entity* World::getEntityByName(const std::string& name)
+Entity* World::getEntityByName(const std::string& name) const
 {
     for (Entity* entity : entities)
     {
@@ -127,7 +113,7 @@ std::vector<Entity*> World::getAllEntities()
 
 Entity* World::removeEntity(Entity* entity)
 {
-    if (std::count(entities.begin(), entities.end(), entity))
+    if (std::ranges::count(entities, entity))
     {
         std::erase(entities, entity);
         return entity;
@@ -148,9 +134,9 @@ void World::deleteAllEntities()
 
 void World::addHUDObject(HUDObject* hudObject)
 {
-    if (std::count(hudObjects.begin(), hudObjects.end(), hudObject))
+    if (std::ranges::count(hudObjects, hudObject))
     {
-        Log::write("World", LogLevel::warning, "HUD Object already in world");
+        Log::write("World", LogLevel::warning, "HUD Object is already present in the world");
     }
     else
     {
@@ -165,7 +151,7 @@ std::vector<HUDObject*> World::getAllHUDObjects()
 
 HUDObject* World::removeHUDObject(HUDObject* hudObject)
 {
-    if (std::count(hudObjects.begin(), hudObjects.end(), hudObject))
+    if (std::ranges::count(hudObjects, hudObject))
     {
         std::erase(hudObjects, hudObject);
         return hudObject;
@@ -189,25 +175,22 @@ std::vector<WorldObject*> World::getAllWorldObjects() const
     return worldObjects;
 }
 
-std::string World::getTileData(const Vector2f& position, const std::string& index) const
+const Properties& World::getTileProperties(const Vector2f& position) const
 {
-    if (static_cast<int>(position.x) < 0) return "";
-    if (static_cast<int>(position.y) < 0) return "";
-    if (static_cast<int>(position.x) > worldWidth) return "";
-    if (static_cast<int>(position.y) > worldHeight) return "";
+    if (static_cast<int>(position.x) < 0) return tiles[0].properties;
+    if (static_cast<int>(position.y) < 0) return tiles[0].properties;
+    if (static_cast<int>(position.x) > worldWidth) return tiles[0].properties;
+    if (static_cast<int>(position.y) > worldHeight) return tiles[0].properties;
 
-    int tileId = 0;
+    int tileID = 0;
 
     for (const TileLayer& layer : layers)
     {
-        if (const int tileIdT = layer.tileIds[static_cast<int>(position.x) + static_cast<int>(position.y) * worldWidth]; tileIdT != 0)
-            tileId = tileIdT;
+        if (const int tileIDTemp = layer.tileIds[static_cast<int>(position.x) + static_cast<int>(position.y) * worldWidth]; tileIDTemp != 0)
+            tileID = tileIDTemp;
     }
 
-    if (!tiles[tileId].data.contains(index))
-        return "";
-
-    return tiles[tileId].data.at(index);
+    return tiles[tileID].properties;
 }
 
 std::vector<Intersection> World::getIntersections(const Entity* entity) const
@@ -261,7 +244,7 @@ void World::loadTileset(const std::string &source, int firstId)
     int columns = tilesetXMLElement->IntAttribute("columns");
     int tileCount = tilesetXMLElement->IntAttribute("tilecount");
     std::filesystem::path tilesetTexturePath = imageXMLElement->Attribute("source");
-    SDL_Texture* texture = Renderer::loadTexture(tilesetTexturePath.replace_extension().string(), "./assets/Worlds/Tilesets/" + tilesetTexturePath.replace_extension().string() + ".png");
+    int textureID = Renderer::loadTexture(tilesetTexturePath.replace_extension().string(), "./assets/Worlds/Tilesets/" + tilesetTexturePath.replace_extension().string() + ".png");
 
     for (int id = 0; id < tileCount; id++)
     {
@@ -270,15 +253,13 @@ void World::loadTileset(const std::string &source, int firstId)
         tile.animationIndex = 0;
         tile.frameStartTime = 0;
         tile.columns = columns;
-        tile.width = width;
-        tile.height = height;
-        tile.tilesetWidth = imageXMLElement->IntAttribute("width");
-        tile.tilesetHeight = imageXMLElement->IntAttribute("height");
-        tile.texture = texture;
-        tile.x = id % tile.columns * tile.width;
-        tile.y = id / tile.columns * tile.height;
-        tile.currentX = tile.x;
-        tile.currentY = tile.y;
+        tile.size.x = width;
+        tile.size.y = height;
+        tile.tilesetSize.x = imageXMLElement->IntAttribute("width");
+        tile.tilesetSize.y = imageXMLElement->IntAttribute("height");
+        tile.textureID = textureID;
+        tile.position.x = id % tile.columns * tile.size.x;
+        tile.position.y = id / tile.columns * tile.size.y;
 
         tiles.insert(tiles.begin() + id + firstId, tile);
     }
@@ -287,14 +268,43 @@ void World::loadTileset(const std::string &source, int firstId)
     {
         int id = tileXMLElement->IntAttribute("id");
 
-        if (const char* tileType = tileXMLElement->Attribute("type"))
-            tiles[id + firstId].data.insert({"type", tileType});
-
         if (const tinyxml2::XMLElement* propertiesXMLElement = tileXMLElement->FirstChildElement("properties"))
         {
             for (const tinyxml2::XMLElement* propertyXMLElement = propertiesXMLElement->FirstChildElement("property"); propertyXMLElement != nullptr; propertyXMLElement = propertyXMLElement->NextSiblingElement("property"))
             {
-                tiles[id + firstId].data.insert({propertyXMLElement->Attribute("name"), propertyXMLElement->Attribute("value")});
+                const char* propertyName = propertyXMLElement->Attribute("name");
+                const char* propertyType = propertyXMLElement->Attribute("type");
+                const char* propertyValue = propertyXMLElement->Attribute("value");
+    
+                if (!propertyType)
+                {
+                    tiles[id + firstId].properties.setString(propertyName, propertyValue);
+                    break;
+                }
+    
+                if (!strcmp(propertyType, "bool"))
+                {
+                    if (!strcmp(propertyValue, "true"))
+                    {
+                        tiles[id + firstId].properties.setBool(propertyName, true);
+                    }
+                    else
+                    {
+                        tiles[id + firstId].properties.setBool(propertyName, false);
+                    }
+                }
+                else if (!strcmp(propertyType, "float"))
+                {
+                    tiles[id + firstId].properties.setFloat(propertyName, std::stof(propertyValue));
+                }
+                else if (!strcmp(propertyType, "int"))
+                {
+                    tiles[id + firstId].properties.setInt(propertyName, std::stoi(propertyValue));
+                }
+                else
+                {
+                    tiles[id + firstId].properties.setString(propertyName, propertyValue);
+                }
             }
         }
 
@@ -334,42 +344,147 @@ void World::loadTilemap(const std::string& tilemapName)
     tinyxml2::XMLElement* mapXMLElement = tilemapXML.FirstChildElement("map");
     worldWidth = mapXMLElement->IntAttribute("width");
     worldHeight = mapXMLElement->IntAttribute("height");
-    float tileWidth = mapXMLElement->IntAttribute("tilewidth");
-    float tileHeight = mapXMLElement->IntAttribute("tileheight");
+    int tileWidth = mapXMLElement->IntAttribute("tilewidth");
+    int tileHeight = mapXMLElement->IntAttribute("tileheight");
 
-    for (const tinyxml2::XMLElement* element = mapXMLElement->FirstChildElement("layer"); element != nullptr; element = element->NextSiblingElement("layer"))
+    for (const tinyxml2::XMLElement* element = mapXMLElement->FirstChildElement(); element != nullptr; element = element->NextSiblingElement())
     {
-        TileLayer layer;
-        layer.name = element->Attribute("name");
+        const char* layerType = element->Name();
+        const char* layerName = element->Attribute("name");
 
-        const char* layerDataStr = element->FirstChildElement("data")->GetText();
-        std::stringstream layerData(layerDataStr);
+        if (layerName && !strcmp("Entities", layerName))
+            nullLayer = layers.size();
 
-        while (layerData.good())
+        if (!strcmp(layerType, "layer"))
         {
-            std::string substr;
-            getline(layerData, substr, ',');
-            layer.tileIds.push_back(stoi(substr));
-        }
+            TileLayer layer;
+            layer.name = element->Attribute("name");
 
-        if (const char* layerClass = element->Attribute("class"); layerClass && !strcmp("foreground", layerClass))
-        {
-            foregroundLayers.push_back(layer);
-        }
-        else
-        {
+            const char* layerDataStr = element->FirstChildElement("data")->GetText();
+            std::stringstream layerData(layerDataStr);
+
+            while (layerData.good())
+            {
+                std::string substr;
+                getline(layerData, substr, ',');
+                layer.tileIds.push_back(stoi(substr));
+            }
             layers.push_back(layer);
         }
-    }
+        else if (!strcmp(layerType, "objectgroup"))
+        {
+            for (const tinyxml2::XMLElement* object = element->FirstChildElement("object"); object != nullptr; object = object->NextSiblingElement())
+            {
+                WorldObject* worldObject = new WorldObject;
+                const char* name = object->Attribute("name");
+                const char* type = object->Attribute("type");
+                float x = object->FloatAttribute("x") / tileWidth;
+                float y = object->FloatAttribute("y") / tileHeight;
+                float width = object->FloatAttribute("width") / tileWidth;
+                float height = object->FloatAttribute("height") / tileHeight;
+    
+                if (name) worldObject->properties.setString("name", name);
+                if (type) worldObject->properties.setString("type", type);
+    
+                if (const tinyxml2::XMLElement* properties = object->FirstChildElement("properties"))
+                {
+                    for (const tinyxml2::XMLElement* property = properties->FirstChildElement("property"); property != nullptr; property = property->NextSiblingElement("property"))
+                    {
+                        const char* propertyName = property->Attribute("name");
+                        const char* propertyType = property->Attribute("type");
+                        const char* propertyValue = property->Attribute("value");
+    
+                        if (!propertyType)
+                        {
+                            worldObject->properties.setString(propertyName, propertyValue);
+                            break;
+                        }
+    
+                        if (!strcmp(propertyType, "bool"))
+                        {
+                            if (!strcmp(propertyValue, "true"))
+                            {
+                                worldObject->properties.setBool(propertyName, true);
+                            }
+                            else
+                            {
+                                worldObject->properties.setBool(propertyName, false);
+                            }
+                        }
+                        else if (!strcmp(propertyType, "float"))
+                        {
+                            worldObject->properties.setFloat(propertyName, std::stof(propertyValue));
+                        }
+                        else if (!strcmp(propertyType, "int"))
+                        {
+                            worldObject->properties.setInt(propertyName, std::stoi(propertyValue));
+                        }
+                        else
+                        {
+                            worldObject->properties.setString(propertyName, propertyValue);
+                        }
+                    }
+                }
 
+                Hitbox hitbox;
+                const tinyxml2::XMLElement* polygon = object->FirstChildElement("polygon");
+                const tinyxml2::XMLElement* ellipse = object->FirstChildElement("ellipse");
+                const tinyxml2::XMLElement* point = object->FirstChildElement("point");
+    
+                if (polygon)
+                {
+                    std::vector<Vector2f> polygonPoints;
+                    std::stringstream polygonPointsStr(polygon->Attribute("points"));
+    
+                    while (polygonPointsStr.good())
+                    {
+                        Vector2f polygonPoint;
+                        std::string substr;
+    
+                        getline(polygonPointsStr, substr, ',');
+                        polygonPoint.x = stof(substr) / tileWidth;
+                        getline(polygonPointsStr, substr, ' ');
+                        polygonPoint.y = stof(substr) / tileHeight;
+                        polygonPoints.push_back(polygonPoint);
+                    }
+    
+                    for (const Vector2f& polygonPoint : polygonPoints)
+                    {
+                        hitbox.vertices.push_back(polygonPoint + Vector2f(x, y));
+                    }
+                }
+                else if (ellipse)
+                {
+                    hitbox.isEllipse = true;
+                    hitbox.center.x = x + width / 2;
+                    hitbox.center.y = y + height / 2;
+                    hitbox.ellipse.x = width / 2;
+                    hitbox.ellipse.y = height / 2;
+                }
+                else if (point)
+                {
+                    hitbox.center = {x, y};
+                    hitbox.vertices.emplace_back(x, y);
+                }
+                else
+                {
+                    hitbox.vertices.emplace_back(x, y);
+                    hitbox.vertices.emplace_back(x, y + height);
+                    hitbox.vertices.emplace_back(x + width, y);
+                    hitbox.vertices.emplace_back(x + width, y + height);
+                }
+                worldObject->setHitbox(hitbox);
+                worldObjects.push_back(worldObject);
+            }
+        }
+    }
+    
     Tile nullTile;
     nullTile.animated = false;
-    nullTile.height = 0;
-    nullTile.width = 0;
-    nullTile.x = 0;
-    nullTile.y = 0;
-    nullTile.currentX = 0;
-    nullTile.currentY = 0;
+    nullTile.size.x = 0;
+    nullTile.size.y = 0;
+    nullTile.position.x = 0;
+    nullTile.position.y = 0;
     tiles.push_back(nullTile);
 
     for (const tinyxml2::XMLElement* element = mapXMLElement->FirstChildElement("tileset"); element != nullptr; element = element->NextSiblingElement("tileset"))
@@ -381,109 +496,7 @@ void World::loadTilemap(const std::string& tilemapName)
 
     for (tinyxml2::XMLElement* objectGroup = mapXMLElement->FirstChildElement("objectgroup"); objectGroup != nullptr; objectGroup = objectGroup->NextSiblingElement())
     {
-        for (tinyxml2::XMLElement* object = objectGroup->FirstChildElement("object"); object != nullptr; object = object->NextSiblingElement())
-        {
-            WorldObject* worldObject = new WorldObject;
-            const char* name = object->Attribute("name");
-            const char* type = object->Attribute("type");
-            float x = object->FloatAttribute("x") / tileWidth;
-            float y = object->FloatAttribute("y") / tileHeight;
-            float width = object->FloatAttribute("width") / tileWidth;
-            float height = object->FloatAttribute("height") / tileHeight;
-
-            if (name) worldObject->properties.setString("name", name);
-            if (type) worldObject->properties.setString("type", type);
-
-            if (tinyxml2::XMLElement* properties = object->FirstChildElement("properties"))
-            {
-                for (tinyxml2::XMLElement* property = properties->FirstChildElement("property"); property != nullptr; property = property->NextSiblingElement("property"))
-                {
-                    const char* propertyName = property->Attribute("name");
-                    const char* propertyType = property->Attribute("type");
-                    const char* propertyValue = property->Attribute("value");
-
-                    if (!propertyType)
-                    {
-                        worldObject->properties.setString(propertyName, propertyValue);
-                        break;
-                    }
-
-                    if (!strcmp(propertyType, "bool"))
-                    {
-                        if (!strcmp(propertyValue, "true"))
-                        {
-                            worldObject->properties.setBool(propertyName, true);
-                        }
-                        else
-                        {
-                            worldObject->properties.setBool(propertyName, false);
-                        }
-                    }
-                    else if (!strcmp(propertyType, "float"))
-                    {
-                        worldObject->properties.setFloat(propertyName, std::stof(propertyValue));
-                    }
-                    else if (!strcmp(propertyType, "int"))
-                    {
-                        worldObject->properties.setInt(propertyName, std::stoi(propertyValue));
-                    }
-                    else
-                    {
-                        worldObject->properties.setString(propertyName, propertyValue);
-                    }
-                }
-            }
-
-            Hitbox hitbox;
-            tinyxml2::XMLElement* polygon = object->FirstChildElement("polygon");
-            tinyxml2::XMLElement* ellipse = object->FirstChildElement("ellipse");
-            tinyxml2::XMLElement* point = object->FirstChildElement("point");
-
-            if (polygon)
-            {
-                std::vector<Vector2f> polygonPoints;
-                std::stringstream polygonPointsStr(polygon->Attribute("points"));
-
-                while (polygonPointsStr.good())
-                {
-                    Vector2f polygonPoint;
-                    std::string substr;
-
-                    getline(polygonPointsStr, substr, ',');
-                    polygonPoint.x = stof(substr) / tileWidth;
-                    getline(polygonPointsStr, substr, ' ');
-                    polygonPoint.y = stof(substr) / tileHeight;
-                    polygonPoints.push_back(polygonPoint);
-                }
-
-                for (const Vector2f& polygonPoint : polygonPoints)
-                {
-                    hitbox.vertices.push_back(polygonPoint + Vector2f(x, y));
-                }
-            }
-            else if (ellipse)
-            {
-                hitbox.isEllipse = true;
-                hitbox.center.x = x + width / 2;
-                hitbox.center.y = y + height / 2;
-                hitbox.ellipse.x = width / 2;
-                hitbox.ellipse.y = height / 2;
-            }
-            else if (point)
-            {
-                hitbox.center = {x, y};
-                hitbox.vertices.emplace_back(x, y);
-            }
-            else
-            {
-                hitbox.vertices.emplace_back(x, y);
-                hitbox.vertices.emplace_back(x, y + height);
-                hitbox.vertices.emplace_back(x + width, y);
-                hitbox.vertices.emplace_back(x + width, y + height);
-            }
-            worldObject->setHitbox(hitbox);
-            worldObjects.push_back(worldObject);
-        }
+        
     }
     Log::write("World", LogLevel::info, "Loaded %s tilemap", tilemapName.c_str());
 }

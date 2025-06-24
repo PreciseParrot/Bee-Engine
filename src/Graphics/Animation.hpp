@@ -5,7 +5,8 @@ enum class AnimationDirection
     none,
     forward,
     reverse,
-    pingPong
+    pingPong,
+    reversePingPong,
 };
 
 struct FrameTag
@@ -15,7 +16,7 @@ struct FrameTag
     AnimationDirection direction = AnimationDirection::none;
 };
 
-struct AnimationSpriteFrame
+struct SpriteFrame
 {
     int x = 0;
     int y = 0;
