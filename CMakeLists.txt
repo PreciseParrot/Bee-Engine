@@ -130,7 +130,6 @@ add_subdirectory(external/glad)
 add_subdirectory(external/imgui)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE GLAD)
-target_link_libraries(${PROJECT_NAME} PRIVATE imgui)
 target_link_libraries(${PROJECT_NAME} PRIVATE tinyxml2::tinyxml2)
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 

@@ -53,8 +53,8 @@ bool HUDObject::isCursorOnMe() const
     Intersection intersection;
     const Vector2f center = static_cast<Vector2i>(position) + scale / 2;
     const Vector2i cursorPosition = Mouse::getMouseScreenPosition();
-    const float c = cosf(rotation * M_PIf / 180.0f);
-    const float s = sinf(rotation * M_PIf / 180.0f);
+    const float c = cosf(rotation * std::numbers::pi_v<float> / 180.0f);
+    const float s = sinf(rotation * std::numbers::pi_v<float> / 180.0f);
 
     hitbox.vertices.emplace_back(center.x - scale.x / 2.0f * c - scale.y / 2.0f * s, center.y - scale.x / 2.0f * s + scale.y / 2.0f * c);
     hitbox.vertices.emplace_back(center.x + scale.x / 2.0f * c - scale.y / 2.0f * s, center.y + scale.x / 2.0f * s + scale.y / 2.0f * c);

@@ -1,6 +1,6 @@
 #include "Bee/Entity.hpp"
 
-#include <cmath>
+#include <numbers>
 #include <vector>
 
 #include "Bee/Bee.hpp"
@@ -22,8 +22,8 @@ void Entity::onDraw() {}
 Hitbox Entity::getHitBox() const
 {
     Hitbox hitbox;
-    const float c = cosf(rotation * M_PIf / 180.0f);
-    const float s = sinf(rotation * M_PIf / 180.0f);
+    const float c = cosf(rotation * std::numbers::pi_v<float> / 180.0f);
+    const float s = sinf(rotation * std::numbers::pi_v<float> / 180.0f);
     
     hitbox.center = position;
     hitbox.vertices.emplace_back(position.x - hitboxScale.x / 2.0f * c - hitboxScale.y / 2.0f * s, position.y - hitboxScale.x / 2.0f * s + hitboxScale.y / 2.0f * c);

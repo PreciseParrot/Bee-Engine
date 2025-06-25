@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.28)
-project(imgui)
 
-add_library(${PROJECT_NAME} STATIC 
+
+target_sources(${PROJECT_NAME} PRIVATE
         imgui.cpp
         imgui_draw.cpp
         imgui_tables.cpp
@@ -11,4 +11,4 @@ add_library(${PROJECT_NAME} STATIC
         imgui_demo.cpp
 )
 
-target_include_directories(imgui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

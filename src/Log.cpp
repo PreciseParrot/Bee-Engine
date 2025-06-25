@@ -53,15 +53,15 @@ void Log::write(const std::string& source, LogLevel level, const std::string& fo
 #ifdef _WIN32
     switch (level)
     {
-        case LogLevel::Info:
+        case LogLevel::info:
             std::cout << output.str() << std::endl;
             break;
-        case LogLevel::Warning:
+        case LogLevel::warning:
             SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN);
             std::cout << output.str() << std::endl;
             SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
             break;
-        case LogLevel::Error:
+        case LogLevel::error:
             SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
             std::cout << output.str() << std::endl;
             SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
