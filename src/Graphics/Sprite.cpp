@@ -9,7 +9,6 @@
 #include "Bee/Log.hpp"
 #include "Bee/Math/Vector2f.hpp"
 #include "Bee/Math/Vector2i.hpp"
-#include "Bee/Math/Vector3f.hpp"
 #include "Renderer-Internal.hpp"
 #include "Rect.hpp"
 
@@ -97,6 +96,7 @@ void Sprite::setAnimation(const std::string& animationName)
         currentSprite = currentAnimation.start;
     }
     currentAnimationName = animationName;
+    frameStartTime = Bee::getTime();
 }
 
 void Sprite::setText(const std::string& text, const std::string& font, int fontSize, const Color& color)
