@@ -92,7 +92,7 @@ private:
     Matrix4f worldProjectionMatrix;
     Matrix4f screenProjectionMatrix;
 
-    IndexBuffer quadIbo;
+    IndexBuffer quadIBO;
 
     void renderEntities(const Batch&);
     void renderHUD(const Batch&);

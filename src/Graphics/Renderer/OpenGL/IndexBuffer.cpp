@@ -7,23 +7,24 @@
 #endif
 
 #include "ErrorHandling.hpp"
+#include "Bee/Log.hpp"
 
 IndexBuffer::IndexBuffer() = default;
 
-IndexBuffer::IndexBuffer(const void* data, const unsigned int count)
+IndexBuffer::IndexBuffer(const void* data, const uint32_t count)
 {
     init(data, count);
 }
 
-void IndexBuffer::init(const void *data, unsigned int count)
+void IndexBuffer::init(const void *data, uint32_t count)
 {
-    assert(sizeof(GLuint) == sizeof(unsigned int));
+    assert(sizeof(GLuint) == sizeof(uint32_t));
 
     this->count = count;
 
     glCall(glGenBuffers(1, &rendererID));
     glCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererID));
-    glCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), data, GL_STATIC_DRAW));
+    glCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), data, GL_STATIC_DRAW));
 }
 
 void IndexBuffer::bind() const
@@ -31,12 +32,17 @@ void IndexBuffer::bind() const
     glCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererID));
 }
 
-void IndexBuffer::unbind() const
+void IndexBuffer::unbind()
 {
     glCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }
 
+uint32_t IndexBuffer::getCount() const
+{
+    return count;
+}
+
 IndexBuffer::~IndexBuffer()
 {
-    glDeleteBuffers(1, &rendererID);
+    glCall(glDeleteBuffers(1, &rendererID));
 }

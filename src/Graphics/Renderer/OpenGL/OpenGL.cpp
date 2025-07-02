@@ -58,7 +58,7 @@ OpenGL::OpenGL()
         2, 3, 0
     };
 
-    quadIbo.init(indices, 6);
+    quadIBO.init(indices, 6);
 
     textures.emplace_back();
     shaders.emplace_back(basicShaderVertSrc, basicShaderFragSrc);
@@ -149,7 +149,7 @@ void OpenGL::update()
     if (onFrameCB)
         onFrameCB();
 
-    draw(vao, quadIbo, *currentShader);
+    draw(vao, quadIBO, *currentShader);
 
     glCall(glViewport(0, 0, screenSize.x, screenSize.y));
 
@@ -531,7 +531,7 @@ void OpenGL::renderEntities(const Batch& batch)
         Entity* entity = static_cast<Entity*>(sprite.object);
         entity->onDraw();
 
-        draw(vao, quadIbo, shaders.at(sprite.shaderID));
+        draw(vao, quadIBO, shaders.at(sprite.shaderID));
     }
 }
 
@@ -559,7 +559,7 @@ void OpenGL::renderHUD(const Batch& batch)
         HUDObject* hudObject = static_cast<HUDObject*>(sprite.object);
         hudObject->onDraw();
 
-        draw(vao, quadIbo, shaders.at(sprite.shaderID));
+        draw(vao, quadIBO, shaders.at(sprite.shaderID));
     }
 }
 

@@ -28,7 +28,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/Graphics/Color.cpp
         src/Graphics/HUDObject.cpp
         src/Graphics/Renderer.cpp
-        src/Graphics/Sprite.cpp 
+        src/Graphics/Sprite.cpp
         src/Graphics/Window.cpp
 
         src/Graphics/Renderer/OpenGL/ErrorHandling.cpp
@@ -76,15 +76,15 @@ if (BEE_VENDORED OR EMSCRIPTEN)
             set(ZLIB_BUILD_SHARED OFF CACHE BOOL "Enable building zlib shared library" FORCE)
         endif ()
         add_subdirectory(external/zlib external/zlib-build EXCLUDE_FROM_ALL)
-        
+
         if (BEE_STATIC_DEPENDENCIES)
             add_library(ZLIB::ZLIB ALIAS zlibstatic)
         endif ()
-        
+
         set(ZLIB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/external/zlib;${CMAKE_CURRENT_BINARY_DIR}/external/zlib-build")
         set(ZLIB_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/zlib;${CMAKE_CURRENT_BINARY_DIR}/external/zlib-build" CACHE STRING "path of zlib, passed to libpng" FORCE)
         set(ZLIB_LIBRARY ZLIB::ZLIB)
-        
+
         set(PNG_TOOLS OFF CACHE BOOL "Build the libpng tools" FORCE)
         set(SKIP_INSTALL_EXPORT TRUE)
         add_subdirectory(external/libpng)
@@ -101,14 +101,14 @@ else ()
 endif()
 
 if (EMSCRIPTEN)
-    target_link_options(${PROJECT_NAME} PUBLIC 
+    target_link_options(${PROJECT_NAME} PUBLIC
             -sUSE_SDL=2
-            -sUSE_SDL_TTF=2 
-            -sUSE_SDL_MIXER=2 
-            -sUSE_LIBPNG 
-            -sUSE_VORBIS 
-            -sUSE_HARFBUZZ=1 
-            -sUSE_OGG=1 
+            -sUSE_SDL_TTF=2
+            -sUSE_SDL_MIXER=2
+            -sUSE_LIBPNG
+            -sUSE_VORBIS
+            -sUSE_HARFBUZZ=1
+            -sUSE_OGG=1
             -sUSE_FREETYPE=1
             -sMIN_WEBGL_VERSION=2
             -sMAX_WEBGL_VERSION=2
@@ -146,7 +146,6 @@ endif ()
 add_subdirectory(external/glad)
 add_subdirectory(external/imgui)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE GLAD)
 target_link_libraries(${PROJECT_NAME} PRIVATE tinyxml2::tinyxml2)
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 

@@ -2,12 +2,12 @@
 
 #include <cassert>
 
-#ifdef DEBUGGGGGG
+#ifdef NDEBUG
+#define glCall(x) x;
+#else
 #define glCall(x) glClearError();\
 x;\
 assert(glLogCall(#x));
-#else
-#define glCall(x) x;
 #endif
 
 

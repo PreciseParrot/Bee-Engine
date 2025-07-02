@@ -25,8 +25,6 @@ static World* currentWorld = nullptr;
 
 void Bee::init(const int windowWidth, const int windowHeight)
 {
-    atexit(cleanUp);
-
     if (SDL_Init(0) < 0)
     {
         Log::write("Engine", LogLevel::error, "Error initializing SDL2: %s", SDL_GetError());
@@ -164,8 +162,8 @@ void Bee::setWorld(World* world)
 
 void Bee::cleanUp()
 {
-    Audio::cleanUp();
     Renderer::cleanUp();
+    Audio::cleanUp();
     Controller::cleanUp();
     Mouse::cleanUp();
     SDL_Quit();
