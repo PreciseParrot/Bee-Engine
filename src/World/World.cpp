@@ -10,7 +10,6 @@
 #include <tinyxml2.h>
 
 #include "Bee/Bee.hpp"
-#include "Bee/Entity.hpp"
 #include "Bee/Log.hpp"
 #include "Bee/Collision/Intersection.hpp"
 #include "Bee/Math/Vector3f.hpp"
@@ -73,6 +72,7 @@ void World::update()
     for (Entity* entity : entities)
     {
         entity->update();
+        entity->BaseObject::update();
         entity->Entity::update();
     }
 
@@ -97,11 +97,11 @@ void World::addEntity(Entity* entity)
 
 Entity* World::getEntityByName(const std::string& name) const
 {
-    for (Entity* entity : entities)
-    {
-        if (entity->getName() == name)
-            return entity;
-    }
+    // for (Entity* entity : entities)
+    // {
+    //     if (entity->getName() == name)
+    //         return entity;
+    // }
 
     return nullptr;
 }

@@ -12,12 +12,13 @@
 #include <SDL2/SDL_ttf.h>
 #include <png.h>
 
-#include "Window-Internal.hpp"
-#include "Graphics/Renderer/IRenderer.hpp"
-#include "Graphics/Renderer/OpenGL/OpenGL.hpp"
+#include "Bee/Entity.hpp"
 #include "Bee/Log.hpp"
 #include "Bee/Math/Vector2f.hpp"
 #include "Bee/Math/Vector2i.hpp"
+#include "Window-Internal.hpp"
+#include "Graphics/Renderer/IRenderer.hpp"
+#include "Graphics/Renderer/OpenGL/OpenGL.hpp"
 
 static std::map<std::pair<std::string, int>, TTF_Font*> fontMap;
 static std::unordered_map<std::string, int> textureCache;

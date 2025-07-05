@@ -18,6 +18,7 @@ endif ()
 
 target_sources(${PROJECT_NAME} PRIVATE
         src/Audio.cpp
+        src/BaseObject.cpp
         src/Bee.cpp
         src/Entity.cpp
         src/Log.cpp
@@ -28,7 +29,6 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/Graphics/Color.cpp
         src/Graphics/HUDObject.cpp
         src/Graphics/Renderer.cpp
-        src/Graphics/Sprite.cpp
         src/Graphics/Window.cpp
 
         src/Graphics/Renderer/OpenGL/ErrorHandling.cpp

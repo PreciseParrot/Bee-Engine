@@ -7,11 +7,9 @@
 #include <cstdint>
 
 #include "Audio.hpp"
-#include "Entity.hpp"
 #include "Log.hpp"
 #include "Collision/Hitbox.hpp"
 #include "Collision/Intersection.hpp"
-#include "Graphics/HUDObject.hpp"
 #include "Graphics/Renderer.hpp"
 #include "Graphics/Window.hpp"
 #include "Input/Controller.hpp"

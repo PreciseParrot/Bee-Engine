@@ -1,4 +1,4 @@
-#include "Sprite.hpp"
+#include "Bee/BaseObject.hpp"
 
 #include <fstream>
 #include <string>
@@ -7,19 +7,14 @@
 
 #include "Bee/Bee.hpp"
 #include "Bee/Log.hpp"
-#include "Bee/Math/Vector2f.hpp"
-#include "Bee/Math/Vector2i.hpp"
-#include "Renderer-Internal.hpp"
-#include "Rect.hpp"
+#include "Graphics/Renderer-Internal.hpp"
 
-Sprite::Sprite() = default;
-
-void Sprite::setShader(const std::string& shader)
+void BaseObject::setShader(const std::string& shader)
 {
     shaderID = Renderer::loadShader(shader);
 }
 
-void Sprite::setSprite(const std::string& spriteName)
+void BaseObject::setSprite(const std::string& spriteName)
 {
     std::string jsonFilePath = "./assets/Sprites/" + spriteName + ".json";
     std::string pngFilePath = "./assets/Sprites/" + spriteName + ".png";
@@ -72,7 +67,7 @@ void Sprite::setSprite(const std::string& spriteName)
     }
 }
 
-void Sprite::setAnimation(const std::string& animationName)
+void BaseObject::setAnimation(const std::string& animationName)
 {
     if (currentAnimationName == animationName) return;
 
@@ -99,11 +94,12 @@ void Sprite::setAnimation(const std::string& animationName)
     frameStartTime = Bee::getTime();
 }
 
-void Sprite::setText(const std::string& text, const std::string& font, int fontSize, const Color& color)
+void BaseObject::setText(const std::string& text, const std::string& font, int fontSize, const Color& color)
 {
     if (text == "") return;
     
-    const SDL_Color sdlColor = {
+    const SDL_Color sdlColor =
+    {
         static_cast<uint8_t>(color.r * 255),
         static_cast<uint8_t>(color.g * 255),
         static_cast<uint8_t>(color.b * 255),
@@ -121,10 +117,59 @@ void Sprite::setText(const std::string& text, const std::string& font, int fontS
     SDL_FreeSurface(rgbaSurface);
 }
 
-Vector2f Sprite::getTextureSize() const
+void BaseObject::setScale(const Vector2f& scale)
+{
+    this->scale = scale;
+}
+
+void BaseObject::setHitboxScale(const float scale)
+{
+    const Vector2f textureSize = getTextureSize();
+    this->hitboxScale.x = textureSize.x / textureSize.y * scale;
+    this->hitboxScale.y = scale;
+}
+
+void BaseObject::setHitboxScale(const Vector2f& scale)
+{
+    hitboxScale = scale;
+}
+
+void BaseObject::setPosition(const Vector2f& position)
+{
+    this->position.x = position.x;
+    this->position.y = position.y;
+}
+
+void BaseObject::setPosition(const Vector3f& position)
+{
+    this->position = position;
+}
+
+void BaseObject::setPositionZ(float z)
+{
+    position.z = z;
+}
+
+void BaseObject::moveOffset(const Vector2f& offset)
+{
+    position.x += offset.x;
+    position.y += offset.y;
+}
+
+Vector3f BaseObject::getPosition() const
+{
+    return position;
+}
+
+Vector2f BaseObject::getScale() const
+{
+    return scale;
+}
+
+Vector2i BaseObject::getTextureSize() const
 {
     Vector2f textureSize;
-    
+
     if (frames.empty())
     {
         textureSize = Renderer::getTextureSize(textureID);
@@ -138,7 +183,22 @@ Vector2f Sprite::getTextureSize() const
     return textureSize;
 }
 
-void Sprite::updateInternal()
+Hitbox BaseObject::getHitBox() const
+{
+    Hitbox hitbox;
+    const float c = cosf(0.0f * std::numbers::pi_v<float> / 180.0f);
+    const float s = sinf(0.0f * std::numbers::pi_v<float> / 180.0f);
+    
+    hitbox.center = position;
+    hitbox.vertices.emplace_back(position.x - hitboxScale.x / 2.0f * c - hitboxScale.y / 2.0f * s, position.y - hitboxScale.x / 2.0f * s + hitboxScale.y / 2.0f * c);
+    hitbox.vertices.emplace_back(position.x - hitboxScale.x / 2.0f * c + hitboxScale.y / 2.0f * s, position.y - hitboxScale.x / 2.0f * s - hitboxScale.y / 2.0f * c);
+    hitbox.vertices.emplace_back(position.x + hitboxScale.x / 2.0f * c - hitboxScale.y / 2.0f * s, position.y + hitboxScale.x / 2.0f * s + hitboxScale.y / 2.0f * c);
+    hitbox.vertices.emplace_back(position.x + hitboxScale.x / 2.0f * c + hitboxScale.y / 2.0f * s, position.y + hitboxScale.x / 2.0f * s - hitboxScale.y / 2.0f * c);
+
+    return hitbox;
+}
+
+void BaseObject::update()
 {
     if (frames.empty() || currentAnimation.direction == AnimationDirection::none)
         return;
@@ -188,54 +248,7 @@ void Sprite::updateInternal()
     }
 }
 
-void Sprite::updateInternalHUD(const Vector3f& position, const Vector2i& scale, const Vector2f& rotationCenter, const float rotation, HUDObject* hudObject)
+void BaseObject::onDraw()
 {
-    updateInternal();
     
-    Rect rect;
-
-    if (frames.empty())
-    {
-        Vector2i textureSize = getTextureSize();
-        rect.x = 0;
-        rect.y = 0;
-        rect.w = textureSize.x;
-        rect.h = textureSize.y;
-    }
-    else
-    {
-        rect.x = frames.at(currentSprite).x;
-        rect.y = frames.at(currentSprite).y;
-        rect.w = frames.at(currentSprite).w;
-        rect.h = frames.at(currentSprite).h;
-    }
-
-    Renderer::queueHUD(position, scale, shaderID, textureID, rect, hudObject);
 }
-
-void Sprite::updateInternalEntity(const Vector3f& position, const Vector2f& scale, const Vector2f& rotationCenter, const float rotation, Entity* entity)
-{
-    updateInternal();
-    
-    Rect rect;
-
-    if (frames.empty())
-    {
-        Vector2i textureSize = getTextureSize();
-        rect.x = 0;
-        rect.y = 0;
-        rect.w = textureSize.x;
-        rect.h = textureSize.y;
-    }
-    else
-    {
-        rect.x = frames.at(currentSprite).x;
-        rect.y = frames.at(currentSprite).y;
-        rect.w = frames.at(currentSprite).w;
-        rect.h = frames.at(currentSprite).h;
-    }
-    
-    Renderer::queueEntity(position, scale, shaderID, textureID, rect, entity);
-}
-
-Sprite::~Sprite() = default;
